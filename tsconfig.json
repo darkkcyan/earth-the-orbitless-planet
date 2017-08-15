@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "target": "es5",
+    "inlineSourceMap": true,
+    "outDir": "./build",
+    "module": "es6"
+  },
+  "files": [
+    "./src/main.ts"
+  ]
+}
