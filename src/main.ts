@@ -15,6 +15,7 @@ img.onload = (e: Event) => {
     radius: 150,
     spinSpeed: 30,
     surfaceMap: img,
+    tiltAngle: Math.PI / 6,
   }, ctx);
   p.x = 300;
   p.y = 400;
