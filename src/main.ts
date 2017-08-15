@@ -5,9 +5,22 @@ c.width = window.innerWidth;
 c.height = window.innerHeight;
 const ctx = c.getContext("2d");
 
-ctx.fillStyle = "red";
-const p = new Planet({radius: 40});
-p.x = 300;
-p.y = 400;
-p.render(ctx);
-ctx.fill();
+const img = new Image();
+img.src = "./test-image.jpg";
+
+img.onload = (e: Event) => {
+  console.log("load complete");
+  // ctx.drawImage(img, 0, 0);
+  const p = new Planet({
+    radius: 150,
+    spinSpeed: 30,
+    surfaceMap: img,
+  }, ctx);
+  p.x = 300;
+  p.y = 400;
+  setInterval(() => {
+    c.width ^= 0;
+    p.process(1 / 60);
+    p.render(ctx);
+  }, 1 / 60);
+};
