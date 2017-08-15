@@ -1,7 +1,13 @@
-let c = document.getElementById("c") as HTMLCanvasElement;
+import Planet from "./Planet";
+
+const c = document.getElementById("c") as HTMLCanvasElement;
 c.width = window.innerWidth;
 c.height = window.innerHeight;
-let ctx = c.getContext("2d");
+const ctx = c.getContext("2d");
 
 ctx.fillStyle = "red";
-ctx.fillRect(0, 0, c.width, c.height);
+const p = new Planet({radius: 40});
+p.x = 300;
+p.y = 400;
+p.render(ctx);
+ctx.fill();
