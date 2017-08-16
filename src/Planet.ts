@@ -21,7 +21,7 @@ export default class Planet {
   private mapWidth: number;
   private mapPosition: number = 0;
 
-  constructor(config: IPlanetConfig, ctx: CanvasRenderingContext2D) {
+  constructor(config: IPlanetConfig) {
     this.radius = config.radius;
     this.spinSpeed = config.spinSpeed;
     this.mapWidth = config.surfaceMap.width;
