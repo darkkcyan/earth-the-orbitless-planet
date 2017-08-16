@@ -1,10 +1,11 @@
-import {PI2} from "./math";
+import {HALF_PI, PI2} from "./math";
 
 export interface IPlanetConfig {
   radius: number;
   surfaceMap: HTMLImageElement;
   spinSpeed: number;  // its actually the surfaceMap scroll speed
   tiltAngle: number;
+  lightSourceAngle?: number;
 }
 
 export default class Planet {
@@ -15,6 +16,7 @@ export default class Planet {
   public surfaceMap: HTMLImageElement;
   public spinSpeed: number;
   public tiltAngle: number;
+  public lightSourceAngle: number = 0;
 
   private mapWidth: number;
   private mapPosition: number = 0;
@@ -25,6 +27,9 @@ export default class Planet {
     this.mapWidth = config.surfaceMap.width;
     this.surfaceMap = config.surfaceMap;
     this.tiltAngle = config.tiltAngle;
+    if (config.lightSourceAngle) {
+      this.lightSourceAngle = config.lightSourceAngle;
+    }
   }
 
   public process(dt: number): void {
@@ -37,9 +42,13 @@ export default class Planet {
   public render(ctx: CanvasRenderingContext2D): void {
     ctx.save();
     ctx.translate(this.x, this.y);
-    ctx.rotate(this.tiltAngle);
+
+    // draw surface map
+    ctx.save();
+    ctx.beginPath();
     ctx.arc(0, 0, this.radius, 0, PI2);
     ctx.clip();
+    ctx.rotate(this.tiltAngle);
     const px = -this.radius + this.mapPosition;
     const py = -this.radius;
     const magic = 3;  // this number is added
@@ -48,6 +57,15 @@ export default class Planet {
 
     ctx.drawImage(this.surfaceMap, px, py);
     ctx.drawImage(this.surfaceMap, px - this.mapWidth + magic, py);
+    ctx.restore();
+
+    // draw shadow, instead of draw light
+    ctx.rotate(this.lightSourceAngle);
+    ctx.beginPath();
+    ctx.arc(0, 0, this.radius, HALF_PI, - HALF_PI);
+    ctx.arc(-this.radius, 0, this.radius * Math.SQRT2, -HALF_PI / 2, HALF_PI / 2);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";  // gray color with half alpha, make it feels like shadow
+    ctx.fill();
     ctx.restore();
   }
 }
