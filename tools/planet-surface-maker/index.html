@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  Open image: <input type="file" id="image-input" accept="image/*" /><br>
+  Open data file: <input type="file" id="data-input" /><button it="save">save</button><br>
+  Number of lines: <input type="number" id="numberoflines-input" value="1" min="1" step="1"/><br>
+  <img id="image-file" /><br>
+  <canvas id="input"></canvas><br>
+  <canvas id="output"></canvas><br>
+  <canvas id="sample"></canvas>
+  <script src="../../build/tools/planet-surface-maker/main.js"></script>
+</body>
+</html>
