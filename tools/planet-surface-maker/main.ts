@@ -85,6 +85,9 @@ addLayerButton.onclick = () => {
   });
   updateUI();
   layerSelectInput.selectedIndex = outputObject.layers.length - 1;
+
+  // call the second time since the selectedIndex is change
+  updateUI();
   console.log(outputObject);
 };
 
@@ -94,6 +97,24 @@ deleteCurrentLayerButton.onclick = () => {
     return;
   }
   outputObject.layers.splice(layerId, 1);
+  updateUI();
+  console.log(outputObject);
+};
+
+numberOfLinesInput.onchange = () => {
+  const layerId = layerSelectInput.selectedIndex;
+  if (layerId === -1) {
+    return;
+  }
+  const layer = outputObject.layers[layerId];
+  const newLineNum = +numberOfLinesInput.value;
+  if (newLineNum < layer.data.length) {
+    layer.data.length = newLineNum;
+  } else {
+    for (let i = layer.data.length; i < newLineNum; ++i) {
+      layer.data.push([]);
+    }
+  }
   updateUI();
   console.log(outputObject);
 };
