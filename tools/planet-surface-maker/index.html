@@ -8,12 +8,34 @@
   </style>
 </head>
 <body>
+  <h1>Input</h1>
   Open image: <input type="file" id="image-input" accept="image/*" /><br>
   Open data file: <input type="file" id="data-input" /><button it="save">save</button><br>
+  <img id="image-file" />
+  <hr>
+  Background color: <input type="color" id="background-color"/>
+  Width: <input type="number" id="width" />
+  Height: <input type="number" id="height" />
+  <hr>
+  <h1>Editor</h1>
+  Layer:
+  <select id="layer"></select>
+  <button id="add-layer">Add layer</button>
+  <button id="del-layer">Delete current layer</button>
+  <button id="move-layer-up">Move layer up</button>
+  <button id="move-layer-down">Move layer down</button>
+  <br>
   Number of lines: <input type="number" id="numberoflines-input" value="1" min="1" step="1"/><br>
-  <img id="image-file" /><br>
-  <canvas id="input"></canvas><br>
-  <canvas id="output"></canvas><br>
+  Color: <input type="color" id="layer-color" /><br>
+  <button id="pen">Pen</button>
+  <button id="erase">Erase</button>
+  <br>
+  <canvas id="editor"></canvas>
+  <hr>
+  <h1>Output</h1>
+  <canvas id="output"></canvas>
+  <hr>
+  <h1>Sample</h1>
   <canvas id="sample"></canvas>
   <script src="../../build/tools/planet-surface-maker/main.js"></script>
 </body>
