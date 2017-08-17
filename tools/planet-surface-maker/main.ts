@@ -24,7 +24,7 @@ let outputObject: IPlanetSurface = {
 function updateUI() {
   backgroundColorInput.value = outputObject.background;
   const layerCount = layerSelectInput.children.length;
-  if (layerCount < outputObject.layers.length) {
+  if (layerCount <= outputObject.layers.length) {
     for (let i = layerCount; i < outputObject.layers.length; ++i) {
       const e = document.createElement("option");
       e.innerHTML = "" + i;
@@ -77,6 +77,8 @@ function onChangeSize() {
 }
 
 widthInput.onchange = heightInput.onchange = onChangeSize;
+
+layerSelectInput.onchange = updateUI;
 
 addLayerButton.onclick = () => {
   outputObject.layers.push({
