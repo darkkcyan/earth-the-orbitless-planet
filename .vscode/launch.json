@@ -6,7 +6,7 @@
       "request": "launch",
       "name": "Debug",
       "url": "http://localhost:8080",
-      "file": "${workspaceRoot}/src/index.html",
+      "file": "${workspaceRoot}/index.html",
       "sourceMaps": true
     }
   ]

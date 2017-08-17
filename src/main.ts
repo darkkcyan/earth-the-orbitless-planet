@@ -6,7 +6,7 @@ c.height = window.innerHeight;
 const ctx = c.getContext("2d");
 
 const img = new Image();
-img.src = "./test-image.jpg";
+img.src = "./src/test-image.jpg";
 
 img.onload = (e: Event) => {
   console.log("load complete");
