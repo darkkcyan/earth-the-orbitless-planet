@@ -103,15 +103,17 @@ function rerender() {
   const h = outputObject.height;
   const layerId = layerSelectInput.selectedIndex;
 
+  ectx.save();
   ectx.clearRect(0, 0, w, h);
   ectx.drawImage(sourceImage, 0, 0, w, h);
 
   if (layerId !== -1) {
     const currentLayer = outputObject.layers[layerId];
     renderLayer(currentLayer, editorCanvas);
+    ectx.globalAlpha = 0.5;
 
     ectx.setLineDash([5, 5]);
-    ectx.lineWidth = 3;
+    ectx.lineWidth = 2;
     ectx.lineCap = "butt";
     // draw lines separators
     const tw = h / currentLayer.data.length;
@@ -121,7 +123,38 @@ function rerender() {
       ectx.lineTo(w, i);
       ectx.stroke();
     }
+
+    // render drawing line
+    if (mouse.downX !== -1 || mouse.downY !== -1) {
+      const col = currentLayer.color;
+      if (toolButton.innerHTML === Tools[1]) {
+        ectx.strokeStyle = col;
+      } else {
+        ectx.strokeStyle = "#" + (0xFFFFFF - parseInt(col.slice(1), 16)).toString(16);
+      }
+      ectx.lineCap = "round";
+      ectx.lineWidth = tw;
+
+      const lineY = Math.floor(mouse.downY / tw) * tw + tw / 2;
+      let x1 = mouse.downX;
+      let x2 = mouse.x;
+      if (x1 > x2) {
+        [x1, x2] = [x2, x1];
+      }
+      if (x1 < 0) {
+        x1 = 0;
+      }
+      if (x2 > w) {
+        x2 = w;
+      }
+
+      ectx.beginPath();
+      ectx.moveTo(x1, lineY);
+      ectx.lineTo(x2, lineY);
+      ectx.stroke();
+    }
   }
+  ectx.restore();
 }
 
 // Editor canvas events
@@ -142,16 +175,20 @@ function mousePos(e: MouseEvent, elm: HTMLElement): [number, number] {
 
 editorCanvas.onmousedown = (e: MouseEvent) => {
   [mouse.x, mouse.y] = [mouse.downX, mouse.downY] = mousePos(e, editorCanvas);
+  updateUI();
   console.log("down", mouse);
 };
 
 editorCanvas.onmousemove = (e: MouseEvent) => {
   [mouse.x, mouse.y] = mousePos(e, editorCanvas);
+  updateUI();
   console.log("move", mouse);
 };
 
 editorCanvas.onmouseup = (e: MouseEvent) => {
+  [mouse.x, mouse.y] = mousePos(e, editorCanvas);
   mouse.x = mouse.y = mouse.downX = mouse.downY = -1;
+  updateUI();
   console.log("up", mouse);
 };
 
