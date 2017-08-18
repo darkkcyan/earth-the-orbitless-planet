@@ -9,7 +9,7 @@ import {
 // Declare all input and output elements
 //////////////////////////////////////////////////////////////////////////////
 const imageInput = document.getElementById("image-input") as HTMLInputElement;
-const sourceImage = document.getElementById("image-file") as HTMLImageElement;
+const sourceImage = document.getElementById("source-image") as HTMLImageElement;
 
 const backgroundColorInput = document.getElementById("background-color") as HTMLInputElement;
 const widthInput = document.getElementById("width") as HTMLInputElement;
@@ -27,6 +27,8 @@ const layerColorInput = document.getElementById("layer-color") as HTMLInputEleme
 const toolButton = document.getElementById("tool-button") as HTMLButtonElement;
 
 const editorCanvas = document.getElementById("editor") as HTMLCanvasElement;
+
+const outputImage = document.getElementById("output-image") as HTMLImageElement;
 
 // Tools enum
 //////////////////////////////////////////////////////////////////////////
