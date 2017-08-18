@@ -29,7 +29,8 @@ function download(data: any, filename: string, type: string) {
 const imageInput = document.getElementById("image-input") as HTMLInputElement;
 const sourceImage = document.getElementById("source-image") as HTMLImageElement;
 
-const saveButton = document.getElementById("save") as HTMLButtonElement;
+const loadDataInput = document.getElementById("load-data") as HTMLInputElement;
+const saveButton = document.getElementById("save-data") as HTMLButtonElement;
 
 const backgroundColorInput = document.getElementById("background-color") as HTMLInputElement;
 const widthInput = document.getElementById("width") as HTMLInputElement;
@@ -351,6 +352,18 @@ backgroundColorInput.onchange = () => {
 ///////////////////////////////////////////////////////////////////////////////////
 saveButton.onclick = () => {
   download(JSON.stringify(outputObject), "file.json", "text/json");
+};
+
+loadDataInput.onchange = (e: Event) => {
+  const file = loadDataInput.files[0];
+  const reader = new FileReader();
+  reader.onload = () => {
+    outputObject = JSON.parse(reader.result) as IPlanetSurface;
+    updateUI();
+  };
+  if (file) {
+    reader.readAsText(file);
+  }
 };
 
 // Size changing event
