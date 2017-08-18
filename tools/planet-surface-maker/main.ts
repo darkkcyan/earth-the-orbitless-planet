@@ -45,10 +45,13 @@ function updateUI() {
       layerSelectInput.appendChild(e);
     }
   } else {
+    const currentLayerId = layerSelectInput.selectedIndex;
     for (let i = layerCount; i > outputObject.layers.length; --i) {
       layerSelectInput.removeChild(layerSelectInput.lastChild);
     }
-    layerSelectInput.selectedIndex = outputObject.layers.length - 1;
+    if (currentLayerId >= outputObject.layers.length) {
+      layerSelectInput.selectedIndex = outputObject.layers.length - 1;
+    }
   }
 
   const layerId = layerSelectInput.selectedIndex;
