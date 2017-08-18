@@ -188,6 +188,16 @@ numberOfLinesInput.onchange = () => {
   console.log(outputObject);
 };
 
+layerColorInput.onchange = () => {
+  const layerId = layerSelectInput.selectedIndex;
+  if (layerId === -1) {
+    return;
+  }
+  outputObject.layers[layerId].color = layerColorInput.value;
+  updateUI();
+  console.log(outputObject);
+};
+
 // main
 ////////////////////////////////////////////////////////////////////////////
 document.onreadystatechange = () => {
