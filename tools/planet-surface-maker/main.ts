@@ -1,4 +1,10 @@
+// Inorder to keep this tool to be simple,
+// everythings is in a single file instead of multiple files
+//////////////////////////////////////////////////////////////////////////////
 import {IPlanetSurface} from "../../src/genPlanetSurfaceImageData";
+
+// Declare all input and output elements
+//////////////////////////////////////////////////////////////////////////////
 const imageInput = document.getElementById("image-input") as HTMLInputElement;
 const sourceImage = document.getElementById("image-file") as HTMLImageElement;
 
@@ -14,6 +20,8 @@ const layerColorInput = document.getElementById("layer-color") as HTMLInputEleme
 
 const editorCanvas = document.getElementById("editor") as HTMLCanvasElement;
 
+// The output object
+///////////////////////////////////////////////////////////////////////////////
 /* tslint:disable prefer-const */
 let outputObject: IPlanetSurface = {
   background: "#000000",
@@ -21,6 +29,8 @@ let outputObject: IPlanetSurface = {
 };
 /* tslint:enable pre-const */
 
+// Update functions
+///////////////////////////////////////////////////////////////////////////////
 function updateUI() {
   backgroundColorInput.value = outputObject.background;
   const layerCount = layerSelectInput.children.length;
@@ -53,6 +63,8 @@ function rerender() {
   ectx.drawImage(sourceImage, 0, 0, w, h);
 }
 
+// Image input event
+///////////////////////////////////////////////////////////////////////////////////
 imageInput.onchange = (e: Event) => {
   const file = imageInput.files[0];
   const reader = new FileReader();
@@ -65,6 +77,7 @@ imageInput.onchange = (e: Event) => {
 };
 sourceImage.onload = rerender;
 
+// Size changing event
 function onChangeSize() {
   const list = document.getElementsByTagName("canvas");
   /* tslint:disable prefer-for-of */
@@ -78,6 +91,8 @@ function onChangeSize() {
 
 widthInput.onchange = heightInput.onchange = onChangeSize;
 
+// Layer controller events
+//////////////////////////////////////////////////////////////////////////////////////
 layerSelectInput.onchange = updateUI;
 
 addLayerButton.onclick = () => {
@@ -122,6 +137,7 @@ numberOfLinesInput.onchange = () => {
 };
 
 // main
+////////////////////////////////////////////////////////////////////////////
 document.onreadystatechange = () => {
   onChangeSize();
 };
