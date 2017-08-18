@@ -13,8 +13,12 @@ const widthInput = document.getElementById("width") as HTMLInputElement;
 const heightInput = document.getElementById("height") as HTMLInputElement;
 
 const layerSelectInput = document.getElementById("layer-select") as HTMLSelectElement;
+
 const addLayerButton = document.getElementById("add-layer") as HTMLButtonElement;
 const deleteCurrentLayerButton = document.getElementById("del-layer") as HTMLButtonElement;
+const moveLayerUpButton = document.getElementById("move-layer-up") as HTMLButtonElement;
+const moveLayerDownButton = document.getElementById("move-layer-down") as HTMLButtonElement;
+
 const numberOfLinesInput = document.getElementById("number-of-lines") as HTMLInputElement;
 const layerColorInput = document.getElementById("layer-color") as HTMLInputElement;
 
@@ -114,6 +118,38 @@ deleteCurrentLayerButton.onclick = () => {
     return;
   }
   outputObject.layers.splice(layerId, 1);
+  updateUI();
+  console.log(outputObject);
+};
+
+moveLayerUpButton.onclick = () => {
+  const layerId = layerSelectInput.selectedIndex;
+  const nextId = layerId + 1;
+  if (layerId === -1 || nextId === outputObject.layers.length) {
+    return;
+  }
+
+  let t = outputObject.layers[layerId];
+  outputObject.layers[layerId] = outputObject.layers[nextId];
+  outputObject.layers[nextId] = t;
+
+  layerSelectInput.selectedIndex = nextId;
+  updateUI();
+  console.log(outputObject);
+};
+
+moveLayerDownButton.onclick = () => {
+  const layerId = layerSelectInput.selectedIndex;
+  const previousId = layerId - 1;
+  if (layerId === -1 || previousId === -1) {
+    return;
+  }
+
+  let t = outputObject.layers[layerId];
+  outputObject.layers[layerId] = outputObject.layers[previousId];
+  outputObject.layers[previousId] = t;
+
+  layerSelectInput.selectedIndex = previousId;
   updateUI();
   console.log(outputObject);
 };
