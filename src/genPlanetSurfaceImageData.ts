@@ -5,11 +5,18 @@ export interface IPlanetSurfaceLayer {
 
 export interface IPlanetSurface {
   background: string;
+  width: number;
+  height: number;
   layers: IPlanetSurfaceLayer[];
 }
 
 export default
-function genPlanetSurfaceImageData(w: number, h: number, data: IPlanetSurface, cvs: HTMLCanvasElement): string {
+function genPlanetSurfaceImageData(
+  data: IPlanetSurface, cvs: HTMLCanvasElement,
+  newWidth?: number, newHeight?: number,
+): string {
+  const w = newWidth ? newWidth : data.width;
+  const h = newHeight ? newHeight : data.height;
   cvs.width = w;
   cvs.height = h;
   const ctx = cvs.getContext("2d");

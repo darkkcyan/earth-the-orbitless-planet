@@ -29,14 +29,30 @@ const editorCanvas = document.getElementById("editor") as HTMLCanvasElement;
 /* tslint:disable prefer-const */
 let outputObject: IPlanetSurface = {
   background: "#000000",
+  height: 100,
   layers: [],
+  width: 200,
 };
 /* tslint:enable pre-const */
 
 // Update functions
 ///////////////////////////////////////////////////////////////////////////////
 function updateUI() {
+  // Update size
+  const list = document.getElementsByTagName("canvas");
+  widthInput.value = "" + outputObject.width;
+  heightInput.value = "" + outputObject.height;
+  /* tslint:disable prefer-for-of */
+  for (let i = 0; i < list.length; ++i) {
+    list[i].width = outputObject.width;
+    list[i].height = outputObject.height;
+  }
+  /* tslint:enable prefer-for-of */
+
+  // Update background color
   backgroundColorInput.value = outputObject.background;
+
+  // Update layer input elements
   const layerCount = layerSelectInput.children.length;
   if (layerCount <= outputObject.layers.length) {
     for (let i = layerCount; i < outputObject.layers.length; ++i) {
@@ -85,14 +101,11 @@ imageInput.onchange = (e: Event) => {
 sourceImage.onload = rerender;
 
 // Size changing event
+////////////////////////////////////////////////////////////////////////////////////
 function onChangeSize() {
-  const list = document.getElementsByTagName("canvas");
-  /* tslint:disable prefer-for-of */
-  for (let i = 0; i < list.length; ++i) {
-    list[i].width = +widthInput.value;
-    list[i].height = +heightInput.value;
-  }
-  /* tslint:enable prefer-for-of */
+  outputObject.width = +widthInput.value;
+  outputObject.height = +heightInput.value;
+  updateUI();
   rerender();
 }
 
@@ -178,5 +191,5 @@ numberOfLinesInput.onchange = () => {
 // main
 ////////////////////////////////////////////////////////////////////////////
 document.onreadystatechange = () => {
-  onChangeSize();
+  updateUI();
 };
