@@ -1,7 +1,10 @@
 // Inorder to keep this tool to be simple,
 // everythings is in a single file instead of multiple files
 //////////////////////////////////////////////////////////////////////////////
-import {IPlanetSurface} from "../../src/genPlanetSurfaceImageData";
+import {
+  IPlanetSurface,
+  renderLayer,
+} from "../../src/genPlanetSurfaceImageData";
 
 // Declare all input and output elements
 //////////////////////////////////////////////////////////////////////////////
@@ -83,14 +86,36 @@ function updateUI() {
     numberOfLinesInput.value = "" + d.data.length;
     layerColorInput.value = d.color;
   }
+
+  // Update editor canvas
+  rerender();
 }
 
 function rerender() {
   const ectx = editorCanvas.getContext("2d");
-  const w = +widthInput.value;
-  const h = +heightInput.value;
+  const w = outputObject.width;
+  const h = outputObject.height;
+  const layerId = layerSelectInput.selectedIndex;
+
   ectx.clearRect(0, 0, w, h);
   ectx.drawImage(sourceImage, 0, 0, w, h);
+
+  if (layerId !== -1) {
+    const currentLayer = outputObject.layers[layerId];
+    renderLayer(currentLayer, editorCanvas);
+
+    ectx.setLineDash([5, 5]);
+    ectx.lineWidth = 3;
+    ectx.lineCap = "butt";
+    // draw lines separators
+    const tw = h / currentLayer.data.length;
+    for (let i = tw; i < h; i += tw) {
+      ectx.beginPath();
+      ectx.moveTo(0, i);
+      ectx.lineTo(w, i);
+      ectx.stroke();
+    }
+  }
 }
 
 // Image input event
@@ -113,7 +138,6 @@ function onChangeSize() {
   outputObject.width = +widthInput.value;
   outputObject.height = +heightInput.value;
   updateUI();
-  rerender();
 }
 
 widthInput.onchange = heightInput.onchange = onChangeSize;
@@ -180,6 +204,7 @@ moveLayerDownButton.onclick = () => {
 numberOfLinesInput.onchange = () => {
   const layerId = layerSelectInput.selectedIndex;
   if (layerId === -1) {
+    setTimeout(() => numberOfLinesInput.value = "1", 0);
     return;
   }
   const layer = outputObject.layers[layerId];
