@@ -180,10 +180,10 @@ function penProcess() {
     x2 = outputObject.width;
   }
 
-  // The line range in layer.data is real number in range [0, 1], represents the ratio.
-  // So x1 and x2 are converted to ratio
-  x1 /= outputObject.width;
-  x2 /= outputObject.width;
+  // The line range in layer.data is integer number in range [0, 100], represents the percentage.
+  // So x1 and x2 are converted to percentage.
+  x1 = Math.round((x1 / outputObject.width) * 100);
+  x2 = Math.round((x2 / outputObject.width) * 100);
 
   let newX1 = x1;
   let newX2 = x2;
@@ -225,10 +225,10 @@ function eraseProcess() {
     x2 = outputObject.width;
   }
 
-  // The line range in layer.data is real number in range [0, 1], represents the ratio.
-  // So x1 and x2 are converted to ratio
-  x1 /= outputObject.width;
-  x2 /= outputObject.width;
+  // The line range in layer.data is integer number in range [0, 100], represents the percentage.
+  // So x1 and x2 are converted to percentage.
+  x1 = Math.round((x1 / outputObject.width) * 100);
+  x2 = Math.round((x2 / outputObject.width) * 100);
 
   let newLength = 0;
   const currentLine = layer.data[lineY];

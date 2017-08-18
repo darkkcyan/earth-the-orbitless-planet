@@ -1,5 +1,8 @@
 export interface IPlanetSurfaceLayer {
   color: string;
+
+  // data[i] (for every i in [0, data.length)) is a list of a pair of number.
+  // Each number is percentage relative to the width
   data: number[][][];
 }
 
@@ -20,8 +23,8 @@ export function renderLayer(layer: IPlanetSurfaceLayer, cvs: HTMLCanvasElement, 
   const lw = ctx.lineWidth = h / layer.data.length;
   for (let f = 0, y = lw / 2; f < layer.data.length; ++f, y += lw) {
     for (const g of layer.data[f]) {
-      const x1 = g[0] * w;
-      const x2 = g[1] * w;
+      const x1 = g[0] * w / 100;
+      const x2 = g[1] * w / 100;
       ctx.beginPath();
       ctx.moveTo(x1, y);
       ctx.lineTo(x2, y);
