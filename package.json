@@ -25,6 +25,9 @@
     "build": "tsc && rollup --config",
     "clean": "rm -frd ./build",
     "watch": "tsc -w & rollup -c -w",
-    "build-planet-surface-maker": "tsc && rollup -c -i ./build/tools/planet-surface-maker/main.js -o ./build/tools/planet-surface-maker/main.compiled.js"
+    "build-planet-surface-maker":
+    "tsc && rollup -c -i ./build/tools/planet-surface-maker/main.js -o ./build/tools/planet-surface-maker/main.compiled.js",
+    "watch-planet-surface-maker":
+    "tsc -w & rollup -w -c -i ./build/tools/planet-surface-maker/main.js -o ./build/tools/planet-surface-maker/main.compiled.js"
   }
 }
