@@ -54,6 +54,7 @@ function updateUI() {
 
   // Update layer input elements
   const layerCount = layerSelectInput.children.length;
+  const currentLayerId = layerSelectInput.selectedIndex;
   if (layerCount <= outputObject.layers.length) {
     for (let i = layerCount; i < outputObject.layers.length; ++i) {
       const e = document.createElement("option");
@@ -61,7 +62,6 @@ function updateUI() {
       layerSelectInput.appendChild(e);
     }
   } else {
-    const currentLayerId = layerSelectInput.selectedIndex;
     for (let i = layerCount; i > outputObject.layers.length; --i) {
       layerSelectInput.removeChild(layerSelectInput.lastChild);
     }
@@ -70,9 +70,8 @@ function updateUI() {
     }
   }
 
-  const layerId = layerSelectInput.selectedIndex;
-  if (layerId !== -1) {
-    const d = outputObject.layers[layerId];
+  if (currentLayerId !== -1) {
+    const d = outputObject.layers[currentLayerId];
     numberOfLinesInput.value = "" + d.data.length;
     layerColorInput.value = d.color;
   }
