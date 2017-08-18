@@ -110,12 +110,13 @@ function rerender() {
 
   if (layerId !== -1) {
     const currentLayer = outputObject.layers[layerId];
-    renderLayer(currentLayer, editorCanvas);
+    renderLayer(currentLayer, editorCanvas, "butt");
     ectx.globalAlpha = 0.5;
 
     ectx.setLineDash([5, 5]);
     ectx.lineWidth = 2;
     ectx.lineCap = "butt";
+    ectx.strokeStyle = "black";
     // draw lines separators
     const tw = h / currentLayer.data.length;
     for (let i = tw; i < h; i += tw) {
@@ -133,7 +134,8 @@ function rerender() {
       } else {
         ectx.strokeStyle = "#" + (0xFFFFFF - parseInt(col.slice(1), 16)).toString(16);
       }
-      ectx.lineCap = "round";
+      ectx.setLineDash([]);
+      ectx.lineCap = "butt";
       ectx.lineWidth = tw;
 
       const lineY = Math.floor(mouse.downY / tw) * tw + tw / 2;
@@ -178,6 +180,8 @@ function penProcess() {
     x2 = outputObject.width;
   }
 
+  // The line range in layer.data is real number in range [0, 1], represents the ratio.
+  // So x1 and x2 are converted to ratio
   x1 /= outputObject.width;
   x2 /= outputObject.width;
 
@@ -202,7 +206,64 @@ function penProcess() {
 }
 
 function eraseProcess() {
-  // TODO: add contents
+  const layerId = layerSelectInput.selectedIndex;
+  if (layerId === -1) {
+    return;
+  }
+  const layer = outputObject.layers[layerId];
+  const tw = outputObject.height / layer.data.length;
+  const lineY = Math.floor(mouse.downY / tw);
+  let x1 = mouse.downX;
+  let x2 = mouse.x;
+  if (x1 > x2) {
+    [x1, x2] = [x2, x1];
+  }
+  if (x1 < 0) {
+    x1 = 0;
+  }
+  if (x2 > outputObject.width) {
+    x2 = outputObject.width;
+  }
+
+  // The line range in layer.data is real number in range [0, 1], represents the ratio.
+  // So x1 and x2 are converted to ratio
+  x1 /= outputObject.width;
+  x2 /= outputObject.width;
+
+  let newLength = 0;
+  const currentLine = layer.data[lineY];
+  const newLineRange: number[][] = [];
+  for (const lineRange of currentLine) {
+    const lrx1 = lineRange[0];
+    const lrx2 = lineRange[1];
+
+    if (lrx1 > x2 || lrx2 < x1) {
+    // erased line and one of the old line range is not intersect
+      currentLine[newLength++] = lineRange;
+      continue;
+    }
+
+    if (x1 <= lrx1 && lrx2 <= x2) {
+    // old line range is inside the erased line
+      continue;
+    }
+
+    if (lrx1 <= x1 && x2 <= lrx2) {
+    // the erased line is inside the old line range
+      lineRange[1] = x1;
+      newLineRange.push([x2, lrx2]);
+    } else if (x1 < lrx1) {
+    // the erased line is intersect with the old line range in the leftside
+      lineRange[0] = x2;
+    } else {
+    // the erased line is intersect with the old line range in the right side
+      lineRange[1] = x1;
+    }
+
+    currentLine[newLength++] = lineRange;
+  }
+  currentLine.length = newLength;
+  currentLine.push(...newLineRange);
 }
 
 const ToolsProcess = {

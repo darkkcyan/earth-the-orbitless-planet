@@ -10,12 +10,12 @@ export interface IPlanetSurface {
   layers: IPlanetSurfaceLayer[];
 }
 
-export function renderLayer(layer: IPlanetSurfaceLayer, cvs: HTMLCanvasElement) {
+export function renderLayer(layer: IPlanetSurfaceLayer, cvs: HTMLCanvasElement, lineCap: string = "round") {
   const w = cvs.width;
   const h = cvs.height;
   const ctx = cvs.getContext("2d");
   ctx.strokeStyle = layer.color;
-  ctx.lineCap = "round";
+  ctx.lineCap = lineCap;
   ctx.fillStyle = layer.color;
   const lw = ctx.lineWidth = h / layer.data.length;
   for (let f = 0, y = lw / 2; f < layer.data.length; ++f, y += lw) {
