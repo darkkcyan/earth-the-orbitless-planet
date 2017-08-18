@@ -21,8 +21,16 @@ const moveLayerDownButton = document.getElementById("move-layer-down") as HTMLBu
 
 const numberOfLinesInput = document.getElementById("number-of-lines") as HTMLInputElement;
 const layerColorInput = document.getElementById("layer-color") as HTMLInputElement;
+const toolButton = document.getElementById("tool-button") as HTMLButtonElement;
 
 const editorCanvas = document.getElementById("editor") as HTMLCanvasElement;
+
+// Tools enum
+//////////////////////////////////////////////////////////////////////////
+enum Tools {
+  ERASE,
+  PEN,
+}
 
 // The output object
 ///////////////////////////////////////////////////////////////////////////////
@@ -195,6 +203,11 @@ layerColorInput.onchange = () => {
   outputObject.layers[layerId].color = layerColorInput.value;
   updateUI();
   console.log(outputObject);
+};
+
+toolButton.onclick = () => {
+  const currentTool = Tools[toolButton.innerHTML];
+  toolButton.innerHTML = Tools[currentTool ^ 1];
 };
 
 // main
