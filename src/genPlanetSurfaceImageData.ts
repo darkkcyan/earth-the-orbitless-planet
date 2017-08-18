@@ -14,6 +14,7 @@ export function renderLayer(layer: IPlanetSurfaceLayer, cvs: HTMLCanvasElement) 
   const w = cvs.width;
   const h = cvs.height;
   const ctx = cvs.getContext("2d");
+  ctx.strokeStyle = layer.color;
   ctx.lineCap = "round";
   ctx.fillStyle = layer.color;
   const lw = ctx.lineWidth = h / layer.data.length;

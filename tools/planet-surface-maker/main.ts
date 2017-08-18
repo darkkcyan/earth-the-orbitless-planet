@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////////////
 import genPlanetSurfaceImageData, {
   IPlanetSurface,
+  IPlanetSurfaceLayer,
   renderLayer,
 } from "../../src/genPlanetSurfaceImageData";
 
@@ -157,6 +158,58 @@ function rerender() {
   ectx.restore();
 }
 
+function penProcess() {
+  const layerId = layerSelectInput.selectedIndex;
+  if (layerId === -1) {
+    return;
+  }
+  const layer = outputObject.layers[layerId];
+  const tw = outputObject.height / layer.data.length;
+  const lineY = Math.floor(mouse.downY / tw);
+  let x1 = mouse.downX;
+  let x2 = mouse.x;
+  if (x1 > x2) {
+    [x1, x2] = [x2, x1];
+  }
+  if (x1 < 0) {
+    x1 = 0;
+  }
+  if (x2 > outputObject.width) {
+    x2 = outputObject.width;
+  }
+
+  x1 /= outputObject.width;
+  x2 /= outputObject.width;
+
+  let newX1 = x1;
+  let newX2 = x2;
+
+  const currentLine = layer.data[lineY];
+  let newLength = 0;
+  for (const lineRange of currentLine) {
+    // if new line and one of the old line range is not intersect
+    const lrx1 = lineRange[0];
+    const lrx2 = lineRange[1];
+    if (lrx1 > x2 || lrx2 < x1) {
+      currentLine[newLength++] = lineRange;
+      continue;
+    }
+    newX1 = Math.min(newX1, lrx1);
+    newX2 = Math.max(newX2, lrx2);
+  }
+  currentLine.length = newLength;
+  currentLine.push([newX1, newX2]);
+}
+
+function eraseProcess() {
+  // TODO: add contents
+}
+
+const ToolsProcess = {
+  [Tools.PEN]: penProcess,
+  [Tools.ERASE]: eraseProcess,
+};
+
 // Editor canvas events
 ///////////////////////////////////////////////////////////////////////////////////
 const mouse = {
@@ -187,6 +240,7 @@ editorCanvas.onmousemove = (e: MouseEvent) => {
 
 editorCanvas.onmouseup = (e: MouseEvent) => {
   [mouse.x, mouse.y] = mousePos(e, editorCanvas);
+  ToolsProcess[Tools[toolButton.innerHTML]]();
   mouse.x = mouse.y = mouse.downX = mouse.downY = -1;
   updateUI();
   console.log("up", mouse);
