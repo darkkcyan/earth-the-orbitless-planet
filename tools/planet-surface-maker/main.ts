@@ -1,7 +1,7 @@
 // Inorder to keep this tool to be simple,
 // everythings is in a single file instead of multiple files
 //////////////////////////////////////////////////////////////////////////////
-import {
+import genPlanetSurfaceImageData, {
   IPlanetSurface,
   renderLayer,
 } from "../../src/genPlanetSurfaceImageData";
@@ -29,6 +29,7 @@ const toolButton = document.getElementById("tool-button") as HTMLButtonElement;
 const editorCanvas = document.getElementById("editor") as HTMLCanvasElement;
 
 const outputImage = document.getElementById("output-image") as HTMLImageElement;
+const hiddenCanvas = document.createElement("canvas");
 
 // Tools enum
 //////////////////////////////////////////////////////////////////////////
@@ -91,6 +92,9 @@ function updateUI() {
 
   // Update editor canvas
   rerender();
+
+  // Update output image
+  outputImage.src = genPlanetSurfaceImageData(outputObject, hiddenCanvas);
 }
 
 function rerender() {
@@ -133,6 +137,13 @@ imageInput.onchange = (e: Event) => {
   }
 };
 sourceImage.onload = rerender;
+
+// Background color input event
+////////////////////////////////////////////////////////////////////////////////////
+backgroundColorInput.onchange = () => {
+  outputObject.background = backgroundColorInput.value;
+  updateUI();
+};
 
 // Size changing event
 ////////////////////////////////////////////////////////////////////////////////////
@@ -235,6 +246,12 @@ layerColorInput.onchange = () => {
 toolButton.onclick = () => {
   const currentTool = Tools[toolButton.innerHTML];
   toolButton.innerHTML = Tools[currentTool ^ 1];
+};
+
+// Output image events
+////////////////////////////////////////////////////////////////////////////
+outputImage.onload = () => {
+  // currently nothing to do
 };
 
 // main
