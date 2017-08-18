@@ -256,10 +256,8 @@ moveLayerUpButton.onclick = () => {
   if (layerId === -1 || nextId === outputObject.layers.length) {
     return;
   }
-
-  let t = outputObject.layers[layerId];
-  outputObject.layers[layerId] = outputObject.layers[nextId];
-  outputObject.layers[nextId] = t;
+  const oo = outputObject;
+  [oo.layers[layerId], oo.layers[nextId]] = [oo.layers[nextId], oo.layers[layerId]];
 
   layerSelectInput.selectedIndex = nextId;
   updateUI();
@@ -273,9 +271,8 @@ moveLayerDownButton.onclick = () => {
     return;
   }
 
-  let t = outputObject.layers[layerId];
-  outputObject.layers[layerId] = outputObject.layers[previousId];
-  outputObject.layers[previousId] = t;
+  const oo = outputObject;
+  [oo.layers[layerId], oo.layers[previousId]] = [oo.layers[previousId], oo.layers[layerId]];
 
   layerSelectInput.selectedIndex = previousId;
   updateUI();
