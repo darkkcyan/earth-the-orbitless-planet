@@ -7,10 +7,29 @@ import genPlanetSurfaceImageData, {
   renderLayer,
 } from "../../src/genPlanetSurfaceImageData";
 
+// Function to download data to a file
+// Code get from here: https://stackoverflow.com/questions/13405129/javascript-create-and-save-file
+////////////////////////////////////////////////////////////////////////////////
+function download(data: any, filename: string, type: string) {
+    const file = new Blob([data], {type});
+    const a = document.createElement("a");
+    const url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, 0);
+}
+
 // Declare all input and output elements
 //////////////////////////////////////////////////////////////////////////////
 const imageInput = document.getElementById("image-input") as HTMLInputElement;
 const sourceImage = document.getElementById("source-image") as HTMLImageElement;
+
+const saveButton = document.getElementById("save") as HTMLButtonElement;
 
 const backgroundColorInput = document.getElementById("background-color") as HTMLInputElement;
 const widthInput = document.getElementById("width") as HTMLInputElement;
@@ -326,6 +345,12 @@ sourceImage.onload = rerender;
 backgroundColorInput.onchange = () => {
   outputObject.background = backgroundColorInput.value;
   updateUI();
+};
+
+// Load and save event
+///////////////////////////////////////////////////////////////////////////////////
+saveButton.onclick = () => {
+  download(JSON.stringify(outputObject), "file.json", "text/json");
 };
 
 // Size changing event
