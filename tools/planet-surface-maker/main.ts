@@ -7,6 +7,8 @@ import genPlanetSurfaceImageData, {
   renderLayer,
 } from "../../src/genPlanetSurfaceImageData";
 
+import Planet from "../../src/Planet";
+
 // Function to download data to a file
 // Code get from here: https://stackoverflow.com/questions/13405129/javascript-create-and-save-file
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,6 +52,7 @@ const toolButton = document.getElementById("tool-button") as HTMLButtonElement;
 const editorCanvas = document.getElementById("editor") as HTMLCanvasElement;
 
 const outputImage = document.getElementById("output-image") as HTMLImageElement;
+const sampleCanvas = document.getElementById("sample") as HTMLCanvasElement;
 const hiddenCanvas = document.createElement("canvas");
 
 // Tools enum
@@ -468,8 +471,24 @@ toolButton.onclick = () => {
 
 // Output image events
 ////////////////////////////////////////////////////////////////////////////
+let planet: Planet = null;
+let intervalId: number = -1;
 outputImage.onload = () => {
-  // currently nothing to do
+  planet = new Planet({
+    lightSourceAngle: 0,
+    radius: outputObject.height/ 2,
+    spinSpeed: outputObject.height / 10,
+    surfaceMap: outputImage,
+    tiltAngle: Math.PI / 6,
+  });
+  if (intervalId !== -1) {
+    clearInterval(intervalId);
+  }
+  intervalId = setInterval(() => {
+    planet.x = planet.y = outputObject.height / 2;
+    planet.process(1 / 60);
+    planet.render(sampleCanvas.getContext("2d"));
+  }, 1 / 60);
 };
 
 // main
