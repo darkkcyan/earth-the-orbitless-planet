@@ -124,6 +124,37 @@ function rerender() {
   }
 }
 
+// Editor canvas events
+///////////////////////////////////////////////////////////////////////////////////
+const mouse = {
+  downX: -1,
+  downY: -1,
+  x: -1,
+  y: -1,
+};
+
+function mousePos(e: MouseEvent, elm: HTMLElement): [number, number] {
+  const r = elm.getBoundingClientRect();
+  const x = e.clientX - r.left;
+  const y = e.clientY - r.top;
+  return [x, y];
+}
+
+editorCanvas.onmousedown = (e: MouseEvent) => {
+  [mouse.x, mouse.y] = [mouse.downX, mouse.downY] = mousePos(e, editorCanvas);
+  console.log("down", mouse);
+};
+
+editorCanvas.onmousemove = (e: MouseEvent) => {
+  [mouse.x, mouse.y] = mousePos(e, editorCanvas);
+  console.log("move", mouse);
+};
+
+editorCanvas.onmouseup = (e: MouseEvent) => {
+  mouse.x = mouse.y = mouse.downX = mouse.downY = -1;
+  console.log("up", mouse);
+};
+
 // Image input event
 ///////////////////////////////////////////////////////////////////////////////////
 imageInput.onchange = (e: Event) => {
