@@ -216,7 +216,7 @@ function penProcess() {
   let newX1 = x1;
   let newX2 = x2;
 
-  const currentLine = layer.data[lineY];
+  const currentLine = layer.data[lineY] as number[][];
   let newLength = 0;
   for (const lineRange of currentLine) {
     // if new line and one of the old line range is not intersect
@@ -259,7 +259,7 @@ function eraseProcess() {
   x2 = Math.round((x2 / outputObject.width) * 100);
 
   let newLength = 0;
-  const currentLine = layer.data[lineY];
+  const currentLine = layer.data[lineY] as number[][];
   const newLineRange: number[][] = [];
   for (const lineRange of currentLine) {
     const lrx1 = lineRange[0];

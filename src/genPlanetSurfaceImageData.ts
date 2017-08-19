@@ -1,9 +1,11 @@
 export interface IPlanetSurfaceLayer {
   color: string;
 
-  // data[i] (for every i in [0, data.length)) is a list of a pair of number.
+  // If data[i] is array, then data[i] (for every i in [0, data.length))
+  // is a list of a pair of number.
   // Each number is percentage relative to the width
-  data: number[][][];
+  // If data[i] is number is a number, then it is the number of round to be skip
+  data: Array<number[][] | number>;
 }
 
 export interface IPlanetSurface {
@@ -24,7 +26,12 @@ export function renderLayer(layer: IPlanetSurfaceLayer, cvs: HTMLCanvasElement, 
   const lw = ctx.lineWidth = h / layer.data.length;
   ctx.lineWidth += magic;
   for (let f = 0, y = lw / 2; f < layer.data.length; ++f, y += lw) {
-    for (const g of layer.data[f]) {
+    const t = layer.data[f];
+    if (typeof t === "number") {
+      y += lw * (t - 1);
+      continue;
+    }
+    for (const g of t) {
       const x1 = g[0] * w / 100;
       const x2 = g[1] * w / 100;
       ctx.beginPath();
