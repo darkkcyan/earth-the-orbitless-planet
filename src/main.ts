@@ -1,19 +1,22 @@
+import genPlanetSurfaceImageData from "./genPlanetSurfaceImageData";
 import Planet from "./Planet";
+import {earthsurface as earthsurfaceData} from "./planet-surfaces-data";
 
 const c = document.getElementById("c") as HTMLCanvasElement;
-c.width = window.innerWidth;
-c.height = window.innerHeight;
 const ctx = c.getContext("2d");
 
 const img = new Image();
-img.src = "./src/test-image.jpg";
+img.src = genPlanetSurfaceImageData(earthsurfaceData, c);
+
+c.width = window.innerWidth;
+c.height = window.innerHeight;
 
 img.onload = (e: Event) => {
   console.log("load complete");
   // ctx.drawImage(img, 0, 0);
   const p = new Planet({
-    radius: 150,
-    spinSpeed: 30,
+    radius: earthsurfaceData.height / 2,
+    spinSpeed: earthsurfaceData.height / 10,
     surfaceMap: img,
     tiltAngle: Math.PI / 6,
   });
