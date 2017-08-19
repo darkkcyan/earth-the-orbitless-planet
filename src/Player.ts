@@ -23,6 +23,9 @@ export class Rocket {
     const RANDOM_RANGE = this.flameSize / 7;
     this.realFlameSize = this.flameSize + (this.x - this.previousX) * 3;
     this.realFlameSize += RANDOM_RANGE * (Math.random() - 0.5);
+    if (this.realFlameSize < this.flameSize / 10) {
+      this.realFlameSize = this.flameSize / 10;
+    }
     this.previousX = this.x;
     this.previousY = this.y;
   }
@@ -51,21 +54,25 @@ export class Rocket {
     ctx.shadowBlur = 20;
     ctx.globalAlpha = 0.5;
     ctx.beginPath();
-    ctx.moveTo(x, y - halfrs * magic);
-    ctx.lineTo(x - this.realFlameSize * magic, y - halfrs);
-    ctx.lineTo(x - this.realFlameSize, y);
-    ctx.lineTo(x - this.realFlameSize * magic, y + halfrs);
-    ctx.lineTo(x, y + halfrs * magic);
-    ctx.shadowColor = ctx.fillStyle = "red";
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(x, y - halfrs * magic2);
-    ctx.lineTo(x - this.realFlameSize * magic2, y - halfrs * magic);
-    ctx.lineTo(x - this.realFlameSize * magic, y);
-    ctx.lineTo(x - this.realFlameSize * magic2, y + halfrs * magic);
-    ctx.lineTo(x, y + halfrs * magic2);
-    ctx.shadowColor = ctx.fillStyle = "yellow";
-    ctx.fill();
+    const coordinates = [
+      [0, -halfrs * magic],
+      [-this.realFlameSize * magic, -halfrs],
+      [-this.realFlameSize, 0],
+      [-this.realFlameSize * magic, halfrs],
+      [0, halfrs * magic],
+    ];
+    const color = ["red", "yellow"];
+    for (let i = 0; i < 2; ++i) {
+      ctx.beginPath();
+      ctx.moveTo(x + coordinates[0][0], y + coordinates[0][1]);
+      for (const offset of coordinates) {
+        ctx.lineTo(x + offset[0], y + offset[1]);
+        offset[0] *= magic;
+        offset[1] *= magic;
+      }
+      ctx.shadowColor = ctx.fillStyle = color[i];
+      ctx.fill();
+    }
     ctx.restore();
   }
 
