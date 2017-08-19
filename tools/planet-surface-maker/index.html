@@ -2,7 +2,11 @@
 <html>
 <head>
   <style>
-    canvas {
+    body {
+      padding-left: 15%;
+      padding-right: 15%;
+    }
+    canvas, img {
       border: 1px solid black;
     }
     #editor {
@@ -12,33 +16,33 @@
 </head>
 <body>
   <h1>Input</h1>
-  Open image: <input type="file" id="image-input" accept="image/*" /><br>
-  Open data file: <input type="file" id="load-data" /><button id="save-data">save</button><br>
-  <img id="source-image" />
+    Open image: <input type="file" id="image-input" accept="image/*" /><br>
+    Open data file: <input type="file" id="load-data" /><button id="save-data">save</button><br>
+    <img id="source-image" />
   <hr>
-  Background color: <input type="color" id="background-color"/>
-  Width: <input type="number" id="width" value="200"/>
-  Height: <input type="number" id="height" value="100"/>
+    Background color: <input type="color" id="background-color"/>
+    Width: <input type="number" id="width" value="200"/>
+    Height: <input type="number" id="height" value="100"/>
   <hr>
   <h1>Editor</h1>
-  Layer:
-  <select id="layer-select"></select>
-  <button id="add-layer">Add layer</button>
-  <button id="del-layer">Delete current layer</button>
-  <button id="move-layer-up">Move layer up</button>
-  <button id="move-layer-down">Move layer down</button>
-  <br>
-  Number of lines: <input type="number" id="number-of-lines" value="1" min="1" step="1"/><br>
-  Color: <input type="color" id="layer-color" /><br>
-  Tool: <button id="tool-button">PEN</button>
-  <br>
-  <canvas id="editor"></canvas>
+    Layer:
+    <select id="layer-select"></select>
+    <button id="add-layer">Add layer</button>
+    <button id="del-layer">Delete current layer</button>
+    <button id="move-layer-up">Move layer up</button>
+    <button id="move-layer-down">Move layer down</button>
+    <br>
+    Number of lines: <input type="number" id="number-of-lines" value="1" min="1" step="1"/><br>
+    Color: <input type="color" id="layer-color" /><br>
+    Tool: <button id="tool-button">PEN</button>
+    <br>
+    <canvas id="editor"></canvas>
   <hr>
   <h1>Output</h1>
-  <img id="output-image" />
+    <img id="output-image" />
   <hr>
   <h1>Sample</h1>
-  <canvas id="sample"></canvas>
+    <canvas id="sample"></canvas>
   <script src="../../build/tools/planet-surface-maker/main.compiled.js"></script>
 </body>
 </html>
