@@ -22,8 +22,14 @@ export function renderLayer(layer: IPlanetSurfaceLayer, cvs: HTMLCanvasElement, 
   ctx.strokeStyle = layer.color;
   ctx.lineCap = lineCap;
   ctx.fillStyle = layer.color;
+
   const magic = 2;  // used to hide gaps
-  const lw = ctx.lineWidth = h / layer.data.length;
+  const numberOfLines = layer.data.reduce(
+    (sum: number, val) => sum + (typeof val === "number" ? val : 1),
+    0,
+  ) as number;
+  const lw = ctx.lineWidth = h / numberOfLines;
+
   ctx.lineWidth += magic;
   for (let f = 0, y = lw / 2; f < layer.data.length; ++f, y += lw) {
     const t = layer.data[f];
