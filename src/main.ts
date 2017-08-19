@@ -1,4 +1,5 @@
 import genPlanetSurfaceImageData from "./genPlanetSurfaceImageData";
+import {getMouseDownPos, getMousePos, setMouseRelativeElement} from "./mouse";
 import Planet from "./Planet";
 import {earthsurface as earthsurfaceData} from "./planet-surfaces-data";
 
@@ -10,6 +11,8 @@ img.src = genPlanetSurfaceImageData(earthsurfaceData, c);
 
 c.width = window.innerWidth;
 c.height = window.innerHeight;
+
+setMouseRelativeElement(c);
 
 img.onload = (e: Event) => {
   console.log("load complete");
@@ -23,15 +26,9 @@ img.onload = (e: Event) => {
   p.x = 300;
   p.y = 400;
   setInterval(() => {
+    [p.x, p.y] = getMousePos();
     c.width ^= 0;
     p.process(1 / 60);
     p.render(ctx);
   }, 1 / 60);
-
-  // fun things: the earth looks "real" when move it around,
-  // but looks a little "fake" when stand still :D
-  window.onmousemove = (me: MouseEvent) => {
-    p.x = me.clientX;
-    p.y = me.clientY;
-  };
 };
