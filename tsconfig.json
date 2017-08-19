@@ -9,6 +9,7 @@
     "module": "es6"
   },
   "files": [
-    "./src/main.ts"
+    "./src/main.ts",
+    "./tools/planet-surface-maker/main.ts"
   ]
 }
