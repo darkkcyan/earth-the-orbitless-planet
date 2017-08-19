@@ -107,6 +107,9 @@ function updateUI() {
       currentLayerId = layerSelectInput.selectedIndex = outputObject.layers.length - 1;
     }
   }
+  if (currentLayerId === -1 && outputObject.layers.length) {
+    currentLayerId = layerSelectInput.selectedIndex = 0;
+  }
 
   if (currentLayerId !== -1) {
     const d = outputObject.layers[currentLayerId];
@@ -479,7 +482,7 @@ let intervalId: number = -1;
 outputImage.onload = () => {
   planet = new Planet({
     lightSourceAngle: 0,
-    radius: outputObject.height/ 2,
+    radius: outputObject.height / 2,
     spinSpeed: outputObject.height / 10,
     surfaceMap: outputImage,
     tiltAngle: Math.PI / 6,
