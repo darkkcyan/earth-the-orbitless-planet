@@ -37,6 +37,8 @@ const saveButton = document.getElementById("save-data") as HTMLButtonElement;
 const backgroundColorInput = document.getElementById("background-color") as HTMLInputElement;
 const widthInput = document.getElementById("width") as HTMLInputElement;
 const heightInput = document.getElementById("height") as HTMLInputElement;
+const doubleSizeButton = document.getElementById("double-size") as HTMLButtonElement;
+const halfSizeButton = document.getElementById("half-size") as HTMLButtonElement;
 
 const layerSelectInput = document.getElementById("layer-select") as HTMLSelectElement;
 
@@ -384,6 +386,18 @@ function onChangeSize() {
 }
 
 widthInput.onchange = heightInput.onchange = onChangeSize;
+
+doubleSizeButton.onclick = () => {
+  outputObject.width *= 2;
+  outputObject.height *= 2;
+  updateUI();
+};
+
+halfSizeButton.onclick = () =>  {
+  outputObject.width = ~~(outputObject.width / 2);
+  outputObject.height = ~~(outputObject.height / 2);
+  updateUI();
+};
 
 // Layer controller events
 //////////////////////////////////////////////////////////////////////////////////////
