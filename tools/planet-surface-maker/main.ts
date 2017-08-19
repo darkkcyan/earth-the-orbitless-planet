@@ -92,7 +92,7 @@ function updateUI() {
 
   // Update layer input elements
   const layerCount = layerSelectInput.children.length;
-  const currentLayerId = layerSelectInput.selectedIndex;
+  let currentLayerId = layerSelectInput.selectedIndex;
   if (layerCount <= outputObject.layers.length) {
     for (let i = layerCount; i < outputObject.layers.length; ++i) {
       const e = document.createElement("option");
@@ -104,7 +104,7 @@ function updateUI() {
       layerSelectInput.removeChild(layerSelectInput.lastChild);
     }
     if (currentLayerId >= outputObject.layers.length) {
-      layerSelectInput.selectedIndex = outputObject.layers.length - 1;
+      currentLayerId = layerSelectInput.selectedIndex = outputObject.layers.length - 1;
     }
   }
 
@@ -303,32 +303,35 @@ const mouse = {
   y: -1,
 };
 
-function mousePos(e: MouseEvent, elm: HTMLElement): [number, number] {
+function mousePos(e: MouseEvent, elm: HTMLElement, forceInside = false): [number, number] {
   const r = elm.getBoundingClientRect();
   const x = e.clientX - r.left;
   const y = e.clientY - r.top;
+  if (forceInside && (x < 0 || y < 0 || x > r.width || y > r.height)) {
+    return [-1, -1];
+  }
   return [x, y];
 }
 
-editorCanvas.onmousedown = (e: MouseEvent) => {
-  [mouse.x, mouse.y] = [mouse.downX, mouse.downY] = mousePos(e, editorCanvas);
-  updateUI();
-  console.log("down", mouse);
-};
-
-editorCanvas.onmousemove = (e: MouseEvent) => {
+window.addEventListener("mousedown", (e: MouseEvent) => {
+  [mouse.downX, mouse.downY] = mousePos(e, editorCanvas, true);
   [mouse.x, mouse.y] = mousePos(e, editorCanvas);
-  updateUI();
-  console.log("move", mouse);
-};
+  rerender();
+}, false);
 
-editorCanvas.onmouseup = (e: MouseEvent) => {
+window.addEventListener("mousemove", (e: MouseEvent) => {
   [mouse.x, mouse.y] = mousePos(e, editorCanvas);
-  ToolsProcess[Tools[toolButton.innerHTML]]();
+  rerender();
+}, false);
+
+window.addEventListener("mouseup", (e: MouseEvent) => {
+  [mouse.x, mouse.y] = mousePos(e, editorCanvas);
+  if (mouse.downX !== -1 && mouse.downY !== -1) {
+    ToolsProcess[Tools[toolButton.innerHTML]]();
+    updateUI();
+  }
   mouse.x = mouse.y = mouse.downX = mouse.downY = -1;
-  updateUI();
-  console.log("up", mouse);
-};
+}, false);
 
 // Image input event
 ///////////////////////////////////////////////////////////////////////////////////
