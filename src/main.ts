@@ -8,7 +8,7 @@ const c = document.getElementById("c") as HTMLCanvasElement;
 const ctx = c.getContext("2d");
 
 const img = new Image();
-img.src = genPlanetSurfaceImageData(earthsurfaceData, c);
+img.src = genPlanetSurfaceImageData(earthsurfaceData, c, 300, 150);
 
 c.width = window.innerWidth;
 c.height = window.innerHeight;
@@ -19,8 +19,8 @@ img.onload = (e: Event) => {
   console.log("load complete");
   // ctx.drawImage(img, 0, 0);
   const p = new Player(new Planet({
-    radius: earthsurfaceData.height / 2,
-    spinSpeed: earthsurfaceData.height / 10,
+    radius: img.height / 2,
+    spinSpeed: img.height / 10,
     surfaceMap: img,
     tiltAngle: Math.PI / 6,
   }));

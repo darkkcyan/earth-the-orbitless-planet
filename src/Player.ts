@@ -13,6 +13,7 @@ export class Rocket {
   private realFlameSize: number;
 
   constructor(public rocketSize: number, public flameSize: number, public movingRange: number) {
+    this.movingTime = this.movingDuration * Math.random();
   }
 
   public process(dt: number) {
@@ -42,6 +43,9 @@ export class Rocket {
     ctx.beginPath();
     ctx.arc(x - halfrs, y, halfrs, -HALF_PI, HALF_PI);
     ctx.fill();
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 4;
+    ctx.stroke();
   }
 
   public renderFlamePart(ctx: CanvasRenderingContext2D) {
@@ -87,24 +91,71 @@ export class Rocket {
 
 }
 
+interface IRocketWithZOrder extends Rocket {
+  z: number;
+}
+
+export class RocketGroup {
+  public x: number;
+  public y: number;
+  public rocketList: IRocketWithZOrder[] = [];
+
+  private currentTime: number = 0;
+
+  constructor(rocketList: Rocket[], public amplitude: number, public duration: number) {
+    for (const rocket of (rocketList as IRocketWithZOrder[])) {
+      this.rocketList.push(rocket);
+      rocket.z = 0;
+    }
+  }
+
+  public process(dt: number) {
+    this.currentTime += dt;
+    if (this.currentTime > this.duration) {
+      this.currentTime -= this.duration;
+    }
+    const timeOffset = this.duration / this.rocketList.length;
+    let t = this.currentTime;
+    for (const roc of this.rocketList) {
+      roc.x = this.x;
+      roc.y = this.y + this.amplitude * Math.sin(PI2 * t / this.duration);
+      roc.z = this.amplitude * Math.cos(PI2 * t / this.duration);
+      t += timeOffset;
+      roc.process(dt);
+    }
+  }
+
+  public render(ctx: CanvasRenderingContext2D) {
+    const rl = this.rocketList.slice();
+    rl.sort((a, b) => a.z - b.z);
+    for (const roc of rl) {
+      roc.render(ctx);
+    }
+  }
+}
+
 export default class Player {
   public followMouse = true;
-  public roc: Rocket;
+  public rocketGroup: RocketGroup;
 
   private _x: number = 0;
   private _y: number = 0;
 
   set x(val: number) {
     this.planet.x = this._x = val;
-    this.roc.x = val - this.planet.radius - 10;
+    this.rocketGroup.x = val - this.planet.radius - 10;
   }
   get x() { return this._x; }
 
-  set y(val: number) { this.roc.y = this.planet.y = this._y = val; }
+  set y(val: number) { this.rocketGroup.y = this.planet.y = this._y = val; }
   get y() { return this._y; }
 
   constructor(private planet: Planet) {
-    this.roc = new Rocket(this.planet.radius / 2.5, this.planet.radius / 1.5, 10);
+    const rl = [];
+    for (let i = 0; i < 3; ++i) {
+      rl.push(new Rocket(this.planet.radius / 2.5, this.planet.radius / 1.5, 10));
+    }
+    this.rocketGroup = new RocketGroup(rl, this.planet.radius / 4, 5);
   }
 
   public process(dt: number) {
@@ -112,11 +163,11 @@ export default class Player {
       [this.x, this.y] = getMousePos();
     }
     this.planet.process(dt);
-    this.roc.process(dt);
+    this.rocketGroup.process(dt);
   }
 
   public render(ctx: CanvasRenderingContext2D) {
     this.planet.render(ctx);
-    this.roc.render(ctx);
+    this.rocketGroup.render(ctx);
   }
 }
