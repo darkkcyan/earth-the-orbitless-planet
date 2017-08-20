@@ -32,20 +32,29 @@ export class Rocket {
   }
 
   public renderRocketPart(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = "white";
     const x = this.x - this.getMovingOffset();
     const y = this.y;
     const halfrs = this.rocketSize / 2;
-    ctx.fillRect(x - halfrs * 2, y - halfrs, halfrs / 2, halfrs * 2);
-    ctx.fillStyle = "black";
-    ctx.fillRect(x - halfrs * 1.5, y - halfrs, halfrs / 2, halfrs * 2);
-    ctx.fillStyle = "gray";
+    const magic = 0.9;
+    for (const [tx, ty, color] of [
+      [x - halfrs * 2, y - halfrs, "#79E9DD"],
+      [x - halfrs * 1.5, y - halfrs, "#36C3DE"],
+    ] as Array<[number, number, string]>) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(tx, ty + halfrs * 2);
+      ctx.lineTo(tx + halfrs / 2, ty + halfrs * 2 * magic);
+      ctx.lineTo(tx + halfrs / 2, ty + halfrs * 2 * (1 - magic));
+      ctx.fill();
+    }
+    // ctx.fillRect(x - halfrs * 2, y - halfrs, halfrs / 2, halfrs * 2);
+    // ctx.fillStyle = ;
+    // ctx.fillRect(x - halfrs * 1.5, y - halfrs, halfrs / 2, halfrs * 2);
+    ctx.fillStyle = "#2468B4";
     ctx.beginPath();
     ctx.arc(x - halfrs, y, halfrs, -HALF_PI, HALF_PI);
     ctx.fill();
-    // ctx.strokeStyle = "black";
-    // ctx.lineWidth = 4;
-    // ctx.stroke();
   }
 
   public renderFlamePart(ctx: CanvasRenderingContext2D) {
@@ -53,7 +62,6 @@ export class Rocket {
     const x = this.x - this.getMovingOffset() - halfrs * 2;
     const y = this.y;
     const magic = 0.618;  // the magic is golden ratio
-    const magic2 = magic * magic;
     ctx.save();
     ctx.shadowBlur = 20;
     ctx.globalAlpha *= 0.5;
@@ -129,7 +137,7 @@ export class RocketGroup {
     const rl = this.rocketList.slice();
     rl.sort((a, b) => a.z - b.z);
     for (const roc of rl) {
-      ctx.globalAlpha = Math.min(0.4 + 0.6 * (roc.z + 1) / 2, 1);
+      ctx.globalAlpha = Math.min(0.5 + 0.5 * (roc.z + 1) / 2, 1);
       roc.render(ctx);
     }
     ctx.globalAlpha = 1;
