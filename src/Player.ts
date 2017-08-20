@@ -1,26 +1,20 @@
-import {HALF_PI, PI2} from "./math";
+import {HALF_PI, PI2, SimpleHarmonicMotion as HarmonicMotioin} from "./math";
 import {getMousePos} from "./mouse";
 import Planet from "./Planet";
 
 export class Rocket {
   public x: number = 0;
   public y: number = 0;
-  public movingDuration = 10;
 
-  private movingTime = 0;
   private previousX: number = 0;
   private previousY: number = 0;
   private realFlameSize: number;
 
-  constructor(public rocketSize: number, public flameSize: number, public movingRange: number) {
-    this.movingTime = this.movingDuration * Math.random();
+  constructor(public rocketSize: number, public flameSize: number, private hm: HarmonicMotioin) {
   }
 
   public process(dt: number) {
-    this.movingTime += dt;
-    if (this.movingTime > this.movingDuration) {
-      this.movingTime -= this.movingDuration;
-    }
+    this.hm.process(dt);
     const RANDOM_RANGE = this.flameSize / 7;
     this.realFlameSize = this.flameSize + (this.x - this.previousX) * 3;
     this.realFlameSize += RANDOM_RANGE * (Math.random() - 0.5);
@@ -32,7 +26,7 @@ export class Rocket {
   }
 
   public renderRocketPart(ctx: CanvasRenderingContext2D) {
-    const x = this.x - this.getMovingOffset();
+    const x = this.x - this.hm.getX();
     const y = this.y;
     const halfrs = this.rocketSize / 2;
     const magic = 0.9;
@@ -48,9 +42,6 @@ export class Rocket {
       ctx.lineTo(tx + halfrs / 2, ty + halfrs * 2 * (1 - magic));
       ctx.fill();
     }
-    // ctx.fillRect(x - halfrs * 2, y - halfrs, halfrs / 2, halfrs * 2);
-    // ctx.fillStyle = ;
-    // ctx.fillRect(x - halfrs * 1.5, y - halfrs, halfrs / 2, halfrs * 2);
     ctx.fillStyle = "#2468B4";
     ctx.beginPath();
     ctx.arc(x - halfrs, y, halfrs, -HALF_PI, HALF_PI);
@@ -59,7 +50,7 @@ export class Rocket {
 
   public renderFlamePart(ctx: CanvasRenderingContext2D) {
     const halfrs = this.rocketSize / 2;
-    const x = this.x - this.getMovingOffset() - halfrs * 2;
+    const x = this.x - this.hm.getX() - halfrs * 2;
     const y = this.y;
     const magic = 0.618;  // the magic is golden ratio
     ctx.save();
@@ -92,11 +83,6 @@ export class Rocket {
     this.renderRocketPart(ctx);
     this.renderFlamePart(ctx);
   }
-
-  private getMovingOffset() {
-    return this.movingRange * Math.cos(PI2 * this.movingTime / this.movingDuration);
-  }
-
 }
 
 interface IRocketWithZOrder extends Rocket {
@@ -108,9 +94,7 @@ export class RocketGroup {
   public y: number;
   public rocketList: IRocketWithZOrder[] = [];
 
-  private currentTime: number = 0;
-
-  constructor(rocketList: Rocket[], public amplitude: number, public duration: number) {
+  constructor(rocketList: Rocket[], public hm: HarmonicMotioin) {
     for (const rocket of (rocketList as IRocketWithZOrder[])) {
       this.rocketList.push(rocket);
       rocket.z = 0;
@@ -118,16 +102,13 @@ export class RocketGroup {
   }
 
   public process(dt: number) {
-    this.currentTime += dt;
-    if (this.currentTime > this.duration) {
-      this.currentTime -= this.duration;
-    }
-    const timeOffset = this.duration / this.rocketList.length;
-    let t = this.currentTime;
+    this.hm.process(dt);
+    const timeOffset = this.hm.period / this.rocketList.length;
+    let t = 0;
     for (const roc of this.rocketList) {
       roc.x = this.x;
-      roc.y = this.y + this.amplitude * Math.sin(PI2 * t / this.duration);
-      roc.z = Math.cos(PI2 * t / this.duration);
+      roc.y = this.y + this.hm.getY(t);
+      roc.z = this.hm.getX(t);
       t += timeOffset;
       roc.process(dt);
     }
@@ -137,7 +118,7 @@ export class RocketGroup {
     const rl = this.rocketList.slice();
     rl.sort((a, b) => a.z - b.z);
     for (const roc of rl) {
-      ctx.globalAlpha = Math.min(0.5 + 0.5 * (roc.z + 1) / 2, 1);
+      ctx.globalAlpha = Math.min(0.5 + 0.5 * (roc.z / this.hm.amplitute + 1) / 2, 1);
       roc.render(ctx);
     }
     ctx.globalAlpha = 1;
@@ -163,9 +144,13 @@ export default class Player {
   constructor(private planet: Planet) {
     const rl = [];
     for (let i = 0; i < 3; ++i) {
-      rl.push(new Rocket(this.planet.radius / 2.5, this.planet.radius / 1.5, 10));
+      rl.push(new Rocket(
+        this.planet.radius / 2.5,
+        this.planet.radius / 1.5,
+        new HarmonicMotioin(10, 10, PI2 * Math.random()),
+      ));
     }
-    this.rocketGroup = new RocketGroup(rl, this.planet.radius / 4, 5);
+    this.rocketGroup = new RocketGroup(rl, new HarmonicMotioin(this.planet.radius / 4, 5));
   }
 
   public process(dt: number) {
