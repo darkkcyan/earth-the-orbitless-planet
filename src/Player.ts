@@ -43,9 +43,9 @@ export class Rocket {
     ctx.beginPath();
     ctx.arc(x - halfrs, y, halfrs, -HALF_PI, HALF_PI);
     ctx.fill();
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 4;
-    ctx.stroke();
+    // ctx.strokeStyle = "black";
+    // ctx.lineWidth = 4;
+    // ctx.stroke();
   }
 
   public renderFlamePart(ctx: CanvasRenderingContext2D) {
@@ -56,7 +56,7 @@ export class Rocket {
     const magic2 = magic * magic;
     ctx.save();
     ctx.shadowBlur = 20;
-    ctx.globalAlpha = 0.5;
+    ctx.globalAlpha *= 0.5;
     ctx.beginPath();
     const coordinates = [
       [0, -halfrs * magic],
@@ -119,7 +119,7 @@ export class RocketGroup {
     for (const roc of this.rocketList) {
       roc.x = this.x;
       roc.y = this.y + this.amplitude * Math.sin(PI2 * t / this.duration);
-      roc.z = this.amplitude * Math.cos(PI2 * t / this.duration);
+      roc.z = Math.cos(PI2 * t / this.duration);
       t += timeOffset;
       roc.process(dt);
     }
@@ -129,8 +129,10 @@ export class RocketGroup {
     const rl = this.rocketList.slice();
     rl.sort((a, b) => a.z - b.z);
     for (const roc of rl) {
+      ctx.globalAlpha = Math.min(0.4 + 0.6 * (roc.z + 1) / 2, 1);
       roc.render(ctx);
     }
+    ctx.globalAlpha = 1;
   }
 }
 
