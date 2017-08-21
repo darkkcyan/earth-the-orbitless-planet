@@ -86,3 +86,63 @@ export function renderPlayerGunLv2(ctx: CanvasRenderingContext2D, config: IGunCo
 
   ctx.restore();
 }
+
+export function renderPlayerGunLv3(ctx: CanvasRenderingContext2D, config: IGunConfig) {
+  const {size, x = 0, y = size / 2} = config;
+  ctx.save();
+  ctx.translate(x, y);
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(0, -size / 2);
+  [
+    [size, -size / 2],
+    [size, -size / 4],
+    [size / 2, -size / 4],
+    [size / 2, size / 4],
+    [size, size / 4],
+    [size, size / 2],
+    [0, size / 2],
+  ].forEach(([tx, ty]) => ctx.lineTo(tx, ty));
+  ctx.clip();
+  ctx.scale(1, .9);
+  renderGunBase(ctx, size);
+  ctx.restore();
+
+  // ctx.fillStyle = colorScheme[3];
+  // ctx.fillRect(size / 2, -size / 16, size * 1.25, size / 8);
+
+  ctx.save();
+  ctx.beginPath();
+  // ctx.arc(size * 1.5, 0, size / 4, HALF_PI, -HALF_PI, true);
+  // [
+  //   [size / 2, -size / 4],
+  //   [size / 2, size / 4],
+  //   [size * 1.5, size / 4],
+  // ].forEach(([tx, ty]) => ctx.lineTo(tx, ty));
+  // ctx.clip();
+  ctx.setLineDash([size / 8, size / 16]);
+  ctx.lineDashOffset = size / 3;
+  ctx.beginPath();
+  ctx.moveTo(size / 2, 0);
+  ctx.lineTo(size * 1.6, 0);
+  ctx.lineWidth = size / 4;
+  ctx.strokeStyle = colorScheme[4];
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.beginPath();
+  ctx.moveTo(size * 1.75, - size / 4);
+  ctx.arc(size * .8, 0, size / 4 * Math.SQRT2, -Math.PI * .75, Math.PI * .75, true);
+  ctx.lineTo(size * 1.75, size / 4);
+  ctx.strokeStyle = colorScheme[5];
+  ctx.lineWidth = size / 10;
+  ctx.lineCap = ctx.lineJoin = "round";
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(size * 1.75, 0, size / 4 + size / 20, 0, PI2);
+  ctx.fillStyle = colorScheme[2];
+  ctx.fill();
+
+  ctx.restore();
+}
