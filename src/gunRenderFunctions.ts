@@ -1,6 +1,6 @@
 // This file constains functions for prerendering purpose
 
-import {PI2} from "./math";
+import {HALF_PI, PI2} from "./math";
 
 export interface IGunConfig {
   size: number;
@@ -20,6 +20,26 @@ const colorScheme = [
   "#FEF6EB",
 ];
 
+function renderLv12GunBarrel(ctx: CanvasRenderingContext2D, config: IGunConfig) {
+  const {size, x = 0, y = 0} = config;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.beginPath();
+  ctx.fillStyle = colorScheme[3];
+  ctx.fillRect(0, -size / 16, size / 2, size / 8);
+  ctx.fillStyle = colorScheme[4];
+  for (let i = 0, tx = size / 10, ts = size / 3; i < 3; ++i, tx += size / 10, ts -= size / 16) {
+    ctx.fillRect(tx, -ts / 2, size / 24, ts);
+  }
+  ctx.beginPath();
+  ctx.arc(size / 2, 0, size / 8, 0, PI2);
+  ctx.fillStyle = colorScheme[2];
+  ctx.fill();
+  ctx.fillStyle = colorScheme[5];
+  ctx.fillRect(-size / 16, -size / 8, size / 8, size / 4);
+  ctx.restore();
+}
+
 export function renderPlayerGunLv1(ctx: CanvasRenderingContext2D, config: IGunConfig) {
   const {size, x = 0, y = size / 2} = config;
   ctx.save();
@@ -30,25 +50,35 @@ export function renderPlayerGunLv1(ctx: CanvasRenderingContext2D, config: IGunCo
   const d: Array<[boolean, string]> = [[false, colorScheme[2]], [true, colorScheme[1]]];
   for (const [reverse, color] of d) {
     ctx.beginPath();
-    ctx.arc(size / 2, 0, size / 2, -Math.PI * 3 / 4, Math.PI * 3 / 4, reverse);
+    ctx.arc(size / 2, 0, size / 2, -Math.PI * 3 / 4, HALF_PI, reverse);
     ctx.fillStyle = color;
     ctx.fill();
   }
   ctx.restore();
 
-  ctx.beginPath();
-  ctx.fillStyle = colorScheme[0];
-  ctx.fillRect(size, -size / 16, size / 2, size / 8);
-  ctx.fillStyle = colorScheme[4];
-  for (let i = 0, tx = size + size / 10, ts = size / 3; i < 3; ++i, tx += size / 10, ts -= size / 16) {
-    ctx.fillRect(tx, -ts / 2, size / 24, ts);
+  renderLv12GunBarrel(ctx, {size, x: size});
+
+  ctx.restore();
+}
+
+export function renderPlayerGunLv2(ctx: CanvasRenderingContext2D, config: IGunConfig) {
+  const {size, x = 0, y = size / 2} = config;
+  ctx.save();
+  ctx.translate(x, y);
+
+  ctx.save();
+  ctx.scale(1, 0.75);
+  const d: Array<[boolean, string]> = [[false, colorScheme[2]], [true, colorScheme[1]]];
+  for (const [reverse, color] of d) {
+    ctx.beginPath();
+    ctx.arc(size / 2, 0, size / 2, -Math.PI * 3 / 4, HALF_PI, reverse);
+    ctx.fillStyle = color;
+    ctx.fill();
   }
-  ctx.beginPath();
-  ctx.arc(size * 1.5, 0, size / 8, 0, PI2);
-  ctx.fillStyle = colorScheme[2];
-  ctx.fill();
-  ctx.fillStyle = colorScheme[5];
-  ctx.fillRect(size * 15 / 16, -size / 8, size / 8, size / 4);
+  ctx.restore();
+
+  renderLv12GunBarrel(ctx, {size, x: size * 15 / 16, y: -size / 8});
+  renderLv12GunBarrel(ctx, {size, x: size * 15 / 16, y: size / 8});
 
   ctx.restore();
 }

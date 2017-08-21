@@ -1,5 +1,5 @@
 import genPlanetSurfaceImageData from "./genPlanetSurfaceImageData";
-import {renderPlayerGunLv1} from "./gunRenderFunctions";
+import {renderPlayerGunLv1, renderPlayerGunLv2} from "./gunRenderFunctions";
 import {getMouseDownPos, getMousePos, setMouseRelativeElement} from "./mouse";
 import Planet from "./Planet";
 import {earthsurface as earthsurfaceData} from "./planet-surfaces-data";
@@ -33,7 +33,13 @@ c.height = window.innerHeight;
 // };
 
 renderPlayerGunLv1(ctx, {
-  size: 30,
+  size: 50,
   x: 100,
+  y: 100,
+});
+
+renderPlayerGunLv2(ctx, {
+  size: 50,
+  x: 200,
   y: 100,
 });
