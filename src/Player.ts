@@ -15,7 +15,7 @@ export class Rocket {
 
   public process(dt: number) {
     this.hm.process(dt);
-    const RANDOM_RANGE = this.flameSize / 7;
+    const RANDOM_RANGE = this.flameSize / 5;
     this.realFlameSize = this.flameSize + (this.x - this.previousX) * 3;
     this.realFlameSize += RANDOM_RANGE * (Math.random() - 0.5);
     if (this.realFlameSize < this.flameSize / 10) {
@@ -30,10 +30,11 @@ export class Rocket {
     const y = this.y;
     const halfrs = this.rocketSize / 2;
     const magic = 0.9;
-    for (const [tx, ty, color] of [
+    const d: Array<[number, number, string]> = [
       [x - halfrs * 2, y - halfrs, "#79E9DD"],
       [x - halfrs * 1.5, y - halfrs, "#36C3DE"],
-    ] as Array<[number, number, string]>) {
+    ];
+    for (const [tx, ty, color] of d) {
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.moveTo(tx, ty);
@@ -54,26 +55,22 @@ export class Rocket {
     const y = this.y;
     const magic = 0.618;  // the magic is golden ratio
     ctx.save();
+    ctx.translate(x, y);
     ctx.shadowBlur = 20;
     ctx.globalAlpha *= 0.5;
     ctx.beginPath();
-    const coordinates = [
-      [0, -halfrs * magic],
-      [-this.realFlameSize * magic, -halfrs],
-      [-this.realFlameSize, 0],
-      [-this.realFlameSize * magic, halfrs],
-      [0, halfrs * magic],
+    const d: Array<[number, string]> = [
+      [1, "red"],
+      [magic, "yellow"],
     ];
-    const color = ["red", "yellow"];
-    for (let i = 0; i < 2; ++i) {
+    for (const [factor, color] of d) {
       ctx.beginPath();
-      ctx.moveTo(x + coordinates[0][0], y + coordinates[0][1]);
-      for (const offset of coordinates) {
-        ctx.lineTo(x + offset[0], y + offset[1]);
-        offset[0] *= magic;
-        offset[1] *= magic;
-      }
-      ctx.shadowColor = ctx.fillStyle = color[i];
+      ctx.moveTo(0, - halfrs * magic * factor);
+      ctx.lineTo(-this.realFlameSize * magic * factor, -halfrs * factor);
+      ctx.lineTo(-this.realFlameSize * factor, 0);
+      ctx.lineTo(-this.realFlameSize * magic * factor, halfrs * factor);
+      ctx.lineTo(0, halfrs * magic * factor);
+      ctx.shadowColor = ctx.fillStyle = color;
       ctx.fill();
     }
     ctx.restore();
