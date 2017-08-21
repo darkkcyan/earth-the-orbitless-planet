@@ -20,6 +20,16 @@ const colorScheme = [
   "#FEF6EB",
 ];
 
+function renderGunBase(ctx: CanvasRenderingContext2D, size: number) {
+  const d: Array<[boolean, string]> = [[false, colorScheme[2]], [true, colorScheme[1]]];
+  for (const [reverse, color] of d) {
+    ctx.beginPath();
+    ctx.arc(size / 2, 0, size / 2, -Math.PI * .75, Math.PI * .75, reverse);
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+}
+
 function renderLv12GunBarrel(ctx: CanvasRenderingContext2D, config: IGunConfig) {
   const {size, x = 0, y = 0} = config;
   ctx.save();
@@ -50,13 +60,7 @@ export function renderPlayerGunLv1(ctx: CanvasRenderingContext2D, config: IGunCo
   ctx.rect(0, -size / 2, size * 0.75, size);
   ctx.clip();
   ctx.scale(1, 0.5);
-  const d: Array<[boolean, string]> = [[false, colorScheme[2]], [true, colorScheme[1]]];
-  for (const [reverse, color] of d) {
-    ctx.beginPath();
-    ctx.arc(size / 2, 0, size / 2, -Math.PI * .75, Math.PI * .75, reverse);
-    ctx.fillStyle = color;
-    ctx.fill();
-  }
+  renderGunBase(ctx, size);
   ctx.restore();
 
   renderLv12GunBarrel(ctx, {size, x: size * 0.75});
@@ -74,17 +78,11 @@ export function renderPlayerGunLv2(ctx: CanvasRenderingContext2D, config: IGunCo
   ctx.rect(0, -size / 2, size * 0.75, size);
   ctx.clip();
   ctx.scale(1, 0.75);
-  const d: Array<[boolean, string]> = [[false, colorScheme[2]], [true, colorScheme[1]]];
-  for (const [reverse, color] of d) {
-    ctx.beginPath();
-    ctx.arc(size / 2, 0, size / 2, -Math.PI * .7, Math.PI * .7, reverse);
-    ctx.fillStyle = color;
-    ctx.fill();
-  }
+  renderGunBase(ctx, size);
   ctx.restore();
 
-  renderLv12GunBarrel(ctx, {size, x: size * .75, y: -size / 8});
-  renderLv12GunBarrel(ctx, {size, x: size * .75, y: size / 8});
+  renderLv12GunBarrel(ctx, {size, x: size * .75, y: -size / 7});
+  renderLv12GunBarrel(ctx, {size, x: size * .75, y: size / 7});
 
   ctx.restore();
 }
