@@ -73,16 +73,41 @@ export function renderPlayerGunLv2(ctx: CanvasRenderingContext2D, config: IGunCo
   ctx.save();
   ctx.translate(x, y);
 
+
+  ctx.beginPath();
+  ctx.arc(size * 1.5, 0, size * .2, 0, PI2);
+  ctx.fillStyle = colorScheme[2];
+  ctx.fill();
+
+  ctx.fillStyle = colorScheme[3];
+  for (let sign = -1; sign < 2; sign += 2) {
+    ctx.beginPath();
+    ctx.moveTo(size * 1.5, sign * size * .2);
+    ctx.lineTo(size * .5, sign * size * .2);
+    ctx.lineTo(size * .7, sign * size * .4);
+    ctx.fill();
+  }
+
   ctx.save();
   ctx.beginPath();
   ctx.rect(0, -size / 2, size * 0.75, size);
   ctx.clip();
-  ctx.scale(1, 0.75);
+  ctx.scale(1, 0.7);
   renderGunBase(ctx, size);
   ctx.restore();
 
-  renderLv12GunBarrel(ctx, {size, x: size * .75, y: -size / 7});
-  renderLv12GunBarrel(ctx, {size, x: size * .75, y: size / 7});
+  ctx.beginPath();
+  ctx.moveTo(size * 1.5, 0);
+  ctx.lineTo(size * .7, size * .15);
+  ctx.lineTo(size * .5, 0);
+  ctx.lineTo(size * .7, -size * .15);
+  ctx.fillStyle = colorScheme[5];
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(size * .75, 0, size * .1, 0, PI2);
+  ctx.fillStyle = colorScheme[4];
+  ctx.fill();
 
   ctx.restore();
 }

@@ -36,7 +36,7 @@ c.height = window.innerHeight;
 //   }, 1 / 60);
 // };
 
-const s = 30;
+const s = 50;
 renderPlayerGunLv1(ctx, {
   size: s,
   x: 100,
