@@ -15,10 +15,9 @@ export interface IPlanetSurface {
   layers: IPlanetSurfaceLayer[];
 }
 
-export function renderLayer(layer: IPlanetSurfaceLayer, cvs: HTMLCanvasElement, lineCap: string = "round") {
-  const w = cvs.width;
-  const h = cvs.height;
-  const ctx = cvs.getContext("2d");
+export function renderLayer(layer: IPlanetSurfaceLayer, ctx: CanvasRenderingContext2D, lineCap: string = "round") {
+  const w = ctx.canvas.width;
+  const h = ctx.canvas.height;
   ctx.strokeStyle = layer.color;
   ctx.lineCap = lineCap;
   ctx.fillStyle = layer.color;
@@ -48,6 +47,15 @@ export function renderLayer(layer: IPlanetSurfaceLayer, cvs: HTMLCanvasElement, 
   }
 }
 
+export function renderPlanetSurface(data: IPlanetSurface, ctx: CanvasRenderingContext2D) {
+  ctx.fillStyle = data.background;
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+  for (const i of data.layers) {
+    renderLayer(i, ctx);
+  }
+}
+
 export default
 function genPlanetSurfaceImageData(
   data: IPlanetSurface, cvs: HTMLCanvasElement,
@@ -57,13 +65,6 @@ function genPlanetSurfaceImageData(
   const h = newHeight ? newHeight : data.height;
   cvs.width = w;
   cvs.height = h;
-  const ctx = cvs.getContext("2d");
-  ctx.fillStyle = data.background;
-  ctx.fillRect(0, 0, w, h);
-
-  for (const i of data.layers) {
-    renderLayer(i, cvs);
-  }
-
+  renderPlanetSurface(data, cvs.getContext("2d"));
   return cvs.toDataURL();
 }

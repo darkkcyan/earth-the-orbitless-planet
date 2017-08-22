@@ -66,7 +66,6 @@ export function renderPlayerGunLv2(ctx: CanvasRenderingContext2D, config: IGunCo
   ctx.save();
   ctx.translate(x, y);
 
-
   ctx.beginPath();
   ctx.arc(size * 1.5, 0, size * .2, 0, PI2);
   ctx.fillStyle = colorScheme[2];
