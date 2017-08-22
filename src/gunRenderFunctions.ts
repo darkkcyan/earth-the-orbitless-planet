@@ -30,26 +30,6 @@ function renderGunBase(ctx: CanvasRenderingContext2D, size: number) {
   }
 }
 
-function renderLv12GunBarrel(ctx: CanvasRenderingContext2D, config: IGunConfig) {
-  const {size, x = 0, y = 0} = config;
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.beginPath();
-  ctx.fillStyle = colorScheme[3];
-  ctx.fillRect(0, -size / 16, size * 0.75, size / 8);
-  ctx.fillStyle = colorScheme[4];
-  for (let i = 0, tx = size / 5, ts = size / 3; i < 3; ++i, tx += size / 8, ts -= size / 16) {
-    ctx.fillRect(tx, -ts / 2, size / 16, ts);
-  }
-  ctx.beginPath();
-  ctx.arc(size * .75, 0, size / 8, 0, PI2);
-  ctx.fillStyle = colorScheme[2];
-  ctx.fill();
-  ctx.fillStyle = colorScheme[5];
-  ctx.fillRect(0, -size / 6, size / 8, size / 3);
-  ctx.restore();
-}
-
 export function renderPlayerGunLv1(ctx: CanvasRenderingContext2D, config: IGunConfig) {
   const {size, x = 0, y = size / 2} = config;
   ctx.save();
@@ -63,7 +43,20 @@ export function renderPlayerGunLv1(ctx: CanvasRenderingContext2D, config: IGunCo
   renderGunBase(ctx, size);
   ctx.restore();
 
-  renderLv12GunBarrel(ctx, {size, x: size * 0.75});
+  ctx.translate(size * 0.75, 0);
+  ctx.beginPath();
+  ctx.fillStyle = colorScheme[3];
+  ctx.fillRect(0, -size / 16, size * 0.75, size / 8);
+  ctx.fillStyle = colorScheme[4];
+  for (let i = 0, tx = size / 5, ts = size / 3; i < 3; ++i, tx += size / 8, ts -= size / 16) {
+    ctx.fillRect(tx, -ts / 2, size / 16, ts);
+  }
+  ctx.beginPath();
+  ctx.arc(size * .75, 0, size / 8, 0, PI2);
+  ctx.fillStyle = colorScheme[2];
+  ctx.fill();
+  ctx.fillStyle = colorScheme[5];
+  ctx.fillRect(0, -size / 6, size / 8, size / 3);
 
   ctx.restore();
 }
@@ -134,18 +127,8 @@ export function renderPlayerGunLv3(ctx: CanvasRenderingContext2D, config: IGunCo
   renderGunBase(ctx, size);
   ctx.restore();
 
-  // ctx.fillStyle = colorScheme[3];
-  // ctx.fillRect(size / 2, -size / 16, size * 1.25, size / 8);
-
   ctx.save();
   ctx.beginPath();
-  // ctx.arc(size * 1.5, 0, size / 4, HALF_PI, -HALF_PI, true);
-  // [
-  //   [size / 2, -size / 4],
-  //   [size / 2, size / 4],
-  //   [size * 1.5, size / 4],
-  // ].forEach(([tx, ty]) => ctx.lineTo(tx, ty));
-  // ctx.clip();
   ctx.setLineDash([size / 8, size / 16]);
   ctx.lineDashOffset = size / 3;
   ctx.beginPath();
