@@ -32,8 +32,6 @@ imageLoader
     c.width ^= 0;
     p.process(1 / 60);
     p.render(ctx);
-    const [x, y] = getMousePos();
-    ctx.drawImage(gunImg, x, y);
   }, 1 / 60);
 });
 
