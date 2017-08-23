@@ -1,14 +1,14 @@
-import genPlanetSurfaceImageData, {renderPlanetSurface} from "./genPlanetSurfaceImageData";
-import {
-  renderPlayerGunLv1,
-  renderPlayerGunLv2,
-  renderPlayerGunLv3,
-} from "./gunRenderFunctions";
 import imageLoader, {images} from "./imageLoader";
 import {getMouseDownPos, getMousePos, setMouseRelativeElement} from "./mouse";
 import Planet from "./Planet";
 import {earthsurface as earthsurfaceData} from "./planet-surfaces-data";
 import Player from "./Player";
+import {renderPlanetSurface} from "./prerender/planet";
+import {
+  renderPlayerGunLv1,
+  renderPlayerGunLv2,
+  renderPlayerGunLv3,
+} from "./prerender/playerGun";
 
 const c = document.getElementById("c") as HTMLCanvasElement;
 

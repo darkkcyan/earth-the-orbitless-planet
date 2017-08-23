@@ -1,6 +1,4 @@
-// This file constains functions for prerendering purpose
-
-import {HALF_PI, PI2} from "./math";
+import {HALF_PI, PI2} from "../math";
 
 export interface IGunConfig {
   size: number;

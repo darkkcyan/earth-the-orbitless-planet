@@ -138,7 +138,7 @@ function rerender() {
 
   if (layerId !== -1) {
     const currentLayer = outputObject.layers[layerId];
-    renderLayer(currentLayer, editorCanvas, "butt");
+    renderLayer(currentLayer, editorCanvas.getContext("2d"), "butt");
     ectx.globalAlpha = 0.5;
 
     ectx.setLineDash([5, 5]);
