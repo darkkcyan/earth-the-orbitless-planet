@@ -1,6 +1,8 @@
 type Data = [number, number, (ctx: CanvasRenderingContext2D) => void];
 const datas: Array<string | Data> = [];
 
+export const images: HTMLImageElement[] = [];
+
 export default {
   add(id: number, w: number, h: number, cb: (ctx: CanvasRenderingContext2D) => void) {
     datas[id] = [w, h, cb];
@@ -9,11 +11,11 @@ export default {
 
   addSrc(id: number, dataURL: string) {
     datas[id] = dataURL;
+    return this;
   },
 
   load(cvs: HTMLCanvasElement, cb: (images: HTMLImageElement[]) => void) {
     const ctx = cvs.getContext("2d");
-    const images: HTMLImageElement[] = [];
     let numloaded = 0;
     const imageOnloadCallback = () => {
       ++numloaded;

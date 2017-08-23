@@ -4,7 +4,7 @@ import {
   renderPlayerGunLv2,
   renderPlayerGunLv3,
 } from "./gunRenderFunctions";
-import imageLoader from "./imageLoader";
+import imageLoader, {images} from "./imageLoader";
 import {getMouseDownPos, getMousePos, setMouseRelativeElement} from "./mouse";
 import Planet from "./Planet";
 import {earthsurface as earthsurfaceData} from "./planet-surfaces-data";
@@ -14,9 +14,9 @@ const c = document.getElementById("c") as HTMLCanvasElement;
 
 imageLoader
 .add(0, 300, 150, (ctx) => renderPlanetSurface(earthsurfaceData, ctx))
-.add(2, 70, 30, (ctx) => renderPlayerGunLv3(ctx, {size: 30}))
-.load(c, ([img, somethingIsNull, gunImg]) => {
-  console.log(somethingIsNull);
+.add(1, 70, 30, (ctx) => renderPlayerGunLv3(ctx, {size: 30}))
+.load(c, () => {
+  const [img, gunImg] = images;
   c.width = window.innerWidth;
   c.height = window.innerHeight;
   const ctx = c.getContext("2d");
