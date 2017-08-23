@@ -43,11 +43,11 @@ export default class Player {
     }
     this.rocketGroup = new RocketGroup(rl, new HarmonicMotioin(this.planet.radius / 4, 5));
     this.gunFormation = new GunFormation({
-      hm: new HarmonicMotioin(1, 1),
-      mainGun: new Gun(images[1]),
-      planetRadius: this.planet.radius * .8,
-      sideGunList: [],
-      sideGunPhaseOffset: 0,
+      hm: new HarmonicMotioin(HALF_PI / 2.5, 10),
+      // mainGun: new Gun(images[1]),
+      planetRadius: this.planet.radius * 1.1,
+      sideGunList: [new Gun(images[1], true), new Gun(images[2], false)],
+      sideGunPhaseOffset: Math.PI / 5,
     });
   }
 

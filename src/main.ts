@@ -14,7 +14,8 @@ const c = document.getElementById("c") as HTMLCanvasElement;
 
 imageLoader
 .add(0, 300, 150, (ctx) => renderPlanetSurface(earthsurfaceData, ctx))
-.add(1, 70, 30, (ctx) => renderPlayerGunLv3(ctx, {size: 30}))
+.add(1, 70, 30, (ctx) => renderPlayerGunLv1(ctx, {size: 30}))
+.add(2, 70, 30, (ctx) => renderPlayerGunLv2(ctx, {size: 30}))
 .load(c, () => {
   const [img, gunImg] = images;
   c.width = window.innerWidth;

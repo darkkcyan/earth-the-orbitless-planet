@@ -4,16 +4,25 @@ import {PI2, SimpleHarmonicMotion as HarMonicmotion} from "./math";
 export class PlayerGun {
   public x: number = 0;
   public y: number = 0;
+  public angle: number = 0;
 
-  constructor(private image: HTMLImageElement) {
+  constructor(private image: HTMLImageElement, public rotate: boolean = false) {
   }
 
   public render(ctx: CanvasRenderingContext2D) {
-    ctx.drawImage(this.image, this.x, this.y - this.image.height / 2);
+    ctx.save();
+    ctx.shadowBlur = this.image.height / 10;
+    ctx.shadowColor = "black";
+    ctx.translate(this.x, this.y);
+    if (this.rotate) {
+      ctx.rotate(this.angle);
+    }
+    ctx.drawImage(this.image, 0, - this.image.height / 2);
+    ctx.restore();
   }
 
   public clone(): PlayerGun {
-    return new PlayerGun(this.image);
+    return new PlayerGun(this.image, this.rotate);
   }
 }
 
@@ -53,16 +62,17 @@ export class HarmonicMotionPlayerGunFormation {
     if (this.mainGun) {
       this.mainGun.x = this.x + this.planetRadius;
       this.mainGun.y = this.y;
+      this.mainGun.angle = 0;
     }
     for (let i = 0, t = 0; i < this.leftSideGunList.length; ++i, t += sideGunTimeOffset) {
       const leftGun = this.leftSideGunList[i];
       const rightGun = this.rightSideGunList[i];
-      const leftAngle = this.hm.getX(t);
-      const rightAngle = this.hm.getX(t + this.hm.period / 2);
-      leftGun.x = this.x + this.planetRadius * Math.cos(leftAngle);
-      leftGun.y = this.y + this.planetRadius * Math.sin(leftAngle);
-      rightGun.x = this.x + this.planetRadius * Math.cos(rightAngle);
-      rightGun.y = this.y + this.planetRadius * Math.sin(rightAngle);
+      leftGun.angle = this.hm.getX(t);
+      rightGun.angle = this.hm.getX(t + this.hm.period / 2);
+      leftGun.x = this.x + this.planetRadius * Math.cos(leftGun.angle);
+      leftGun.y = this.y + this.planetRadius * Math.sin(leftGun.angle);
+      rightGun.x = this.x + this.planetRadius * Math.cos(rightGun.angle);
+      rightGun.y = this.y + this.planetRadius * Math.sin(rightGun.angle);
     }
   }
 
