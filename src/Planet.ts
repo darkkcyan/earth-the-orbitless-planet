@@ -13,18 +13,27 @@ export default class Planet {
   public y: number = 0;
 
   public radius: number;
-  public surfaceMap: HTMLImageElement;
   public spinSpeed: number;
   public tiltAngle: number;
   public lightSourceAngle: number = 0;
 
+  private _surfaceMap: HTMLImageElement;
   private mapWidth: number;
-  private mapPosition: number = 0;
+  private mapPosition: number;
+
+  set surfaceMap(val: HTMLImageElement) {
+    this._surfaceMap = val;
+    this.mapWidth = this._surfaceMap.width;
+    this.mapPosition = 0;
+  }
+
+  get surfaceMap() {
+    return this._surfaceMap;
+  }
 
   constructor(config: IPlanetConfig) {
     this.radius = config.radius;
     this.spinSpeed = config.spinSpeed;
-    this.mapWidth = config.surfaceMap.width;
     this.surfaceMap = config.surfaceMap;
     this.tiltAngle = config.tiltAngle;
     if (config.lightSourceAngle) {
@@ -62,8 +71,8 @@ export default class Planet {
     // draw shadow, instead of draw light
     ctx.rotate(this.lightSourceAngle);
     ctx.beginPath();
+    ctx.arc(this.radius, 0, this.radius * Math.SQRT2, -Math.PI * 3 / 4, Math.PI * 3 / 4, true);
     ctx.arc(0, 0, this.radius, HALF_PI, - HALF_PI);
-    ctx.arc(-this.radius, 0, this.radius * Math.SQRT2, -HALF_PI / 2, HALF_PI / 2);
     ctx.fillStyle = "rgba(0, 0, 0, 0.5)";  // gray color with half alpha, make it feels like shadow
     ctx.fill();
     ctx.restore();

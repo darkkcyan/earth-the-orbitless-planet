@@ -21,23 +21,16 @@ glob(path.join(input, "*.json"), {}, (err, files) => {
     const bname = path.basename(name, ".json");
     const obj = JSON.parse(fs.readFileSync(name, 'utf8')); 
     for (const layer of obj.layers) {
-      const fixedData = [];
-      let numEmpty = 0;
-      for (const d of layer.data) {
-        if (!d.length) {
-          ++numEmpty;
-          continue;
+      layer.data = layer.data.reduce((ans, cur) => {
+        if (cur.length) ans.push(cur);
+        else {
+          if (!ans.length || typeof ans[ans.length - 1] !== "number") {
+            ans.push(0);
+          } 
+          ans[ans.length - 1]++;
         }
-        if (numEmpty) {
-          fixedData.push(numEmpty);
-        }
-        fixedData.push(d);
-        numEmpty = 0;
-      }
-      if (numEmpty) {
-        fixedData.push(numEmpty);
-      }
-      layer.data = fixedData;
+        return ans;
+      }, []);
     }
     output += `\nexport let ${bname}: IPlanetSurface = ${JSON.stringify(obj)};`;
   }

@@ -7,7 +7,9 @@
   "rules": {
     "indent": [true, "space", 2],
     "no-console": [false],
-    "no-bitwise": false
+    "no-bitwise": false,
+    "variable-name": false,
+    "max-classes-per-file": [false]
   },
   "rulesDirectory": []
 }
