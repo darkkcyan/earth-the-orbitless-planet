@@ -18,14 +18,16 @@ export default {
     const imageOnloadCallback = () => {
       ++numloaded;
       if (numloaded === datas.length) {
-        cb(images);      ++numloaded;
-        if (numloaded === datas.length) {
-          cb(images);
-        }
+        cb(images);
       }
     };
     for (let i = 0; i < datas.length; ++i) {
       const d = datas[i];
+      if (!d) {
+        images[i] = null;
+        ++numloaded;
+        continue;
+      }
       images[i] = new Image();
       images[i].onload = imageOnloadCallback;
       if (typeof d === "string") {

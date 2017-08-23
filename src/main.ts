@@ -14,8 +14,9 @@ const c = document.getElementById("c") as HTMLCanvasElement;
 
 imageLoader
 .add(0, 300, 150, (ctx) => renderPlanetSurface(earthsurfaceData, ctx))
-.add(1, 70, 30, (ctx) => renderPlayerGunLv3(ctx, {size: 30}))
-.load(c, ([img, gunImg]) => {
+.add(2, 70, 30, (ctx) => renderPlayerGunLv3(ctx, {size: 30}))
+.load(c, ([img, somethingIsNull, gunImg]) => {
+  console.log(somethingIsNull);
   c.width = window.innerWidth;
   c.height = window.innerHeight;
   const ctx = c.getContext("2d");
