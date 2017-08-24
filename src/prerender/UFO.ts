@@ -6,8 +6,8 @@ export interface IUFOConfig {
   color: string;
 }
 
-const GLASS_COLOR = "#C2EEFE";
-const SHADOW_GLASS_COLOR = "#7AABEB";
+const GLASS_COLOR = "rgba(194,238,254,0.601)";
+const SHADOW_GLASS_COLOR = "#B5CFD9";
 
 export function renderUFO(ctx: CanvasRenderingContext2D, config: IUFOConfig) {
   ctx.save();
