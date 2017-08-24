@@ -9,6 +9,7 @@ import {
   renderPlayerGunLv2,
   renderPlayerGunLv3,
 } from "./prerender/playerGun";
+import {renderUFO} from "./prerender/UFO";
 
 const c = document.getElementById("c") as HTMLCanvasElement;
 
@@ -16,6 +17,7 @@ imageLoader
 .add(0, 300, 150, (ctx) => renderPlanetSurface(earthsurfaceData, ctx))
 .add(1, 70, 30, (ctx) => renderPlayerGunLv1(ctx, {size: 30}))
 .add(2, 70, 30, (ctx) => renderPlayerGunLv2(ctx, {size: 30}))
+.add(3, 100, 40, (ctx) => renderUFO(ctx, {color: "#00C2D2", size: 40}))
 .load(c, () => {
   const [img, gunImg] = images;
   c.width = window.innerWidth;
@@ -33,6 +35,7 @@ imageLoader
     c.width ^= 0;
     p.process(1 / 60);
     p.render(ctx);
+    ctx.drawImage(images[3], 100, 100);
   }, 1 / 60);
 });
 
