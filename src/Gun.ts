@@ -1,4 +1,4 @@
-export default class PlayerGun {
+export default class Gun {
   public x: number = 0;
   public y: number = 0;
   public angle: number = 0;
@@ -18,7 +18,7 @@ export default class PlayerGun {
     ctx.restore();
   }
 
-  public clone(): PlayerGun {
-    return new PlayerGun(this.image, this.rotate);
+  public clone(): Gun {
+    return new Gun(this.image, this.rotate);
   }
 }

@@ -1,5 +1,8 @@
+import Gun from "./Gun";
+
 export interface IEnemyUFOConfig {
   image: HTMLImageElement;
+  gun: Gun;
 }
 
 export default class EnemyUFO {
@@ -13,6 +16,7 @@ export default class EnemyUFO {
 
   private previousPos: number[][] = [];
   private captureTimeLeft: number;
+  private gun: Gun;
 
   constructor(config: IEnemyUFOConfig) {
     this.init(config);
@@ -21,6 +25,7 @@ export default class EnemyUFO {
   public init(config: IEnemyUFOConfig) {
     this.image = config.image;
     this.previousPos = [];
+    this.gun = config.gun;
     this.captureTimeLeft = EnemyUFO.captureTime;
   }
 
@@ -33,6 +38,8 @@ export default class EnemyUFO {
       this.captureTimeLeft += EnemyUFO.captureTime;
       this.previousPos.push([this.x, this.y]);
     }
+    this.gun.x = this.x;
+    this.gun.y = this.y;
   }
 
   public render(ctx: CanvasRenderingContext2D) {
@@ -47,5 +54,6 @@ export default class EnemyUFO {
     }
     ctx.globalAlpha = 1;
     ctx.drawImage(this.image, this.x - this.image.width / 2, this.y - this.image.height / 2);
+    this.gun.render(ctx);
   }
 }
