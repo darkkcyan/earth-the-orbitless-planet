@@ -1,5 +1,14 @@
 export const PI2 = 2 * Math.PI;
 export const HALF_PI = Math.PI / 2;
+export function clamp(val: number, min: number, max: number) {
+  if (val < min) {
+    return min;
+  }
+  if (val > max) {
+    return max;
+  }
+  return val;
+}
 
 /**
  * https://en.wikipedia.org/wiki/Simple_harmonic_motion
