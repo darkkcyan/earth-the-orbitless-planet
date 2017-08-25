@@ -1,3 +1,4 @@
+import Gun from "./Gun";
 import {images} from "./imageLoader";
 import {
   HALF_PI,
@@ -8,8 +9,7 @@ import {getMousePos} from "./mouse";
 import Planet from "./Planet";
 import {
   HarmonicMotionPlayerGunFormation as GunFormation ,
-  PlayerGun as Gun,
-} from "./PlayerGun";
+} from "./PlayerGunFormation";
 import {
   PlayerRocket as Rocket,
   PlayerRocketGroup as RocketGroup,
