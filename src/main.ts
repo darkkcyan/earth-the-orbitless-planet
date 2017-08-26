@@ -13,6 +13,8 @@ import {
 } from "./prerender/gun";
 import {renderPlanetSurface} from "./prerender/planet";
 import {renderUFO} from "./prerender/UFO";
+import {Circle, Rectangle} from "./shapes";
+import SpatialHashMap, {ICollidable} from "./SpatialHashMap";
 
 const c = document.getElementById("c") as HTMLCanvasElement;
 
@@ -28,25 +30,57 @@ imageLoader
   c.width = window.innerWidth;
   c.height = window.innerHeight;
   const ctx = c.getContext("2d");
-  console.log("load complete");
-  ctx.drawImage(img, 0, 0);
-  // const p = new Player(new Planet({
-  //   radius: img.height / 2,
-  //   spinSpeed: img.height / 10,
-  //   surfaceMap: img,
-  //   tiltAngle: Math.PI / 6,
-  // }));
-  const g = new Gun(images[4], true);
-  g.angle = Math.PI / 2;
-  const u = new EnemyUFO({
-    gun: g,
-    image: images[5],
-  });
+  const p = new Player(new Planet({
+    radius: img.height / 2,
+    spinSpeed: img.height / 10,
+    surfaceMap: img,
+    tiltAngle: Math.PI / 6,
+  }));
+  p.collisionShape = new Circle(0, 0, 0);
+  // const g = new Gun(images[4], true);
+  // g.angle = Math.PI / 2;
+  // const u = new EnemyUFO({
+  //   gun: g,
+  //   image: images[5],
+  // });
+  const r: ICollidable[] = [];
+  for (let i = 50; i--; ) {
+    r.push({
+      collisionShape: new  Rectangle(
+        Math.random() * c.width,
+        Math.random() * c.height,
+        Math.random() * 40 + 10,
+        Math.random() * 40 + 10,
+      ),
+    });
+  }
   setInterval(() => {
     c.width ^= 0;
-    [u.x, u.y] = getMousePos();
-    u.process(1 / 60);
-    u.render(ctx);
+    p.process(1 / 60);
+    p.render(ctx);
+    p.collisionShape.x = p.x;
+    p.collisionShape.y = p.y;
+    p.collisionShape.radius = img.height / 2;
+    const shm = new SpatialHashMap();
+    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+    for (const rect of r) {
+      shm.insert(rect);
+      ctx.fillRect(
+        rect.collisionShape.x,
+        rect.collisionShape.y,
+        (rect.collisionShape as Rectangle).width,
+        (rect.collisionShape as Rectangle).height,
+      );
+    }
+    ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
+    for (const rect of shm.retrive(p)) {
+      ctx.fillRect(
+        rect.collisionShape.x,
+        rect.collisionShape.y,
+        (rect.collisionShape as Rectangle).width,
+        (rect.collisionShape as Rectangle).height,
+      );
+    }
   }, 1 / 60);
 });
 
