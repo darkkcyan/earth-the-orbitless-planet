@@ -1,8 +1,13 @@
-import {collisionDetector, IShape, Rectangle} from "./shapes";
+import {
+  AllKindOfShapes,
+  isCollision,
+  IShape,
+  Rectangle,
+  SHAPE_TYPE,
+} from "./shapes";
 
 export interface ICollidable {
-  boundary: Rectangle;
-  shape: IShape;
+  collisionShape: AllKindOfShapes;
 }
 
 export default class SpatialHashMap {
@@ -11,39 +16,41 @@ export default class SpatialHashMap {
   }
 
   public insert(a: ICollidable) {
-    for (const p of this.getPositions(a.boundary)) {
-      const key = this.hashFunc(p);
-      if (!this.hash[key]) {
-        this.hash[key] = [];
+    const [sx, sy, ex, ey] = this.getPositions(a.collisionShape);
+    for (let i = sx; i <= ex; ++i) {
+      for (let f = sy; f <= ey; ++f) {
+        const key = this.hashFunc(i, f);
+        if (!this.hash[key]) {
+          this.hash[key] = [];
+        }
+        this.hash[key].push(a);
       }
-      this.hash[key].push(a);
     }
   }
 
   public retrive(a: ICollidable) {
     const ans: ICollidable[] = [];
-    const bpx = a.boundary.x >> this.powerOf2;
-    const bpy = a.boundary.y >> this.powerOf2;
-    for (const p of this.getPositions(a.boundary)) {
-      const key = this.hashFunc(p);
-      if (!this.hash[key]) {
-        continue;
-      }
-      for (const obj of this.hash[key]) {
-        if (obj === a) {
+    const [sx, sy, ex, ey] = this.getPositions(a.collisionShape);
+    for (let i = sx; i <= ex; ++i) {
+      for (let f = sy; f <= ey; ++f) {
+        const key = this.hashFunc(i, f);
+        if (!this.hash[key]) {
           continue;
         }
+        for (const obj of this.hash[key]) {
+          if (obj === a) {
+            continue;
+          }
 
-        // if this object is processed before
-        if (
-          Math.max(obj.boundary.x >> this.powerOf2, bpx) !== p[0] ||
-          Math.max(obj.boundary.y >> this.powerOf2, bpy) !== p[1]
-        ) {
-          continue;
-        }
+          // if this object is processed before
+          const [ox, oy] = this.getPositions(obj.collisionShape);
+          if (Math.max(ox, sx) !== i || Math.max(oy, sy) !== f) {
+            continue;
+          }
 
-        if (collisionDetector[obj.shape.shapeType][a.shape.shapeType](obj.shape, a.shape)) {
-          ans.push(obj);
+          if (isCollision(obj.collisionShape, a.collisionShape)) {
+            ans.push(obj);
+          }
         }
       }
     }
@@ -54,21 +61,15 @@ export default class SpatialHashMap {
     return [x >> this.powerOf2, y >> this.powerOf2];
   }
 
-  private getPositions(boundary: Rectangle) {
-    const sx = boundary.x >> this.powerOf2;
-    const sy = boundary.y >> this.powerOf2;
-    const ex = (boundary.x + boundary.width) >> this.powerOf2;
-    const ey = (boundary.y + boundary.height) >> this.powerOf2;
-    const ans: Array<[number, number]> = [];
-    for (let i = sx; i <= ey; ++i) {
-      for (let f = sy; f <= ey; ++f) {
-        ans.push([i, f]);
-      }
+  private getPositions(shape: AllKindOfShapes) {
+    const ans = shape.getBounds();
+    for (let i = ans.length; i--; ) {
+      ans[i] >>= this.powerOf2;
     }
     return ans;
   }
 
-  private hashFunc([x, y]: [number, number]) {
+  private hashFunc(x: number, y: number) {
     return (x << 25 | y);  // because the safe integer range is 2 ^ 53
   }
 }
