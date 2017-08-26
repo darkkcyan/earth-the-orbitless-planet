@@ -32,7 +32,7 @@ imageLoader
   const ctx = c.getContext("2d");
   const p = new Player(new Planet({
     radius: img.height / 2,
-    spinSpeed: img.height / 10,
+    spinSpeed: img.height / 2,
     surfaceMap: img,
     tiltAngle: Math.PI / 6,
   }));
@@ -43,36 +43,55 @@ imageLoader
   //   gun: g,
   //   image: images[5],
   // });
-  const r: ICollidable[] = [];
-  for (let i = 50; i--; ) {
+  const r: Array<{
+    collisionShape: Rectangle,
+    px: number,
+    py: number,
+  }> = [];
+  // change the number to 100 to see them clearer
+  for (let i = 1000; i--; ) {
     r.push({
       collisionShape: new  Rectangle(
         Math.random() * c.width,
         Math.random() * c.height,
-        Math.random() * 40 + 10,
-        Math.random() * 40 + 10,
+        Math.random() * 16 + 1,
+        Math.random() * 16 + 1,
       ),
+      px: (Math.random() - Math.random()) * 3,
+      py: (Math.random() - Math.random()) * 3,
     });
   }
-  setInterval(() => {
+  let ld = Date.now();
+  function loop() {
     c.width ^= 0;
     p.process(1 / 60);
+    console.log((Date.now() - ld) / 1000);
+    ld = Date.now();
     p.render(ctx);
     p.collisionShape.x = p.x;
     p.collisionShape.y = p.y;
     p.collisionShape.radius = img.height / 2;
     const shm = new SpatialHashMap();
-    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+    ctx.strokeStyle = "rgb(255, 0, 0)";
+    ctx.lineWidth = 2;
     for (const rect of r) {
+      rect.collisionShape.x += rect.px;
+      rect.collisionShape.y += rect.py;
+      if (rect.collisionShape.x < 0 || rect.collisionShape.x > c.width) {
+        rect.px *= -1;
+      }
+      if (rect.collisionShape.y < 0 || rect.collisionShape.y > c.height) {
+        rect.py *= -1;
+      }
       shm.insert(rect);
-      ctx.fillRect(
+      ctx.strokeRect(
         rect.collisionShape.x,
         rect.collisionShape.y,
         (rect.collisionShape as Rectangle).width,
         (rect.collisionShape as Rectangle).height,
       );
     }
-    ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
+    ctx.fillStyle = "rgba(255, 255, 255, 1)";
     for (const rect of shm.retrive(p)) {
       ctx.fillRect(
         rect.collisionShape.x,
@@ -81,7 +100,20 @@ imageLoader
         (rect.collisionShape as Rectangle).height,
       );
     }
-  }, 1 / 60);
+    ctx.fillStyle = "rgba(255, 255, 0, 0.5)";
+    for (const rect of r) {
+      if (shm.retrive(rect).length > 0) {
+        ctx.fillRect(
+          rect.collisionShape.x,
+          rect.collisionShape.y,
+          (rect.collisionShape as Rectangle).width,
+          (rect.collisionShape as Rectangle).height,
+        );
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
 });
 
 setMouseRelativeElement(c);

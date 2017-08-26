@@ -41,12 +41,12 @@ export default class Player implements ICollidable {
       rl.push(new Rocket(
         this.planet.radius / 2.5,
         this.planet.radius / 1.5,
-        new HarmonicMotioin(10, 10, PI2 * Math.random()),
+        new HarmonicMotioin(10, 1, PI2 * Math.random()),
       ));
     }
-    this.rocketGroup = new RocketGroup(rl, new HarmonicMotioin(this.planet.radius / 4, 5));
+    this.rocketGroup = new RocketGroup(rl, new HarmonicMotioin(this.planet.radius / 4, 2));
     this.gunFormation = new GunFormation({
-      hm: new HarmonicMotioin(HALF_PI / 2.5, 10),
+      hm: new HarmonicMotioin(HALF_PI / 2.5, 3),
       mainGun: new Gun(images[3]),
       planetRadius: this.planet.radius * 1.1,
       sideGunList: [new Gun(images[1], true), new Gun(images[2], false)],
