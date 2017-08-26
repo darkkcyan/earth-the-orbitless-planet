@@ -14,9 +14,12 @@ import {
   PlayerRocket as Rocket,
   PlayerRocketGroup as RocketGroup,
 } from "./PlayerRocket";
+import {Circle} from "./shapes";
+import {ICollidable} from "./SpatialHashMap";
 
-export default class Player {
+export default class Player implements ICollidable {
   public followMouse = true;
+  public collisionShape: Circle;
 
   private rocketGroup: RocketGroup;
   private _x: number = 0;
