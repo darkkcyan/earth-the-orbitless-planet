@@ -1,3 +1,4 @@
+import Bullet from "./Bullet";
 import ctx, {celm, scrheight, scrwidth} from "./canvas";
 import {PLAYER_GUN_COLORSCHEME, UFO_GUN_COLORSCHEME} from "./colorschemes";
 import EnemyUFO from "./EnemyUFO";
@@ -42,74 +43,16 @@ imageLoader
   //   gun: g,
   //   image: images[5],
   // });
-  const r: Array<{
-    collisionShape: Rectangle,
-    px: number,
-    py: number,
-  }> = [];
-  // change the number to 100 to see them clearer
-  for (let i = 1000; i--; ) {
-    r.push({
-      collisionShape: new  Rectangle(
-        Math.random() * scrwidth,
-        Math.random() * scrheight,
-        Math.random() * 16 + 1,
-        Math.random() * 16 + 1,
-      ),
-      px: (Math.random() - Math.random()) * 3,
-      py: (Math.random() - Math.random()) * 3,
-    });
-  }
-  let ld = Date.now();
+  const b = new Bullet();
+  b.init({
+    color: "teal",
+    radius: 10,
+    speed: 1200,
+  }, 50, 50, 0);
   function loop() {
     celm.width ^= 0;
-    p.process(1 / 60);
-    console.log((Date.now() - ld) / 1000);
-    ld = Date.now();
-    p.render(ctx);
-    p.collisionShape.x = p.x;
-    p.collisionShape.y = p.y;
-    p.collisionShape.radius = img.height / 2;
-    const shm = new SpatialHashMap();
-    ctx.strokeStyle = "rgb(255, 0, 0)";
-    ctx.lineWidth = 2;
-    for (const rect of r) {
-      rect.collisionShape.x += rect.px;
-      rect.collisionShape.y += rect.py;
-      if (rect.collisionShape.x < 0 || rect.collisionShape.x > celm.width) {
-        rect.px *= -1;
-      }
-      if (rect.collisionShape.y < 0 || rect.collisionShape.y > celm.height) {
-        rect.py *= -1;
-      }
-      shm.insert(rect);
-      ctx.strokeRect(
-        rect.collisionShape.x,
-        rect.collisionShape.y,
-        (rect.collisionShape as Rectangle).width,
-        (rect.collisionShape as Rectangle).height,
-      );
-    }
-    ctx.fillStyle = "rgba(255, 255, 255, 1)";
-    for (const rect of shm.retrive(p)) {
-      ctx.fillRect(
-        rect.collisionShape.x,
-        rect.collisionShape.y,
-        (rect.collisionShape as Rectangle).width,
-        (rect.collisionShape as Rectangle).height,
-      );
-    }
-    ctx.fillStyle = "rgba(255, 255, 0, 0.5)";
-    for (const rect of r) {
-      if (shm.retrive(rect).length > 0) {
-        ctx.fillRect(
-          rect.collisionShape.x,
-          rect.collisionShape.y,
-          (rect.collisionShape as Rectangle).width,
-          (rect.collisionShape as Rectangle).height,
-        );
-      }
-    }
+    b.process(1 / 60);
+    b.render(ctx);
     requestAnimationFrame(loop);
   }
   loop();
