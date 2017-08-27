@@ -1,8 +1,9 @@
+import ctx, {celm, scrheight, scrwidth} from "./canvas";
 import {PLAYER_GUN_COLORSCHEME, UFO_GUN_COLORSCHEME} from "./colorschemes";
 import EnemyUFO from "./EnemyUFO";
 import Gun from "./Gun";
 import imageLoader, {images} from "./imageLoader";
-import {getMouseDownPos, getMousePos, setMouseRelativeElement} from "./mouse";
+import {getMousePos} from "./mouse";
 import Planet from "./Planet";
 import {earthsurface as earthsurfaceData} from "./planet-surfaces-data";
 import Player from "./Player";
@@ -16,8 +17,7 @@ import {renderUFO} from "./prerender/UFO";
 import {Circle, Rectangle} from "./shapes";
 import SpatialHashMap, {ICollidable} from "./SpatialHashMap";
 
-const c = document.getElementById("c") as HTMLCanvasElement;
-
+// tslint:disable no-shadowed-variable
 imageLoader
 .add(0, 300, 150, (ctx) => renderPlanetSurface(earthsurfaceData, ctx))
 .add(1, 70, 30, (ctx) => renderGunLv1(ctx, {size: 30, colorScheme: PLAYER_GUN_COLORSCHEME}))
@@ -25,11 +25,10 @@ imageLoader
 .add(3, 70, 30, (ctx) => renderGunLv3(ctx, {size: 30, colorScheme: PLAYER_GUN_COLORSCHEME}))
 .add(4, 60, 25, (ctx) => renderGunLv3(ctx, {size: 25, colorScheme: UFO_GUN_COLORSCHEME}))
 .add(5, 100, 40, (ctx) => renderUFO(ctx, {color: "#F200ED", size: 40}))
-.load(c, () => {
+.load(celm, () => {
   const [img, gunImg] = images;
-  c.width = window.innerWidth;
-  c.height = window.innerHeight;
-  const ctx = c.getContext("2d");
+  celm.width = scrwidth;
+  celm.height = scrheight;
   const p = new Player(new Planet({
     radius: img.height / 2,
     spinSpeed: img.height / 2,
@@ -52,8 +51,8 @@ imageLoader
   for (let i = 1000; i--; ) {
     r.push({
       collisionShape: new  Rectangle(
-        Math.random() * c.width,
-        Math.random() * c.height,
+        Math.random() * scrwidth,
+        Math.random() * scrheight,
         Math.random() * 16 + 1,
         Math.random() * 16 + 1,
       ),
@@ -63,7 +62,7 @@ imageLoader
   }
   let ld = Date.now();
   function loop() {
-    c.width ^= 0;
+    celm.width ^= 0;
     p.process(1 / 60);
     console.log((Date.now() - ld) / 1000);
     ld = Date.now();
@@ -77,10 +76,10 @@ imageLoader
     for (const rect of r) {
       rect.collisionShape.x += rect.px;
       rect.collisionShape.y += rect.py;
-      if (rect.collisionShape.x < 0 || rect.collisionShape.x > c.width) {
+      if (rect.collisionShape.x < 0 || rect.collisionShape.x > celm.width) {
         rect.px *= -1;
       }
-      if (rect.collisionShape.y < 0 || rect.collisionShape.y > c.height) {
+      if (rect.collisionShape.y < 0 || rect.collisionShape.y > celm.height) {
         rect.py *= -1;
       }
       shm.insert(rect);
@@ -115,5 +114,3 @@ imageLoader
   }
   loop();
 });
-
-setMouseRelativeElement(c);

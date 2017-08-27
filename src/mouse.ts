@@ -1,5 +1,4 @@
-let mouseDownX: number;
-let mouseDownY: number;
+import {celm, scrheight, scrwidth} from "./canvas";
 let currentX: number;
 let currentY: number;
 
@@ -12,47 +11,17 @@ let mouseStatus = MouseStatus.UP;
 
 export let getMouseStatus = () => mouseStatus;
 
-function getMousePosRelativeToElement(x: number, y: number, elm: HTMLElement): [number, number] {
-  const r = elm.getBoundingClientRect();
-  return [x - r.left, y - r.top];
-}
-
-function posInsideElement(x: number, y: number, elm: HTMLElement) {
-  const r = elm.getBoundingClientRect();
-  return (
-    (r.left <= x && x <= r.right) &&
-    (r.top <= y && y <= r.bottom)
-  );
-}
-
-window.addEventListener("mousedown", (e: MouseEvent) => {
-  mouseDownX = currentX = e.clientX;
-  mouseDownY = currentY = e.clientY;
+celm.onmousedown = (e: MouseEvent) => {
   mouseStatus = MouseStatus.DOWN;
-}, false);
+};
 
-window.addEventListener("mousemove", (e: MouseEvent) => {
-  currentX = e.clientX;
-  currentY = e.clientY;
-}, false);
+celm.onmousemove = (e: MouseEvent) => {
+  currentX = e.offsetX * scrwidth / celm.offsetWidth;
+  currentY = e.offsetY * scrheight / celm.offsetHeight;
+};
 
-window.addEventListener("mouseup", (e: MouseEvent) => {
-  currentX = e.clientX;
-  currentY = e.clientY;
+celm.onmouseup = (e: MouseEvent) => {
   mouseStatus = MouseStatus.UP;
-}, false);
+};
 
-let relativeElement: HTMLElement;
-export let setMouseRelativeElement = (elm: HTMLElement) => relativeElement = elm;
-
-export let getMouseDownPos = () =>
-  getMousePosRelativeToElement(mouseDownX, mouseDownY, relativeElement);
-
-export let getMousePos = () =>
-  getMousePosRelativeToElement(currentX, currentY, relativeElement);
-
-export let isMouseDownInsideRelativeElement = () =>
-  posInsideElement(mouseDownX, mouseDownY, relativeElement);
-
-export let isMouseInsideRelativeElement = () =>
-  posInsideElement(currentX, currentY, relativeElement);
+export let getMousePos = () => [currentX, currentY];
