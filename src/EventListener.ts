@@ -9,11 +9,13 @@ export interface IHasEventHandler {
 
 const listeners: IHasEventHandler[][] = [];
 
-export function addListener(eventId: number, obj: IHasEventHandler) {
-  if (!listeners[eventId]) {
-    listeners[eventId] = [];
+export function addListener(obj: IHasEventHandler, eventIds: number[]) {
+  for (const eventId of eventIds) {
+    if (!listeners[eventId]) {
+      listeners[eventId] = [];
+    }
+    listeners[eventId].push(obj);
   }
-  listeners[eventId].push(obj);
 }
 
 export function emit(eventId, data?: any) {

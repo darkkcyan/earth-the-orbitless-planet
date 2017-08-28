@@ -27,8 +27,7 @@ export default class Bullet implements ICollidable {
     this.angle = angle;
     this.color = config.color;
     this.isDead = false;
-    addListener(Events.process, this);
-    addListener(Events.render, this);
+    addListener(this, [Events.process, Events.render]);
   }
 
   public [Events.process](dt: number) {

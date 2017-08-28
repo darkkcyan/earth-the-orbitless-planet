@@ -20,7 +20,7 @@ import {ICollidable} from "./SpatialHashMap";
 
 export default class Player implements ICollidable {
   public followMouse = true;
-  public collisionShape: Circle;
+  public collisionShape: Circle = new Circle(0, 0, 0);
 
   [index: number]: (any) => boolean | void;
 
@@ -39,10 +39,8 @@ export default class Player implements ICollidable {
   get y() { return this._y; }
 
   constructor(private planet: Planet) {
-    addListener(Events.process, this);
-    addListener(Events.render, this);
-
     const rl = [];
+    this.collisionShape.radius = planet.radius;
     for (let i = 0; i < 3; ++i) {
       rl.push(new Rocket(
         this.planet.radius / 2.5,
@@ -58,6 +56,7 @@ export default class Player implements ICollidable {
       sideGunList: [new Gun(images[1], true), new Gun(images[2], false)],
       sideGunPhaseOffset: Math.PI / 5,
     });
+    addListener(this, [Events.process, Events.render]);
   }
 
   public [Events.process](dt: number) {

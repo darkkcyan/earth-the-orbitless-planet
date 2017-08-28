@@ -31,21 +31,21 @@ imageLoader
   const [img, gunImg] = images;
   celm.width = scrwidth;
   celm.height = scrheight;
-  const p = new Player(new Planet({
+  // tslint:disable no-unused-expression
+  // Its actually used expression, tslint does not recognize that
+  new Player(new Planet({
     radius: img.height / 2,
     spinSpeed: img.height / 2,
     surfaceMap: img,
     tiltAngle: Math.PI / 6,
   }));
-  p.collisionShape = new Circle(0, 0, 0);
   // const g = new Gun(images[4], true);
   // g.angle = Math.PI / 2;
   // const u = new EnemyUFO({
   //   gun: g,
   //   image: images[5],
   // });
-  const b = new Bullet();
-  b.init({
+  new Bullet().init({
     color: "teal",
     radius: 10,
     speed: 1200,
