@@ -44,12 +44,12 @@ imageLoader
   //   gun: g,
   //   image: images[5],
   // });
-  // const b = new Bullet();
-  // b.init({
-  //   color: "teal",
-  //   radius: 10,
-  //   speed: 1200,
-  // }, 50, 50, 0);
+  const b = new Bullet();
+  b.init({
+    color: "teal",
+    radius: 10,
+    speed: 1200,
+  }, 50, 50, 0);
   function loop() {
     celm.width ^= 0;
     emit(Events.process, 1 / 60);
