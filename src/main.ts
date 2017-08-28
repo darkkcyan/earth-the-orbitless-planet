@@ -2,6 +2,7 @@ import Bullet from "./Bullet";
 import ctx, {celm, scrheight, scrwidth} from "./canvas";
 import {PLAYER_GUN_COLORSCHEME, UFO_GUN_COLORSCHEME} from "./colorschemes";
 import EnemyUFO from "./EnemyUFO";
+import {emit, Events} from "./EventListener";
 import Gun from "./Gun";
 import imageLoader, {images} from "./imageLoader";
 import {getMousePos} from "./mouse";
@@ -43,16 +44,16 @@ imageLoader
   //   gun: g,
   //   image: images[5],
   // });
-  const b = new Bullet();
-  b.init({
-    color: "teal",
-    radius: 10,
-    speed: 1200,
-  }, 50, 50, 0);
+  // const b = new Bullet();
+  // b.init({
+  //   color: "teal",
+  //   radius: 10,
+  //   speed: 1200,
+  // }, 50, 50, 0);
   function loop() {
     celm.width ^= 0;
-    b.process(1 / 60);
-    b.render(ctx);
+    emit(Events.process, 1 / 60);
+    emit(Events.render, ctx);
     requestAnimationFrame(loop);
   }
   loop();

@@ -1,3 +1,4 @@
+import {addListener, Events} from "./EventListener";
 import Gun from "./Gun";
 import {images} from "./imageLoader";
 import {
@@ -21,6 +22,8 @@ export default class Player implements ICollidable {
   public followMouse = true;
   public collisionShape: Circle;
 
+  [index: number]: (any) => boolean | void;
+
   private rocketGroup: RocketGroup;
   private _x: number = 0;
   private _y: number = 0;
@@ -36,6 +39,9 @@ export default class Player implements ICollidable {
   get y() { return this._y; }
 
   constructor(private planet: Planet) {
+    addListener(Events.process, this);
+    addListener(Events.render, this);
+
     const rl = [];
     for (let i = 0; i < 3; ++i) {
       rl.push(new Rocket(
@@ -54,7 +60,7 @@ export default class Player implements ICollidable {
     });
   }
 
-  public process(dt: number) {
+  public [Events.process](dt: number) {
     if (this.followMouse) {
       [this.x, this.y] = getMousePos();
     }
@@ -63,7 +69,7 @@ export default class Player implements ICollidable {
     this.gunFormation.process(dt);
   }
 
-  public render(ctx: CanvasRenderingContext2D) {
+  public [Events.render](ctx: CanvasRenderingContext2D) {
     this.planet.render(ctx);
     this.rocketGroup.render(ctx);
     this.gunFormation.render(ctx);
