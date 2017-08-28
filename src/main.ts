@@ -21,10 +21,10 @@ import SpatialHashMap, {ICollidable} from "./SpatialHashMap";
 
 // tslint:disable no-shadowed-variable
 imageLoader
-.add(0, 300, 150, (ctx) => renderPlanetSurface(earthsurfaceData, ctx))
-.add(1, 70, 30, (ctx) => renderGunLv1(ctx, {size: 30, colorScheme: PLAYER_GUN_COLORSCHEME}))
-.add(2, 70, 30, (ctx) => renderGunLv2(ctx, {size: 30, colorScheme: PLAYER_GUN_COLORSCHEME}))
-.add(3, 70, 30, (ctx) => renderGunLv3(ctx, {size: 30, colorScheme: PLAYER_GUN_COLORSCHEME}))
+.add(0, 140, 70, (ctx) => renderPlanetSurface(earthsurfaceData, ctx))
+.add(1, 60, 25, (ctx) => renderGunLv1(ctx, {size: 25, colorScheme: PLAYER_GUN_COLORSCHEME}))
+.add(2, 60, 25, (ctx) => renderGunLv2(ctx, {size: 25, colorScheme: PLAYER_GUN_COLORSCHEME}))
+.add(3, 60, 25, (ctx) => renderGunLv3(ctx, {size: 25, colorScheme: PLAYER_GUN_COLORSCHEME}))
 .add(4, 60, 25, (ctx) => renderGunLv3(ctx, {size: 25, colorScheme: UFO_GUN_COLORSCHEME}))
 .add(5, 100, 40, (ctx) => renderUFO(ctx, {color: "#F200ED", size: 40}))
 .load(celm, () => {

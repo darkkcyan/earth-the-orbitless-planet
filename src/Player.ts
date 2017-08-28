@@ -45,26 +45,26 @@ export default class Player implements ICollidable {
       rl.push(new Rocket(
         this.planet.radius / 2.5,
         this.planet.radius / 1.5,
-        new HarmonicMotion(10, 1, PI2 * Math.random()),
+        new HarmonicMotion(5, 1, PI2 * Math.random()),
       ));
     }
     this.rocketGroup = new RocketGroup(rl, new HarmonicMotion(this.planet.radius / 4, 2));
     this.gunFormation = new GunFormation({
-      hm: new HarmonicMotion(HALF_PI / 3, 3),
+      hm: new HarmonicMotion(HALF_PI / 3, 2),
       mainGun: new Gun({
         bulletConfig: {
           color: "red",
-          radius: 10,
+          radius: 5,
           speed: 1200,
         },
         image: images[3],
         reloadTime: .2,
       }),
-      planetRadius: this.planet.radius * 1.1,
+      planetRadius: 45,
       sideGunList: [new Gun({
         bulletConfig: {
           color: "yellow",
-          radius: 5,
+          radius: 3,
           speed: 1000,
         },
         image: images[1],
@@ -73,7 +73,7 @@ export default class Player implements ICollidable {
       }), new Gun({
         bulletConfig: {
           color: "blue",
-          radius: 7,
+          radius: 4,
           speed: 1100,
         },
         image: images[2],
