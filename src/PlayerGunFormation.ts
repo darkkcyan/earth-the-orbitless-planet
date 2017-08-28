@@ -1,3 +1,4 @@
+import {Events} from "./EventListener";
 import Gun from "./Gun";
 import {PI2, SimpleHarmonicMotion as HarMonicmotion} from "./math";
 // TODO: make the gun fire.
@@ -32,7 +33,7 @@ export class HarmonicMotionPlayerGunFormation {
     this.hm = config.hm;
   }
 
-  public process(dt: number) {
+  public [Events.process](dt: number) {
     this.hm.process(dt);
     const sideGunTimeOffset = this.sideGunPhaseOffset / PI2 * this.hm.period;
     if (this.mainGun) {
@@ -52,7 +53,7 @@ export class HarmonicMotionPlayerGunFormation {
     }
   }
 
-  public render(ctx: CanvasRenderingContext2D) {
+  public [Events.render](ctx: CanvasRenderingContext2D) {
     for (const gun of this.leftSideGunList) {
       gun.render(ctx);
     }

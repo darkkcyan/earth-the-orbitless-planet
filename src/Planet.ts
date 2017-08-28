@@ -1,3 +1,4 @@
+import {Events} from "./EventListener";
 import {HALF_PI, PI2} from "./math";
 
 export interface IPlanetConfig {
@@ -41,14 +42,14 @@ export default class Planet {
     }
   }
 
-  public process(dt: number): void {
+  public [Events.process](dt: number) {
     this.mapPosition += dt * this.spinSpeed;
     if (this.mapPosition > this.mapWidth) {
       this.mapPosition -= this.mapWidth;
     }
   }
 
-  public render(ctx: CanvasRenderingContext2D): void {
+  public [Events.render](ctx: CanvasRenderingContext2D) {
     ctx.save();
     ctx.translate(this.x, this.y);
 

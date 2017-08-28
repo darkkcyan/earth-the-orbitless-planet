@@ -1,3 +1,4 @@
+import {Events} from "./EventListener";
 import {HALF_PI, SimpleHarmonicMotion as HarmonicMotioin} from "./math";
 
 export class PlayerRocket {
@@ -12,7 +13,7 @@ export class PlayerRocket {
   constructor(public rocketSize: number, public flameSize: number, private hm: HarmonicMotioin) {
   }
 
-  public process(dt: number) {
+  public [Events.process](dt: number) {
     this.hm.process(dt);
     const RANDOM_RANGE = this.flameSize / 5;
     this.realFlameSize = this.flameSize + (this.x - this.previousX) * 3;
@@ -82,7 +83,7 @@ export class PlayerRocket {
     ctx.restore();
   }
 
-  public render(ctx: CanvasRenderingContext2D) {
+  public [Events.render](ctx: CanvasRenderingContext2D) {
     this.renderRocketPart(ctx);
     this.renderFlamePart(ctx);
   }
@@ -104,7 +105,7 @@ export class PlayerRocketGroup {
     }
   }
 
-  public process(dt: number) {
+  public [Events.process](dt: number) {
     this.hm.process(dt);
     const timeOffset = this.hm.period / this.rocketList.length;
     let t = 0;
@@ -113,16 +114,16 @@ export class PlayerRocketGroup {
       roc.y = this.y + this.hm.getY(t);
       roc.z = this.hm.getX(t);
       t += timeOffset;
-      roc.process(dt);
+      roc[Events.process](dt);
     }
   }
 
-  public render(ctx: CanvasRenderingContext2D) {
+  public [Events.render](ctx: CanvasRenderingContext2D) {
     const rl = this.rocketList.slice();
     rl.sort((a, b) => a.z - b.z);
     for (const roc of rl) {
       roc.darkness = 1 - Math.min(0.5 + 0.5 * (roc.z / this.hm.amplitute + 1) / 2, 1);
-      roc.render(ctx);
+      roc[Events.render](ctx);
     }
   }
 }
