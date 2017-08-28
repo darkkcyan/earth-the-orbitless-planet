@@ -1,6 +1,7 @@
 // Inorder to keep this tool to be simple,
 // everythings is in a single file instead of multiple files
 //////////////////////////////////////////////////////////////////////////////
+import {Events} from "../../src/EventListener";
 import genPlanetSurfaceImageData, {
   IPlanetSurface,
   IPlanetSurfaceLayer,
@@ -506,8 +507,8 @@ outputImage.onload = () => {
   }
   intervalId = setInterval(() => {
     planet.x = planet.y = outputObject.height / 2;
-    planet.process(1 / 60);
-    planet.render(sampleCanvas.getContext("2d"));
+    planet[Events.process](1 / 60);
+    planet[Events.render](sampleCanvas.getContext("2d"));
   }, 1 / 60);
 };
 
