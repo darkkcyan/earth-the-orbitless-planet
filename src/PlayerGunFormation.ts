@@ -1,7 +1,7 @@
 import {Events} from "./EventListener";
 import Gun from "./Gun";
 import {PI2, SimpleHarmonicMotion as HarMonicmotion} from "./math";
-// TODO: make the gun fire.
+import {getMouseStatus, MouseStatus} from "./mouse";
 
 export interface IPlayerGunFormationConfig {
   planetRadius: number;
@@ -36,10 +36,13 @@ export class HarmonicMotionPlayerGunFormation {
   public [Events.process](dt: number) {
     this.hm.process(dt);
     const sideGunTimeOffset = this.sideGunPhaseOffset / PI2 * this.hm.period;
+    const fire = getMouseStatus() === MouseStatus.DOWN;
     if (this.mainGun) {
       this.mainGun.x = this.x + this.planetRadius;
       this.mainGun.y = this.y;
       this.mainGun.angle = 0;
+      this.mainGun.isFiring = fire;
+      this.mainGun[Events.process](dt);
     }
     for (let i = 0, t = 0; i < this.leftSideGunList.length; ++i, t += sideGunTimeOffset) {
       const leftGun = this.leftSideGunList[i];
@@ -50,18 +53,21 @@ export class HarmonicMotionPlayerGunFormation {
       leftGun.y = this.y + this.planetRadius * Math.sin(leftGun.angle);
       rightGun.x = this.x + this.planetRadius * Math.cos(rightGun.angle);
       rightGun.y = this.y + this.planetRadius * Math.sin(rightGun.angle);
+      leftGun.isFiring = rightGun.isFiring = fire;
+      leftGun[Events.process](dt);
+      rightGun[Events.process](dt);
     }
   }
 
   public [Events.render](ctx: CanvasRenderingContext2D) {
     for (const gun of this.leftSideGunList) {
-      gun.render(ctx);
+      gun[Events.render](ctx);
     }
     for (const gun of this.rightSideGunList) {
-      gun.render(ctx);
+      gun[Events.render](ctx);
     }
     if (this.mainGun) {
-      this.mainGun.render(ctx);
+      this.mainGun[Events.render](ctx);
     }
   }
 }

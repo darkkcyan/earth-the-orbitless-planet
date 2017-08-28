@@ -1,5 +1,6 @@
 import {scrheight, scrwidth} from "./canvas";
 import {addListener, Events} from "./EventListener";
+import ObjectRespawner from "./ObjectRespawner";
 import {Circle} from "./shapes";
 import {ICollidable} from "./SpatialHashMap";
 
@@ -10,6 +11,7 @@ export interface IBulletConfig {
 }
 
 export default class Bullet implements ICollidable {
+  public static Respawner = new ObjectRespawner(Bullet);
   public static TAIL_LENGTH = 50;
   public collisionShape: Circle = new Circle(0, 0, 0);
   public speed: number;
@@ -39,7 +41,6 @@ export default class Bullet implements ICollidable {
     ) {
       this.isDead = true;
     }
-    console.log("bullet dead", this.isDead);
     return this.isDead;
   }
 

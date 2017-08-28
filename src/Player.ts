@@ -4,7 +4,7 @@ import {images} from "./imageLoader";
 import {
   HALF_PI,
   PI2,
-  SimpleHarmonicMotion as HarmonicMotioin,
+  SimpleHarmonicMotion as HarmonicMotion,
 } from "./math";
 import {getMousePos} from "./mouse";
 import Planet from "./Planet";
@@ -45,15 +45,41 @@ export default class Player implements ICollidable {
       rl.push(new Rocket(
         this.planet.radius / 2.5,
         this.planet.radius / 1.5,
-        new HarmonicMotioin(10, 1, PI2 * Math.random()),
+        new HarmonicMotion(10, 1, PI2 * Math.random()),
       ));
     }
-    this.rocketGroup = new RocketGroup(rl, new HarmonicMotioin(this.planet.radius / 4, 2));
+    this.rocketGroup = new RocketGroup(rl, new HarmonicMotion(this.planet.radius / 4, 2));
     this.gunFormation = new GunFormation({
-      hm: new HarmonicMotioin(HALF_PI / 2.5, 3),
-      mainGun: new Gun(images[3]),
+      hm: new HarmonicMotion(HALF_PI / 3, 3),
+      mainGun: new Gun({
+        bulletConfig: {
+          color: "red",
+          radius: 10,
+          speed: 1200,
+        },
+        image: images[3],
+        reloadTime: .2,
+      }),
       planetRadius: this.planet.radius * 1.1,
-      sideGunList: [new Gun(images[1], true), new Gun(images[2], false)],
+      sideGunList: [new Gun({
+        bulletConfig: {
+          color: "yellow",
+          radius: 5,
+          speed: 1000,
+        },
+        image: images[1],
+        reloadTime: .2,
+        rotate: true,
+      }), new Gun({
+        bulletConfig: {
+          color: "blue",
+          radius: 7,
+          speed: 1100,
+        },
+        image: images[2],
+        reloadTime: .2,
+      })],
+      // sideGunList: [],
       sideGunPhaseOffset: Math.PI / 5,
     });
     addListener(this, [Events.process, Events.render]);

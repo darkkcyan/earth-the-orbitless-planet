@@ -75,7 +75,7 @@ export interface IHasEventHandler {
   [index: number]: (any) => boolean | void;
 }
 
-const listeners: IHasEventHandler[][] = [];
+export const listeners: IHasEventHandler[][] = [];
 
 export function addListener(obj: IHasEventHandler, eventIds: number[]) {
   for (const eventId of eventIds) {
