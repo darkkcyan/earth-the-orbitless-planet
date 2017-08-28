@@ -16,8 +16,11 @@ export default class ObjectRespawner<T> {
   private queue: T[] = [];
   private currentHead = 0;
 
-  constructor(private ctor: IConstructor<T>, numberOfObject: number) {
-    while (numberOfObject --) {
+  constructor(private ctor: IConstructor<T>) {
+  }
+
+  public assign(numberOfObject: number) {
+    while (numberOfObject--) {
       this.free(new this.ctor());
     }
   }
