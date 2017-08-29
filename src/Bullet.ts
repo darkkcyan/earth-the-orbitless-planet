@@ -40,6 +40,7 @@ export default class Bullet implements ICollidable {
       x > scrwidth + Bullet.TAIL_LENGTH || y > scrheight + Bullet.TAIL_LENGTH
     ) {
       this.isDead = true;
+      Bullet.Respawner.free(this);
     }
     return this.isDead;
   }

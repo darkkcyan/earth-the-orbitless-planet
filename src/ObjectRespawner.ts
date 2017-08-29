@@ -1,3 +1,4 @@
+import {addListener, Events} from "./EventListener";
 interface IConstructor<T> {
   new(): T;
 }
@@ -16,7 +17,10 @@ export default class ObjectRespawner<T> {
   private queue: T[] = [];
   private currentHead = 0;
 
+  [index: number]: (any) => boolean | void;
+
   constructor(private ctor: IConstructor<T>) {
+    addListener(this, [Events.process]);
   }
 
   public assign(numberOfObject: number) {
@@ -42,6 +46,10 @@ export default class ObjectRespawner<T> {
       this.queue.splice(0, this.currentHead);
       this.currentHead = 0;
     }
+  }
+
+  public [Events.process]() {
+    this.clean();
   }
 
 }

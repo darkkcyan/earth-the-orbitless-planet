@@ -1,3 +1,4 @@
+import {Events} from "./EventListener";
 import Gun from "./Gun";
 
 export interface IEnemyUFOConfig {
@@ -54,6 +55,6 @@ export default class EnemyUFO {
     }
     ctx.globalAlpha = 1;
     ctx.drawImage(this.image, this.x - this.image.width / 2, this.y - this.image.height / 2);
-    this.gun.render(ctx);
+    this.gun[Events.render](ctx);
   }
 }
