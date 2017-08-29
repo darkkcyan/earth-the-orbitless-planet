@@ -19,6 +19,7 @@ import {renderPlanetSurface} from "./prerender/planet";
 import {renderUFO} from "./prerender/UFO";
 import {Circle, Rectangle} from "./shapes";
 import SpatialHashMap, {ICollidable} from "./SpatialHashMap";
+import formations, {UFOFormation} from "./UFOFormation";
 
 // tslint:disable no-shadowed-variable
 imageLoader
@@ -41,15 +42,13 @@ imageLoader
     tiltAngle: Math.PI / 6,
   })));
   const u = new EnemyUFO();
-  u.init({
+  new formations[0]([{
     bulletConfig: {
       color: "red",
       radius: 6,
       speed: 500,
     },
     image: images[5],
-  });
-  u.x = scrwidth / 2;
-  u.y = scrheight / 2;
+  }]);
   gameloop();
 });

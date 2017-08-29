@@ -11,9 +11,9 @@ export interface IEnemyUFOConfig {
 
 export default class EnemyUFO {
   [index: number]: (any) => boolean | void;
-  public static offsetAlpha = .03;
+  public static offsetAlpha = .05;
   public static maxNumberOfShadow = 5;
-  public static captureTime = .2;
+  public static captureTime = .075;
 
   public static fireTimeRange: [number, number] = [1, 2];
   public static fireTowardPlayerProbability = .3;
