@@ -11,6 +11,7 @@ export interface IUFOFormationConstructor {
 export const enum UFOFormation {
   zigzag,
   polygon,
+  towardPlayer,
 }
 
 const formations: IUFOFormationConstructor[] = [];
@@ -33,15 +34,12 @@ class PolygonFormation {
   private sideUFO: EnemyUFO[] = [];
   private rotatehm = new HarmonicMotion(PolygonFormation.radius, 3);
 
-  constructor(UFOList: IEnemyUFOConfig[]) {
-    this.mainUFO = new EnemyUFO();
-    this.mainUFO.init(UFOList.shift());
+  constructor(UFOConfigList: IEnemyUFOConfig[]) {
+    this.mainUFO = EnemyUFO.Respawner.get().init(UFOConfigList.shift());
     this.mainUFO.x = scrwidth + 100;  // magic number :D
     this.mainUFO.y = scrheight / 2;
-    for (const config of UFOList) {
-      const u = new EnemyUFO();
-      u.init(config);
-      this.sideUFO.push(u);
+    for (const config of UFOConfigList) {
+      this.sideUFO.push(EnemyUFO.Respawner.get().init(config));
     }
     addListener(this, [Events.process]);
   }
@@ -96,9 +94,8 @@ class ZigzagFormation {
     const sign = Math.random() < .5 ? 1 : -1;
     let x = scrwidth + 100;
     let y = Math.random() * scrheight;
-    for (const UFOConfig of (arg as IEnemyUFOConfig[])) {
-      const u = new EnemyUFO();
-      u.init(UFOConfig);
+    for (const config of (arg as IEnemyUFOConfig[])) {
+      const u = EnemyUFO.Respawner.get().init(config);
       u.x = x;
       u.y = y;
       this.UFOList.push(u);
@@ -107,7 +104,6 @@ class ZigzagFormation {
       y -= py * sign;
     }
     addListener(this, [Events.process]);
-    console.log(this.angle);
   }
 
   public [Events.process]() {
@@ -126,3 +122,5 @@ class ZigzagFormation {
     }
   }
 }
+
+formations[UFOFormation.zigzag] = ZigzagFormation;

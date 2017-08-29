@@ -57,5 +57,14 @@ imageLoader
     },
     image: images[5],
   }, 3)]);
+
+  new formations[0]([...rep({
+    bulletConfig: {
+      color: "blue",
+      radius: 6,
+      speed: 500,
+    },
+    image: images[5],
+  }, 10)]);
   gameloop();
 });

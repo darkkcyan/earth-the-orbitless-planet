@@ -3,6 +3,7 @@ import ctx from "./canvas";
 import {addListener, Events} from "./EventListener";
 import {dt, player} from "./game";
 import {randRange} from "./math";
+import ObjectRespawner from "./ObjectRespawner";
 
 export interface IEnemyUFOConfig {
   image: HTMLImageElement;
@@ -10,6 +11,7 @@ export interface IEnemyUFOConfig {
 }
 
 export default class EnemyUFO {
+  public static Respawner = new ObjectRespawner(EnemyUFO);
   [index: number]: (any) => boolean | void;
   public static offsetAlpha = .05;
   public static maxNumberOfShadow = 5;
@@ -32,6 +34,7 @@ export default class EnemyUFO {
     this.captureTimeLeft = 0;
     this.fireTime = randRange(EnemyUFO.fireTimeRange);
     addListener(this, [Events.process, Events.render]);
+    return this;
   }
 
   public [Events.process]() {
