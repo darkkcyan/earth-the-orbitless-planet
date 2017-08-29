@@ -3,7 +3,7 @@ import ctx, {celm, scrheight, scrwidth} from "./canvas";
 import {PLAYER_GUN_COLORSCHEME, UFO_GUN_COLORSCHEME} from "./colorschemes";
 import EnemyUFO from "./EnemyUFO";
 import {emit, Events, listeners} from "./EventListener";
-import {gameloop} from "./game";
+import {gameloop, player, setPlayer} from "./game";
 import Gun from "./Gun";
 import imageLoader, {images} from "./imageLoader";
 import {getMousePos} from "./mouse";
@@ -34,17 +34,22 @@ imageLoader
   celm.height = scrheight;
   // tslint:disable no-unused-expression
   // Its actually used expression, tslint does not recognize that
-  new Player(new Planet({
+  setPlayer(new Player(new Planet({
     radius: img.height / 2,
     spinSpeed: img.height / 2,
     surfaceMap: img,
     tiltAngle: Math.PI / 6,
-  }));
-  // const g = new Gun(images[4], true);
-  // g.angle = Math.PI / 2;
-  // const u = new EnemyUFO({
-  //   gun: g,
-  //   image: images[5],
-  // });
+  })));
+  const u = new EnemyUFO();
+  u.init({
+    bulletConfig: {
+      color: "red",
+      radius: 6,
+      speed: 500,
+    },
+    image: images[5],
+  });
+  u.x = scrwidth / 2;
+  u.y = scrheight / 2;
   gameloop();
 });

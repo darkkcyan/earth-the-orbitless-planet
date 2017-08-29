@@ -10,6 +10,10 @@ export function clamp(val: number, min: number, max: number) {
   return val;
 }
 
+export function randRange(range) {
+  return range[0] + Math.random() * (range[1] - range[0] + 1);
+}
+
 /**
  * https://en.wikipedia.org/wiki/Simple_harmonic_motion
  * This class is made with some helper function to compute the position x, position y, ...
