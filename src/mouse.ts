@@ -1,6 +1,6 @@
 import {celm, scrheight, scrwidth} from "./canvas";
-let currentX: number;
-let currentY: number;
+let currentX: number = 0;
+let currentY: number = 0;
 
 export const enum MouseStatus {
   DOWN,

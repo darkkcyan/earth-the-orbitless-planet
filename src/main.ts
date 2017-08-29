@@ -56,11 +56,20 @@ imageLoader
       speed: 500,
     },
     image: images[5],
-  }, 3)]);
+  }, 9)]);
 
   new formations[0]([...rep({
     bulletConfig: {
       color: "blue",
+      radius: 6,
+      speed: 500,
+    },
+    image: images[5],
+  }, 10)]);
+
+  new formations[2]([200, ...rep({
+    bulletConfig: {
+      color: "red",
       radius: 6,
       speed: 500,
     },

@@ -124,3 +124,39 @@ class ZigzagFormation {
 }
 
 formations[UFOFormation.zigzag] = ZigzagFormation;
+
+class TowardPlayerFormation {
+  [index: number]: (any?) => boolean | void;
+
+  public static speedx = 300;
+  public static speedyRatio = 1.2;
+  public UFOList: EnemyUFO[] = [];
+  constructor(UFOConfigList: Array<IEnemyUFOConfig | number>) {
+    let x = scrwidth + 100;
+    const px = typeof UFOConfigList[0] === "number" ? +UFOConfigList.shift() : 100;
+    const y = scrheight * Math.random();
+    for (const config of (UFOConfigList as IEnemyUFOConfig[])) {
+      const u = EnemyUFO.Respawner.get().init(config);
+      u.x = x;
+      u.y = y;
+      x += px;
+      this.UFOList.push(u);
+    }
+    addListener(this, [Events.process]);
+  }
+
+  public [Events.process]() {
+    for (const u of this.UFOList) {
+      u.x -= TowardPlayerFormation.speedx * dt;
+      const d = player.y - u.y;
+      const s = d < 0 ? -1 : +(d > 0);
+      if (d * s > 200) {
+        u.y += d * dt * TowardPlayerFormation.speedyRatio;
+      } else if (d * s > 40) {
+        u.y += 200 * s * dt;
+      }
+    }
+  }
+}
+
+formations[UFOFormation.towardPlayer] = TowardPlayerFormation;
