@@ -9,7 +9,6 @@ export interface IUFOFormationConstructor {
 }
 
 export const enum UFOFormation {
-  single,
   zigzag,
   polygon,
 }
@@ -17,24 +16,33 @@ export const enum UFOFormation {
 const formations: IUFOFormationConstructor[] = [];
 export default formations;
 
-class SingleUFOFormation {
+class PolygonFormation {
   public static towardPlayerProbability = .05;
   public static moveTime = 1.5;
+  public static radius = 100;
 
   [index: number]: (any?) => boolean | void;
-  public UFO: EnemyUFO;
+  public mainUFO: EnemyUFO;
 
   private dtx = 0;
   private dty = 0;
   private nextX = 0;
   private nextY = 0;
-  private currentTime = SingleUFOFormation.moveTime * 2;
-  private hm = new HarmonicMotion(.5, 2 * SingleUFOFormation.moveTime);
+  private currentTime = PolygonFormation.moveTime * 2;
+  private hm = new HarmonicMotion(.5, 2 * PolygonFormation.moveTime);
+  private sideUFO: EnemyUFO[] = [];
+  private rotatehm = new HarmonicMotion(PolygonFormation.radius, 3);
+
   constructor(UFOList: IEnemyUFOConfig[]) {
-    this.UFO = new EnemyUFO();
-    this.UFO.init(UFOList[0]);
-    this.UFO.x = scrwidth + 100;  // magic number :D
-    this.UFO.y = scrheight / 2;
+    this.mainUFO = new EnemyUFO();
+    this.mainUFO.init(UFOList.shift());
+    this.mainUFO.x = scrwidth + 100;  // magic number :D
+    this.mainUFO.y = scrheight / 2;
+    for (const config of UFOList) {
+      const u = new EnemyUFO();
+      u.init(config);
+      this.sideUFO.push(u);
+    }
     addListener(this, [Events.process]);
   }
 
@@ -42,22 +50,31 @@ class SingleUFOFormation {
     this.hm.process(dt);
     if (this.hm.getPhase() < Math.PI) {
       this.hm.t = this.hm.period / 2;
-      if (Math.random() <= SingleUFOFormation.towardPlayerProbability) {
+      if (Math.random() <= PolygonFormation.towardPlayerProbability) {
         this.nextX = player.x;
         this.nextY = player.y;
       } else {
         this.nextX = scrwidth * (Math.random() / 2 + .5);
         this.nextY = scrheight * Math.random();
       }
-      this.dtx = this.nextX - this.UFO.x;
-      this.dty = this.nextY - this.UFO.y;
+      this.dtx = this.nextX - this.mainUFO.x;
+      this.dty = this.nextY - this.mainUFO.y;
     }
-    this.UFO.x = this.nextX + (this.hm.getX() - .5) * this.dtx;
-    this.UFO.y = this.nextY + (this.hm.getX() - .5) * this.dty;
+    this.mainUFO.x = this.nextX + (this.hm.getX() - .5) * this.dtx;
+    this.mainUFO.y = this.nextY + (this.hm.getX() - .5) * this.dty;
+
+    this.rotatehm.process(dt);
+    const timeoffset = this.rotatehm.period / this.sideUFO.length;
+    let t = 0;
+    for (const UFO of this.sideUFO) {
+      UFO.x = this.mainUFO.x + this.rotatehm.getX(t);
+      UFO.y = this.mainUFO.y + this.rotatehm.getY(t);
+      t += timeoffset;
+    }
   }
 }
 
-formations[UFOFormation.single] = SingleUFOFormation;
+formations[UFOFormation.polygon] = PolygonFormation;
 
 class ZigzagFormation {
   [index: number]: (any?) => boolean | void;
@@ -109,34 +126,3 @@ class ZigzagFormation {
     }
   }
 }
-
-formations[UFOFormation.zigzag] = ZigzagFormation;
-class PolygonFormation extends SingleUFOFormation {
-  public static radius = 100;
-  public sideUFO: EnemyUFO[] = [];
-
-  private rotatehm = new HarmonicMotion(PolygonFormation.radius, 2);
-
-  constructor(arg: IEnemyUFOConfig[]) {
-    super([arg.shift()]);
-    for (const config of arg) {
-      const u = new EnemyUFO();
-      u.init(config);
-      this.sideUFO.push(u);
-    }
-  }
-
-  public [Events.process]() {
-    super[Events.process]();
-    this.rotatehm.process(dt);
-    const timeoffset = this.rotatehm.period / this.sideUFO.length;
-    let t = 0;
-    for (const UFO of this.sideUFO) {
-      UFO.x = this.UFO.x + this.rotatehm.getX(t);
-      UFO.y = this.UFO.y + this.rotatehm.getY(t);
-      t += timeoffset;
-    }
-  }
-}
-
-formations[UFOFormation.polygon] = PolygonFormation;
