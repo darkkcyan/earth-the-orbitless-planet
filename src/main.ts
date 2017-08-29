@@ -42,13 +42,20 @@ imageLoader
     tiltAngle: Math.PI / 6,
   })));
   const u = new EnemyUFO();
-  new formations[0]([{
+  function rep<T>(obj: T, n: number) {
+    const ans: T[] = [];
+    for (; n--; ) {
+      ans.push(obj);
+    }
+    return ans;
+  }
+  new formations[1]([...rep({
     bulletConfig: {
       color: "red",
       radius: 6,
       speed: 500,
     },
     image: images[5],
-  }]);
+  }, 10)]);
   gameloop();
 });
