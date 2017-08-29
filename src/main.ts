@@ -49,13 +49,13 @@ imageLoader
     }
     return ans;
   }
-  new formations[1]([...rep({
+  new formations[2]([...rep({
     bulletConfig: {
       color: "red",
       radius: 6,
       speed: 500,
     },
     image: images[5],
-  }, 10)]);
+  }, 6)]);
   gameloop();
 });
