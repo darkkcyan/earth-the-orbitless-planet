@@ -2,6 +2,7 @@ import {scrheight, scrwidth} from "./canvas";
 import EnemyUFO, {IEnemyUFOConfig} from "./EnemyUFO";
 import {addListener, Events} from "./EventListener";
 import {dt, player} from "./game";
+import {SimpleHarmonicMotion as HarmonicMotion} from "./math";
 
 export interface IUFOFormationConstructor {
   new (UFOList: IEnemyUFOConfig[]);
@@ -15,15 +16,18 @@ const formations: IUFOFormationConstructor[] = [];
 export default formations;
 
 formations[UFOFormation.single] = class SingleUFOFormation {
-  public static towardPlayerProbability = .1;
-  public static moveTime = .7;
+  public static towardPlayerProbability = .05;
+  public static moveTime = 1.5;
 
   [index: number]: (any) => boolean | void;
   public UFO: EnemyUFO;
 
+  private dtx = 0;
+  private dty = 0;
   private nextX = 0;
   private nextY = 0;
   private currentTime = SingleUFOFormation.moveTime * 2;
+  private hm = new HarmonicMotion(.5, 2 * SingleUFOFormation.moveTime);
   constructor(UFOList: IEnemyUFOConfig[]) {
     this.UFO = new EnemyUFO();
     this.UFO.init(UFOList[0]);
@@ -33,8 +37,9 @@ formations[UFOFormation.single] = class SingleUFOFormation {
   }
 
   public [Events.process]() {
-    if (this.currentTime >= 2 * SingleUFOFormation.moveTime) {
-      this.currentTime -= 2 * SingleUFOFormation.moveTime;
+    this.hm.process(dt);
+    if (this.hm.getPhase() < Math.PI) {
+      this.hm.t = this.hm.period / 2;
       if (Math.random() <= SingleUFOFormation.towardPlayerProbability) {
         this.nextX = player.x;
         this.nextY = player.y;
@@ -42,13 +47,10 @@ formations[UFOFormation.single] = class SingleUFOFormation {
         this.nextX = scrwidth * (Math.random() / 2 + .5);
         this.nextY = scrheight * Math.random();
       }
+      this.dtx = this.nextX - this.UFO.x;
+      this.dty = this.nextY - this.UFO.y;
     }
-    this.currentTime += dt;
-    const t = SingleUFOFormation.moveTime - this.currentTime;
-    if (t <= 0) {
-      return;
-    }
-    this.UFO.x += dt / t * (this.nextX - this.UFO.x);
-    this.UFO.y += dt / t * (this.nextY - this.UFO.y);
+    this.UFO.x = this.nextX + (this.hm.getX() - .5) * this.dtx;
+    this.UFO.y = this.nextY + (this.hm.getX() - .5) * this.dty;
   }
 };
