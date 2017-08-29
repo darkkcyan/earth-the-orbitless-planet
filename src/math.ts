@@ -10,8 +10,8 @@ export function clamp(val: number, min: number, max: number) {
   return val;
 }
 
-export function randRange(range) {
-  return range[0] + Math.random() * (range[1] - range[0] + 1);
+export function randRange(range: number[]) {
+  return range[0] + Math.random() * (range[1] - range[0]);
 }
 
 /**
