@@ -1,4 +1,6 @@
+import ctx from "./canvas";
 import {Events} from "./EventListener";
+import {dt} from "./game";
 import {HALF_PI, SimpleHarmonicMotion as HarmonicMotioin} from "./math";
 
 export class PlayerRocket {
@@ -13,7 +15,7 @@ export class PlayerRocket {
   constructor(public rocketSize: number, public flameSize: number, private hm: HarmonicMotioin) {
   }
 
-  public [Events.process](dt: number) {
+  public [Events.process]() {
     this.hm.process(dt);
     const RANDOM_RANGE = this.flameSize / 5;
     this.realFlameSize = this.flameSize + (this.x - this.previousX) * 3;
@@ -25,7 +27,7 @@ export class PlayerRocket {
     this.previousY = this.y;
   }
 
-  public renderRocketPart(ctx: CanvasRenderingContext2D) {
+  public renderRocketPart() {
     const x = this.x - this.hm.getX();
     const y = this.y;
     const halfrs = this.rocketSize / 2;
@@ -56,7 +58,7 @@ export class PlayerRocket {
     ctx.fill();
   }
 
-  public renderFlamePart(ctx: CanvasRenderingContext2D) {
+  public renderFlamePart() {
     const halfrs = this.rocketSize / 2;
     const x = this.x - this.hm.getX() - halfrs * 2;
     const y = this.y;
@@ -83,15 +85,13 @@ export class PlayerRocket {
     ctx.restore();
   }
 
-  public [Events.render](ctx: CanvasRenderingContext2D) {
-    this.renderRocketPart(ctx);
-    this.renderFlamePart(ctx);
+  public [Events.render]() {
+    this.renderRocketPart();
+    this.renderFlamePart();
   }
 }
 
-interface IPlayerRocketWithZOrder extends PlayerRocket {
-  z: number;
-}
+type IPlayerRocketWithZOrder = PlayerRocket & {z: number};
 
 export class PlayerRocketGroup {
   public x: number;
@@ -105,7 +105,7 @@ export class PlayerRocketGroup {
     }
   }
 
-  public [Events.process](dt: number) {
+  public [Events.process]() {
     this.hm.process(dt);
     const timeOffset = this.hm.period / this.rocketList.length;
     let t = 0;
@@ -114,16 +114,16 @@ export class PlayerRocketGroup {
       roc.y = this.y + this.hm.getY(t);
       roc.z = this.hm.getX(t);
       t += timeOffset;
-      roc[Events.process](dt);
+      roc[Events.process]();
     }
   }
 
-  public [Events.render](ctx: CanvasRenderingContext2D) {
+  public [Events.render]() {
     const rl = this.rocketList.slice();
     rl.sort((a, b) => a.z - b.z);
     for (const roc of rl) {
       roc.darkness = 1 - Math.min(0.5 + 0.5 * (roc.z / this.hm.amplitute + 1) / 2, 1);
-      roc[Events.render](ctx);
+      roc[Events.render]();
     }
   }
 }

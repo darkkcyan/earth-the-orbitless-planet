@@ -11,7 +11,7 @@ export function gameloop() {
   dt = (Date.now() - lastTime) / 1000;
   lastTime = Date.now();
   celm.width ^= 0;
-  emit(Events.process, dt);
-  emit(Events.render, ctx);
+  emit(Events.process);
+  emit(Events.render);
   requestAnimationFrame(gameloop);
 }

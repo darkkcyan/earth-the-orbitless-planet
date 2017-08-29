@@ -1,5 +1,7 @@
 import Bullet, {IBulletConfig} from "./Bullet";
+import ctx from "./canvas";
 import {Events} from "./EventListener";
+import {dt} from "./game";
 
 export interface IGunConfig {
   image: HTMLImageElement;
@@ -30,7 +32,7 @@ export default class Gun {
     );
   }
 
-  public [Events.process](dt: number) {
+  public [Events.process]() {
     this.currentTime -= dt;
     if (this.currentTime <= 0) {
       this.currentTime += this.config.reloadTime;
@@ -43,7 +45,7 @@ export default class Gun {
     }
   }
 
-  public [Events.render](ctx: CanvasRenderingContext2D) {
+  public [Events.render]() {
     ctx.save();
     ctx.shadowBlur = this.config.image.height / 10;
     ctx.shadowColor = "black";

@@ -1,4 +1,6 @@
+import ctx from "./canvas";
 import {Events} from "./EventListener";
+import {dt} from "./game";
 import {HALF_PI, PI2} from "./math";
 
 export interface IPlanetConfig {
@@ -42,14 +44,14 @@ export default class Planet {
     }
   }
 
-  public [Events.process](dt: number) {
+  public [Events.process]() {
     this.mapPosition += dt * this.spinSpeed;
     if (this.mapPosition > this.mapWidth) {
       this.mapPosition -= this.mapWidth;
     }
   }
 
-  public [Events.render](ctx: CanvasRenderingContext2D) {
+  public [Events.render]() {
     ctx.save();
     ctx.translate(this.x, this.y);
 
@@ -74,7 +76,7 @@ export default class Planet {
     ctx.beginPath();
     ctx.arc(this.radius, 0, this.radius * Math.SQRT2, -Math.PI * 3 / 4, Math.PI * 3 / 4, true);
     ctx.arc(0, 0, this.radius, HALF_PI, - HALF_PI);
-    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";  // gray color with half alpha, make it feels like shadow
+    ctx.fillStyle = "rgba(0,0,0,0.5)";  // gray color with half alpha, make it feels like shadow
     ctx.fill();
     ctx.restore();
   }

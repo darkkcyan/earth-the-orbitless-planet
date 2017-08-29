@@ -1,5 +1,6 @@
-import {scrheight, scrwidth} from "./canvas";
+import ctx, {scrheight, scrwidth} from "./canvas";
 import {addListener, Events} from "./EventListener";
+import {dt} from "./game";
 import ObjectRespawner from "./ObjectRespawner";
 import {Circle} from "./shapes";
 import {ICollidable} from "./SpatialHashMap";
@@ -32,7 +33,7 @@ export default class Bullet implements ICollidable {
     addListener(this, [Events.process, Events.render]);
   }
 
-  public [Events.process](dt: number) {
+  public [Events.process]() {
     const x = this.collisionShape.x += this.speed * Math.cos(this.angle) * dt;
     const y = this.collisionShape.y += this.speed * Math.sin(this.angle) * dt;
     if (
@@ -45,7 +46,7 @@ export default class Bullet implements ICollidable {
     return this.isDead;
   }
 
-  public [Events.render](ctx: CanvasRenderingContext2D) {
+  public [Events.render]() {
     const {x, y} = this.collisionShape;
     ctx.beginPath();
     ctx.lineWidth = 2 * this.collisionShape.radius;

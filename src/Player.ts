@@ -85,18 +85,18 @@ export default class Player implements ICollidable {
     addListener(this, [Events.process, Events.render]);
   }
 
-  public [Events.process](dt: number) {
+  public [Events.process]() {
     if (this.followMouse) {
       [this.x, this.y] = getMousePos();
     }
-    this.planet[Events.process](dt);
-    this.rocketGroup[Events.process](dt);
-    this.gunFormation[Events.process](dt);
+    this.planet[Events.process]();
+    this.rocketGroup[Events.process]();
+    this.gunFormation[Events.process]();
   }
 
-  public [Events.render](ctx: CanvasRenderingContext2D) {
-    this.planet[Events.render](ctx);
-    this.rocketGroup[Events.render](ctx);
-    this.gunFormation[Events.render](ctx);
+  public [Events.render]() {
+    this.planet[Events.render]();
+    this.rocketGroup[Events.render]();
+    this.gunFormation[Events.render]();
   }
 }

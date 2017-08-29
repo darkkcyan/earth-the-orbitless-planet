@@ -1,4 +1,6 @@
+import ctx from "./canvas";
 import {Events} from "./EventListener";
+import {dt} from "./game";
 import Gun from "./Gun";
 
 export interface IEnemyUFOConfig {
@@ -11,6 +13,8 @@ export default class EnemyUFO {
   public static maxNumberOfShadow = 5;
   public static captureTime = .2;
 
+  public static fireTimeRange: [number, number] = [5, 10];
+
   public image: HTMLImageElement;
   public x: number = 0;
   public y: number = 0;
@@ -19,10 +23,6 @@ export default class EnemyUFO {
   private captureTimeLeft: number;
   private gun: Gun;
 
-  constructor(config: IEnemyUFOConfig) {
-    this.init(config);
-  }
-
   public init(config: IEnemyUFOConfig) {
     this.image = config.image;
     this.previousPos = [];
@@ -30,7 +30,7 @@ export default class EnemyUFO {
     this.captureTimeLeft = EnemyUFO.captureTime;
   }
 
-  public process(dt: number) {
+  public process() {
     while (this.previousPos.length > EnemyUFO.maxNumberOfShadow) {
       this.previousPos.shift();
     }
@@ -43,7 +43,7 @@ export default class EnemyUFO {
     this.gun.y = this.y;
   }
 
-  public render(ctx: CanvasRenderingContext2D) {
+  public render() {
     for (
       let i = 0, alpha = EnemyUFO.offsetAlpha;
       i < this.previousPos.length - 1;
@@ -55,6 +55,6 @@ export default class EnemyUFO {
     }
     ctx.globalAlpha = 1;
     ctx.drawImage(this.image, this.x - this.image.width / 2, this.y - this.image.height / 2);
-    this.gun[Events.render](ctx);
+    this.gun[Events.render]();
   }
 }
