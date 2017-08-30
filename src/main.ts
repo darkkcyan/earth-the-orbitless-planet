@@ -19,7 +19,14 @@ import {renderPlanetSurface} from "./prerender/planet";
 import {renderUFO} from "./prerender/UFO";
 import {Circle, Rectangle} from "./shapes";
 import SpatialHashMap, {ICollidable} from "./SpatialHashMap";
-import formations, {UFOFormation} from "./UFOFormation";
+import UFOFormation, {
+  PolygonUPP,
+  RandomPositionSPP,
+  StraightForwardSPP,
+  StraightLineUPP,
+  TowardPlayerSPP,
+  WallUPP,
+} from "./UFOFormation";
 
 // tslint:disable no-shadowed-variable
 imageLoader
@@ -49,31 +56,18 @@ imageLoader
     }
     return ans;
   }
-  new formations[1]([...rep({
-    bulletConfig: {
-      color: "red",
-      radius: 6,
-      speed: 500,
-    },
-    image: images[5],
-  }, 9)]);
+  new UFOFormation(
+    [...rep({
+      bulletConfig: {
+        color: "red",
+        radius: 6,
+        speed: 500,
+      },
+      image: images[5],
+    }, 15)],
+    new TowardPlayerSPP(),
+    new WallUPP(),
+  );
 
-  new formations[0]([...rep({
-    bulletConfig: {
-      color: "blue",
-      radius: 6,
-      speed: 500,
-    },
-    image: images[5],
-  }, 10)]);
-
-  new formations[2]([200, ...rep({
-    bulletConfig: {
-      color: "red",
-      radius: 6,
-      speed: 500,
-    },
-    image: images[5],
-  }, 10)]);
   gameloop();
 });
