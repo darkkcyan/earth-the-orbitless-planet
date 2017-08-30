@@ -33,7 +33,7 @@ export default class Bullet implements ICollidable {
     this.color = config.color;
     this.isDead = false;
     this.tag = config.isPlayerBullet ? Tag.player_bullet : Tag.enemy_bullet;
-    addListener(this, [Events.process, Events.collisionCheck, Events.render]);
+    addListener(this, [Events.process, Events.render]);
   }
 
   public [Events.process]() {
@@ -44,23 +44,16 @@ export default class Bullet implements ICollidable {
       x > scrwidth + Bullet.TAIL_LENGTH || y > scrheight + Bullet.TAIL_LENGTH
     ) {
       this.isDead = true;
-      Bullet.Respawner.free(this);
     }
-    shm.insert(this);
-    return this.isDead;
-  }
 
-  public [Events.collisionCheck]() {
-    for (const obj of shm.retrive(this)) {
-      if (
-        (obj.tag === Tag.player && this.tag === Tag.enemy_bullet) ||
-        (obj.tag === Tag.enemy && this.tag === Tag.player_bullet)
-      ) {
-        this.isDead = true;
-        this.tag = Tag.no_tag;
-        // TODO: sumon partical :D
-        break;
-      }
+    if (this.tag === Tag.no_tag) {
+      this.isDead = true;
+    }
+
+    if (!this.isDead) {
+      shm.insert(this);
+    } else {
+      Bullet.Respawner.free(this);
     }
     return this.isDead;
   }

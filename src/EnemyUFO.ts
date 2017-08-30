@@ -33,7 +33,7 @@ export default class EnemyUFO implements ICollidable {
   private previousPos: number[][] = [];
   private captureTimeLeft: number;
   private fireTime: number;
-  private gotHit: boolean;
+  private hitCooltime: number = 0;
 
   public init(config: IEnemyUFOConfig) {
     this.config = config;
@@ -79,14 +79,18 @@ export default class EnemyUFO implements ICollidable {
     this.collisionShape.y = this.y - this.collisionShape.height / 2;
     shm.insert(this);
 
-    this.gotHit = false;
+    if (this.hitCooltime > 0) {
+      --this.hitCooltime;
+    }
   }
 
   public [Events.collisionCheck]() {
     for (const obj of shm.retrive(this)) {
       if (obj.tag === Tag.player_bullet) {
         // TODO: decrease health
-        this.gotHit = true;
+        obj.tag = Tag.no_tag;  // cannot do this from Bullet because if the bullet
+                               // was proccesed first, then Enemy couldnot "see" the bullet.
+        this.hitCooltime = 5;
       }
     }
   }
@@ -104,7 +108,7 @@ export default class EnemyUFO implements ICollidable {
       ctx.drawImage(this.config.image, x - w / 2, y - h / 2);
     }
     ctx.globalAlpha = 1;
-    const img = this.gotHit ? images[6] : this.config.image;
+    const img = this.hitCooltime ? images[6] : this.config.image;
     ctx.drawImage(img, this.x - w / 2, this.y - h / 2);
   }
 }

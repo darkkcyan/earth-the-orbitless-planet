@@ -109,6 +109,7 @@ export default class Player implements ICollidable {
       if (obj.tag === Tag.enemy) {
         ++enemycnt;
       } else if (obj.tag === Tag.enemy_bullet) {
+        obj.tag = Tag.no_tag;
         ++bulletcnt;
       }
     }

@@ -71,7 +71,7 @@ imageLoader
       },
       image: images[5],
     }, 10)],
-    new StraightForwardSPP(),
+    new RandomPositionSPP(),
     new PyramidUPP(),
   );
 
