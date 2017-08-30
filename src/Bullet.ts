@@ -32,7 +32,7 @@ export default class Bullet implements ICollidable {
     this.angle = angle;
     this.color = config.color;
     this.isDead = false;
-    this.tag = config.isPlayerBullet ? Tag.enemy_bullet : Tag.enemy_bullet;
+    this.tag = config.isPlayerBullet ? Tag.player_bullet : Tag.enemy_bullet;
     addListener(this, [Events.process, Events.collisionCheck, Events.render]);
   }
 

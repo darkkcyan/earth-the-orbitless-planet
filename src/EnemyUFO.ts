@@ -2,6 +2,7 @@ import Bullet, {IBulletConfig} from "./Bullet";
 import ctx from "./canvas";
 import {addListener, Events} from "./EventListener";
 import {dt, player, shm} from "./game";
+import {images} from "./imageLoader";
 import {randRange} from "./math";
 import ObjectRespawner from "./ObjectRespawner";
 import {Rectangle} from "./shapes";
@@ -103,6 +104,7 @@ export default class EnemyUFO implements ICollidable {
       ctx.drawImage(this.config.image, x - w / 2, y - h / 2);
     }
     ctx.globalAlpha = 1;
-    ctx.drawImage(this.config.image, this.x - w / 2, this.y - h / 2);
+    const img = this.gotHit ? images[6] : this.config.image;
+    ctx.drawImage(img, this.x - w / 2, this.y - h / 2);
   }
 }

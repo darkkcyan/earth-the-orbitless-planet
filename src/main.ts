@@ -10,6 +10,7 @@ import {getMousePos} from "./mouse";
 import Planet from "./Planet";
 import {earthsurface as earthsurfaceData} from "./planet-surfaces-data";
 import Player from "./Player";
+import fillWhite from "./prerender/fillWhite";
 import {
   renderGunLv1,
   renderGunLv2,
@@ -37,6 +38,10 @@ imageLoader
 .add(3, 60, 25, (ctx) => renderGunLv3(ctx, {size: 25, colorScheme: PLAYER_GUN_COLORSCHEME}))
 .add(4, 60, 25, (ctx) => renderGunLv3(ctx, {size: 25, colorScheme: UFO_GUN_COLORSCHEME}))
 .add(5, 100, 40, (ctx) => renderUFO(ctx, {color: "#F200ED", size: 40}))
+.add(6, 100, 40, (ctx) => {
+  renderUFO(ctx, {color: "black", size: 40});
+  fillWhite();
+})
 .load(celm, () => {
   const [img, gunImg] = images;
   celm.width = scrwidth;
