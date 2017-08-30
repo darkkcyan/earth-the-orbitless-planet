@@ -55,7 +55,6 @@ export default class Partical {
 
   public [Events.render]() {
     ctx.globalAlpha = easeOutCubic(this.currentTime, 1, -1, this.age);
-    console.log(ctx.globalAlpha);
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, PI2);
     ctx.fillStyle = this.color;

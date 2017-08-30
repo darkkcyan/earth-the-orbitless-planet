@@ -21,18 +21,32 @@ export default class Formation {
   public x: number = scrwidth + 100;
   public y: number = scrheight * Math.random();
 
+  private numUFO: number;
+
   constructor(
     UFOConfigList: IEnemyUFOConfig[],
     public selfPositionProcessor: IFormationSubProcessor,
     public UFOPositionProcess: IFormationSubProcessor,
   ) {
     this.UFOList = UFOConfigList.map((x) => EnemyUFO.Respawner.get().init(x));
+    this.numUFO = UFOConfigList.length;
     addListener(this, [Events.process]);
   }
 
   public [Events.process]() {
+    for (let i = this.UFOList.length; i--; ) {
+      const u = this.UFOList[i];
+      if (!u) {
+        continue;
+      }
+      if (u.isdead()) {
+        --this.numUFO;
+        this.UFOList[i] = null;
+      }
+    }
     this.selfPositionProcessor.process(this);
     this.UFOPositionProcess.process(this);
+    return this.numUFO === 0;
   }
 
   // return position corresponding to the formation position
@@ -133,11 +147,16 @@ export class PolygonUPP implements IFormationSubProcessor {
   public process(f: Formation) {
     this.hm.process(dt);
     const [x, y] = f.getFitPossition(2 * this.radius, 2 * this.radius);
-    f.UFOList[0].x = x;
-    f.UFOList[0].y = y;
+    if (f.UFOList[0]) {
+      f.UFOList[0].x = x;
+      f.UFOList[0].y = y;
+    }
     const timeoffset = this.hm.period / (f.UFOList.length - 1);
     for (let i = 1, t = 0; i < f.UFOList.length; ++i, t += timeoffset) {
       const u = f.UFOList[i];
+      if (!u) {
+        continue;
+      }
       u.x = x + this.hm.getX(t);
       u.y = y + this.hm.getY(t);
     }
@@ -159,8 +178,10 @@ export class StraightLineUPP implements IFormationSubProcessor {
     let x = f.x;
     let y = f.y;
     for (const u of f.UFOList) {
-      u.x = x;
-      u.y = y;
+      if (u) {
+        u.x = x;
+        u.y = y;
+      }
       x += px;
       y += py;
       if (y > scrheight) {
@@ -195,8 +216,10 @@ export class WallUPP implements IFormationSubProcessor {
     for (let i = numberOfLine; i--; ) {
       for (let j = this.UFOPerLine; j--; ) {
         const u = f.UFOList[i * this.UFOPerLine + j];
-        u.x = x + i * this.offset;
-        u.y = y + j * this.offset;
+        if (u) {
+          u.x = x + i * this.offset;
+          u.y = y + j * this.offset;
+        }
       }
     }
   }
@@ -218,8 +241,10 @@ export class PyramidUPP implements IFormationSubProcessor {
       const rs = i * this.offset;
       for (let j = -1; ++j <= i; ) {
         const u = f.UFOList[i * (i + 1) / 2 + j];
-        u.x = x + rs;
-        u.y = y - rs / 2 + j * this.offset;
+        if (u) {
+          u.x = x + rs;
+          u.y = y - rs / 2 + j * this.offset;
+        }
       }
     }
   }

@@ -52,6 +52,10 @@ export default class EnemyUFO implements ICollidable {
     return this;
   }
 
+  public isdead() {
+    return this.live <= 0;
+  }
+
   public [Events.process]() {
     while (this.previousPos.length > EnemyUFO.maxNumberOfShadow) {
       this.previousPos.shift();
@@ -86,7 +90,7 @@ export default class EnemyUFO implements ICollidable {
     if (this.hitCooltime > 0) {
       --this.hitCooltime;
     }
-    if (this.live <= 0) {
+    if (this.isdead()) {
       Particle.createPartical(20, this.x, this.y, 3, "rgb(255, 27, 242)", 100);
       EnemyUFO.Respawner.free(this);
       return true;
@@ -104,7 +108,7 @@ export default class EnemyUFO implements ICollidable {
         this.hitCooltime = 5;
       }
     }
-    return this.live <= 0;
+    return this.isdead();
   }
 
   public [Events.render]() {
@@ -122,6 +126,6 @@ export default class EnemyUFO implements ICollidable {
     ctx.globalAlpha = 1;
     const img = this.hitCooltime ? images[6] : this.config.image;
     ctx.drawImage(img, this.x - w / 2, this.y - h / 2);
-    return this.live <= 0;
+    return this.isdead();
   }
 }

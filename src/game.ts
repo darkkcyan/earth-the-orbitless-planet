@@ -1,5 +1,5 @@
 import ctx, {celm} from "./canvas";
-import {emit, Events} from "./EventListener";
+import {emit, Events, listeners} from "./EventListener";
 import Player from "./Player";
 import SpatialHashMap from "./SpatialHashMap";
 
@@ -21,5 +21,6 @@ export function gameloop() {
   emit(Events.process);
   emit(Events.collisionCheck);
   emit(Events.render);
+  console.log(listeners[Events.process]);
   requestAnimationFrame(gameloop);
 }
