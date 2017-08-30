@@ -1,3 +1,4 @@
+import ctx from "../canvas";
 import {HALF_PI, PI2} from "../math";
 
 export interface IGunConfig {
@@ -7,7 +8,7 @@ export interface IGunConfig {
   y?: number;
 }
 
-function renderGunBase(ctx: CanvasRenderingContext2D, size: number, colorScheme: string[]) {
+function renderGunBase(size: number, colorScheme: string[]) {
   const d: Array<[boolean, string]> = [[false, colorScheme[2]], [true, colorScheme[1]]];
   for (const [reverse, color] of d) {
     ctx.beginPath();
@@ -17,7 +18,7 @@ function renderGunBase(ctx: CanvasRenderingContext2D, size: number, colorScheme:
   }
 }
 
-export function renderGunLv1(ctx: CanvasRenderingContext2D, config: IGunConfig) {
+export function renderGunLv1(config: IGunConfig) {
   const {size, x = 0, y = size / 2, colorScheme} = config;
   ctx.save();
   ctx.translate(x, y);
@@ -27,7 +28,7 @@ export function renderGunLv1(ctx: CanvasRenderingContext2D, config: IGunConfig) 
   ctx.rect(0, -size / 2, size * 0.75, size);
   ctx.clip();
   ctx.scale(1, 0.5);
-  renderGunBase(ctx, size, colorScheme);
+  renderGunBase(size, colorScheme);
   ctx.restore();
 
   ctx.translate(size * 0.75, 0);
@@ -48,7 +49,7 @@ export function renderGunLv1(ctx: CanvasRenderingContext2D, config: IGunConfig) 
   ctx.restore();
 }
 
-export function renderGunLv2(ctx: CanvasRenderingContext2D, config: IGunConfig) {
+export function renderGunLv2(config: IGunConfig) {
   const {size, x = 0, y = size / 2, colorScheme} = config;
   ctx.save();
   ctx.translate(x, y);
@@ -72,7 +73,7 @@ export function renderGunLv2(ctx: CanvasRenderingContext2D, config: IGunConfig) 
   ctx.rect(0, -size / 2, size * 0.75, size);
   ctx.clip();
   ctx.scale(1, 0.7);
-  renderGunBase(ctx, size, colorScheme);
+  renderGunBase(size, colorScheme);
   ctx.restore();
 
   ctx.beginPath();
@@ -91,7 +92,7 @@ export function renderGunLv2(ctx: CanvasRenderingContext2D, config: IGunConfig) 
   ctx.restore();
 }
 
-export function renderGunLv3(ctx: CanvasRenderingContext2D, config: IGunConfig) {
+export function renderGunLv3(config: IGunConfig) {
   const {size, x = 0, y = size / 2, colorScheme} = config;
   ctx.save();
   ctx.translate(x, y);
@@ -110,7 +111,7 @@ export function renderGunLv3(ctx: CanvasRenderingContext2D, config: IGunConfig) 
   ].forEach(([tx, ty]) => ctx.lineTo(tx, ty));
   ctx.clip();
   ctx.scale(1, .9);
-  renderGunBase(ctx, size, colorScheme);
+  renderGunBase(size, colorScheme);
   ctx.restore();
 
   ctx.save();

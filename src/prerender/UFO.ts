@@ -1,3 +1,4 @@
+import ctx from "../canvas";
 import {PI2} from "../math";
 export interface IUFOConfig {
   size: number;
@@ -9,7 +10,7 @@ export interface IUFOConfig {
 const GLASS_COLOR = "rgba(194,238,254,0.601)";
 const SHADOW_GLASS_COLOR = "#B5CFD9";
 
-export function renderUFO(ctx: CanvasRenderingContext2D, config: IUFOConfig) {
+export function renderUFO(config: IUFOConfig) {
   ctx.save();
   const size = config.size;
   const GAP_SIZE = size * .075;

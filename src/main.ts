@@ -5,7 +5,7 @@ import EnemyUFO from "./EnemyUFO";
 import {emit, Events, listeners} from "./EventListener";
 import {gameloop, player, setPlayer} from "./game";
 import Gun from "./Gun";
-import imageLoader, {images} from "./imageLoader";
+import {images, loadPrerender, onload} from "./imageLoader";
 import {getMousePos} from "./mouse";
 import Planet from "./Planet";
 import {earthsurface as earthsurfaceData} from "./planet-surfaces-data";
@@ -31,18 +31,17 @@ import UFOFormation, {
 } from "./UFOFormation";
 
 // tslint:disable no-shadowed-variable
-imageLoader
-.add(0, 140, 70, (ctx) => renderPlanetSurface(earthsurfaceData, ctx))
-.add(1, 60, 25, (ctx) => renderGunLv1(ctx, {size: 25, colorScheme: PLAYER_GUN_COLORSCHEME}))
-.add(2, 60, 25, (ctx) => renderGunLv2(ctx, {size: 25, colorScheme: PLAYER_GUN_COLORSCHEME}))
-.add(3, 60, 25, (ctx) => renderGunLv3(ctx, {size: 25, colorScheme: PLAYER_GUN_COLORSCHEME}))
-.add(4, 60, 25, (ctx) => renderGunLv3(ctx, {size: 25, colorScheme: UFO_GUN_COLORSCHEME}))
-.add(5, 100, 40, (ctx) => renderUFO(ctx, {color: "#F200ED", size: 40}))
-.add(6, 100, 40, (ctx) => {
-  renderUFO(ctx, {color: "black", size: 40});
+loadPrerender(0, 140, 70, () => {renderPlanetSurface(earthsurfaceData); });
+loadPrerender(1, 60, 25, () => renderGunLv1({size: 25, colorScheme: PLAYER_GUN_COLORSCHEME}));
+loadPrerender(2, 60, 25, () => renderGunLv2({size: 25, colorScheme: PLAYER_GUN_COLORSCHEME}));
+loadPrerender(3, 60, 25, () => renderGunLv3({size: 25, colorScheme: PLAYER_GUN_COLORSCHEME}));
+loadPrerender(4, 60, 25, () => renderGunLv3({size: 25, colorScheme: UFO_GUN_COLORSCHEME}));
+loadPrerender(5, 100, 40, () => renderUFO({color: "#F200ED", size: 40}));
+loadPrerender(6, 100, 40, () => {
+  renderUFO({color: "black", size: 40});
   fillWhite();
-})
-.load(celm, () => {
+});
+onload(() => {
   const [img, gunImg] = images;
   celm.width = scrwidth;
   celm.height = scrheight;

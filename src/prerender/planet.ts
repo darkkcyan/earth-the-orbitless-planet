@@ -1,3 +1,4 @@
+import globalctx, {celm} from "../canvas";
 export interface IPlanetSurfaceLayer {
   color: string;
 
@@ -15,9 +16,9 @@ export interface IPlanetSurface {
   layers: IPlanetSurfaceLayer[];
 }
 
-export function renderLayer(layer: IPlanetSurfaceLayer, ctx: CanvasRenderingContext2D, lineCap: string = "round") {
-  const w = ctx.canvas.width;
-  const h = ctx.canvas.height;
+export function renderLayer(layer: IPlanetSurfaceLayer, ctx = globalctx, lineCap: string = "round") {
+  const w = celm.width;
+  const h = celm.height;
   ctx.strokeStyle = layer.color;
   ctx.lineCap = lineCap;
   ctx.fillStyle = layer.color;
@@ -47,9 +48,9 @@ export function renderLayer(layer: IPlanetSurfaceLayer, ctx: CanvasRenderingCont
   }
 }
 
-export function renderPlanetSurface(data: IPlanetSurface, ctx: CanvasRenderingContext2D) {
+export function renderPlanetSurface(data: IPlanetSurface, ctx = globalctx) {
   ctx.fillStyle = data.background;
-  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.fillRect(0, 0, celm.width, celm.height);
 
   for (const i of data.layers) {
     renderLayer(i, ctx);
