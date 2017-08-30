@@ -113,7 +113,7 @@ export default class Player implements ICollidable {
         ++bulletcnt;
       }
     }
-    console.log("Player hit enemy:", enemycnt, " Player hit bullet", bulletcnt);
+    // console.log("Player hit enemy:", enemycnt, " Player hit bullet", bulletcnt);
   }
 
   public [Events.render]() {

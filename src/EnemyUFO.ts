@@ -5,12 +5,14 @@ import {dt, player, shm} from "./game";
 import {images} from "./imageLoader";
 import {randRange} from "./math";
 import ObjectRespawner from "./ObjectRespawner";
+import Particle from "./Particle";
 import {Rectangle} from "./shapes";
 import {ICollidable, Tag} from "./SpatialHashMap";
 
 export interface IEnemyUFOConfig {
   image: HTMLImageElement;
   bulletConfig: IBulletConfig;
+  live: number;
 }
 
 export default class EnemyUFO implements ICollidable {
@@ -34,6 +36,7 @@ export default class EnemyUFO implements ICollidable {
   private captureTimeLeft: number;
   private fireTime: number;
   private hitCooltime: number = 0;
+  private live: number;
 
   public init(config: IEnemyUFOConfig) {
     this.config = config;
@@ -44,6 +47,7 @@ export default class EnemyUFO implements ICollidable {
       0, 0,
       this.config.image.width * .9, this.config.image.height * .9,
     );
+    this.live = config.live;
     addListener(this, [Events.process, Events.collisionCheck, Events.render]);
     return this;
   }
@@ -82,6 +86,12 @@ export default class EnemyUFO implements ICollidable {
     if (this.hitCooltime > 0) {
       --this.hitCooltime;
     }
+    if (this.live <= 0) {
+      Particle.createPartical(20, this.x, this.y, 3, "rgb(255, 27, 242)", 100);
+      EnemyUFO.Respawner.free(this);
+      return true;
+    }
+    return false;
   }
 
   public [Events.collisionCheck]() {
@@ -90,9 +100,11 @@ export default class EnemyUFO implements ICollidable {
         // TODO: decrease health
         obj.tag = Tag.no_tag;  // cannot do this from Bullet because if the bullet
                                // was proccesed first, then Enemy couldnot "see" the bullet.
+        --this.live;
         this.hitCooltime = 5;
       }
     }
+    return this.live <= 0;
   }
 
   public [Events.render]() {
@@ -110,5 +122,6 @@ export default class EnemyUFO implements ICollidable {
     ctx.globalAlpha = 1;
     const img = this.hitCooltime ? images[6] : this.config.image;
     ctx.drawImage(img, this.x - w / 2, this.y - h / 2);
+    return this.live <= 0;
   }
 }

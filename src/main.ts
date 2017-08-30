@@ -70,6 +70,7 @@ imageLoader
         speed: 500,
       },
       image: images[5],
+      live: 10,
     }, 10)],
     new RandomPositionSPP(),
     new PyramidUPP(),
