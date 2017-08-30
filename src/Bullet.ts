@@ -1,14 +1,15 @@
 import ctx, {scrheight, scrwidth} from "./canvas";
 import {addListener, Events} from "./EventListener";
-import {dt} from "./game";
+import {dt, shm} from "./game";
 import ObjectRespawner from "./ObjectRespawner";
 import {Circle} from "./shapes";
-import {ICollidable} from "./SpatialHashMap";
+import {ICollidable, Tag} from "./SpatialHashMap";
 
 export interface IBulletConfig {
   radius: number;
   color: string;
   speed: number;
+  isPlayerBullet?: boolean;
 }
 
 export default class Bullet implements ICollidable {
@@ -19,6 +20,7 @@ export default class Bullet implements ICollidable {
   public angle: number;
   public color: string;
   public isDead: boolean;
+  public tag: number;
 
   [index: number]: (any) => boolean | void;
 
@@ -30,7 +32,8 @@ export default class Bullet implements ICollidable {
     this.angle = angle;
     this.color = config.color;
     this.isDead = false;
-    addListener(this, [Events.process, Events.render]);
+    this.tag = config.isPlayerBullet ? Tag.enemy_bullet : Tag.enemy_bullet;
+    addListener(this, [Events.process, Events.collisionCheck, Events.render]);
   }
 
   public [Events.process]() {
@@ -42,6 +45,22 @@ export default class Bullet implements ICollidable {
     ) {
       this.isDead = true;
       Bullet.Respawner.free(this);
+    }
+    shm.insert(this);
+    return this.isDead;
+  }
+
+  public [Events.collisionCheck]() {
+    for (const obj of shm.retrive(this)) {
+      if (
+        (obj.tag === Tag.player && this.tag === Tag.enemy_bullet) ||
+        (obj.tag === Tag.enemy && this.tag === Tag.player_bullet)
+      ) {
+        this.isDead = true;
+        this.tag = Tag.no_tag;
+        // TODO: sumon partical :D
+        break;
+      }
     }
     return this.isDead;
   }

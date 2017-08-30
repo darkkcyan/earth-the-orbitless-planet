@@ -8,6 +8,15 @@ import {
 
 export interface ICollidable {
   collisionShape: AllKindOfShapes;
+  tag: number;  // used to identify the kind of object
+}
+
+export const enum Tag {
+  player,
+  player_bullet,
+  enemy_bullet,
+  enemy,
+  no_tag,
 }
 
 export default class SpatialHashMap {

@@ -65,6 +65,7 @@
 // Predefine event's ids
 export const enum Events {
   process,
+  collisionCheck,
   render,
 }
 

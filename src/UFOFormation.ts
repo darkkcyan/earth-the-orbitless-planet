@@ -195,7 +195,6 @@ export class PyramidUPP implements IFormationSubProcessor {
     while ((maxLine + 1) * maxLine / 2 < f.UFOList.length) {
       ++maxLine;
     }
-    console.log(maxLine);
     const s = (maxLine - 1) * this.offset;
     const x = f.x - s / 2;
     const y = scrheight / 2 + (f.y / scrheight - .5) * (scrheight - s);

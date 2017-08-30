@@ -1,4 +1,5 @@
 import {addListener, Events} from "./EventListener";
+import {shm} from "./game";
 import Gun from "./Gun";
 import {images} from "./imageLoader";
 import {
@@ -16,11 +17,12 @@ import {
   PlayerRocketGroup as RocketGroup,
 } from "./PlayerRocket";
 import {Circle} from "./shapes";
-import {ICollidable} from "./SpatialHashMap";
+import {ICollidable, Tag} from "./SpatialHashMap";
 
 export default class Player implements ICollidable {
   public followMouse = true;
   public collisionShape: Circle = new Circle(0, 0, 0);
+  public tag: number = Tag.player;
 
   [index: number]: (any) => boolean | void;
 
@@ -30,12 +32,14 @@ export default class Player implements ICollidable {
   private gunFormation: GunFormation;
 
   set x(val: number) {
-    this.gunFormation.x = this.planet.x = this._x = val;
+    this.collisionShape.x = this.gunFormation.x = this.planet.x = this._x = val;
     this.rocketGroup.x = val - this.planet.radius - 10;
   }
   get x() { return this._x; }
 
-  set y(val: number) { this.gunFormation.y = this.rocketGroup.y = this.planet.y = this._y = val; }
+  set y(val: number) {
+    this.collisionShape.y = this.gunFormation.y = this.rocketGroup.y = this.planet.y = this._y = val;
+  }
   get y() { return this._y; }
 
   constructor(private planet: Planet) {
@@ -54,6 +58,7 @@ export default class Player implements ICollidable {
       mainGun: new Gun({
         bulletConfig: {
           color: "red",
+          isPlayerBullet: true,
           radius: 5,
           speed: 1200,
         },
@@ -64,6 +69,7 @@ export default class Player implements ICollidable {
       sideGunList: [new Gun({
         bulletConfig: {
           color: "yellow",
+          isPlayerBullet: true,
           radius: 3,
           speed: 1000,
         },
@@ -73,6 +79,7 @@ export default class Player implements ICollidable {
       }), new Gun({
         bulletConfig: {
           color: "blue",
+          isPlayerBullet: true,
           radius: 4,
           speed: 1100,
         },
@@ -82,7 +89,7 @@ export default class Player implements ICollidable {
       // sideGunList: [],
       sideGunPhaseOffset: Math.PI / 5,
     });
-    addListener(this, [Events.process, Events.render]);
+    addListener(this, [Events.process, Events.collisionCheck, Events.render]);
   }
 
   public [Events.process]() {
@@ -92,6 +99,20 @@ export default class Player implements ICollidable {
     this.planet[Events.process]();
     this.rocketGroup[Events.process]();
     this.gunFormation[Events.process]();
+    shm.insert(this);
+  }
+
+  public [Events.collisionCheck]() {
+    let bulletcnt = 0;
+    let enemycnt = 0;
+    for (const obj of shm.retrive(this)) {
+      if (obj.tag === Tag.enemy) {
+        ++enemycnt;
+      } else if (obj.tag === Tag.enemy_bullet) {
+        ++bulletcnt;
+      }
+    }
+    console.log("Player hit enemy:", enemycnt, " Player hit bullet", bulletcnt);
   }
 
   public [Events.render]() {

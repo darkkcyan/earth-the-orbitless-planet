@@ -1,16 +1,18 @@
 import Bullet, {IBulletConfig} from "./Bullet";
 import ctx from "./canvas";
 import {addListener, Events} from "./EventListener";
-import {dt, player} from "./game";
+import {dt, player, shm} from "./game";
 import {randRange} from "./math";
 import ObjectRespawner from "./ObjectRespawner";
+import {Rectangle} from "./shapes";
+import {ICollidable, Tag} from "./SpatialHashMap";
 
 export interface IEnemyUFOConfig {
   image: HTMLImageElement;
   bulletConfig: IBulletConfig;
 }
 
-export default class EnemyUFO {
+export default class EnemyUFO implements ICollidable {
   public static Respawner = new ObjectRespawner(EnemyUFO);
   [index: number]: (any) => boolean | void;
   public static offsetAlpha = .05;
@@ -20,6 +22,9 @@ export default class EnemyUFO {
   public static fireTimeRange: [number, number] = [1, 2];
   public static fireTowardPlayerProbability = .3;
 
+  public collisionShape: Rectangle;
+  public tag: number = Tag.enemy;
+
   public x: number = 0;
   public y: number = 0;
 
@@ -27,13 +32,18 @@ export default class EnemyUFO {
   private previousPos: number[][] = [];
   private captureTimeLeft: number;
   private fireTime: number;
+  private gotHit: boolean;
 
   public init(config: IEnemyUFOConfig) {
     this.config = config;
     this.previousPos = [];
     this.captureTimeLeft = 0;
     this.fireTime = randRange(EnemyUFO.fireTimeRange);
-    addListener(this, [Events.process, Events.render]);
+    this.collisionShape = new Rectangle(
+      0, 0,
+      this.config.image.width * .9, this.config.image.height * .9,
+    );
+    addListener(this, [Events.process, Events.collisionCheck, Events.render]);
     return this;
   }
 
@@ -62,6 +72,21 @@ export default class EnemyUFO {
         this.x, this.y,
         angle,
       );
+    }
+
+    this.collisionShape.x = this.x - this.collisionShape.width / 2;
+    this.collisionShape.y = this.y - this.collisionShape.height / 2;
+    shm.insert(this);
+
+    this.gotHit = false;
+  }
+
+  public [Events.collisionCheck]() {
+    for (const obj of shm.retrive(this)) {
+      if (obj.tag === Tag.player_bullet) {
+        // TODO: decrease health
+        this.gotHit = true;
+      }
     }
   }
 
