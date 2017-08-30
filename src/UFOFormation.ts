@@ -1,4 +1,5 @@
 import {scrheight, scrwidth} from "./canvas";
+import {easeInOutQuad} from "./ease";
 import EnemyUFO, {IEnemyUFOConfig} from "./EnemyUFO";
 import {addListener, Events} from "./EventListener";
 import {dt, player} from "./game";
@@ -32,6 +33,15 @@ export default class Formation {
   public [Events.process]() {
     this.selfPositionProcessor.process(this);
     this.UFOPositionProcess.process(this);
+  }
+
+  // return position corresponding to the formation position
+  // but will make an object with size width and height fit the screen
+  public getFitPossition(width: number, height: number) {
+    return [
+      (this.x / scrwidth) * (scrwidth - width) + width / 2,
+      (this.y / scrheight) * (scrheight - height) + height / 2,
+    ];
   }
 }
 
@@ -67,35 +77,37 @@ export class StraightForwardSPP implements IFormationSubProcessor {
 }
 
 export class RandomPositionSPP implements IFormationSubProcessor {
-  public hm: HarmonicMotion;
-  public nextX: number;
-  public nextY: number;
+  public currentX: number;
+  public currentY: number;
   public dtx: number;
   public dty: number;
+  public currentTime: number;
 
   constructor(
     public moveTime = 1.5,
     public towardPlayerProbability = .05,
   ) {
-    this.hm = new HarmonicMotion(.5, 2 * this.moveTime);
+    this.currentTime = this.moveTime;
   }
 
   public process(f: Formation) {
-    this.hm.process(dt);
-    if (this.hm.getPhase() < Math.PI) {
-      this.hm.t = this.hm.period / 2;
+    this.currentTime += dt;
+    if (this.currentTime >= this.moveTime) {
+      this.currentTime = 0;
+      this.currentX = f.x;
+      this.currentY = f.y;
       if (Math.random() <= this.towardPlayerProbability) {
-        this.nextX = player.x;
-        this.nextY = player.y;
+        this.dtx = player.x;
+        this.dty = player.y;
       } else {
-        this.nextX = scrwidth * (Math.random() / 2 + .5);
-        this.nextY = scrheight * Math.random();
+        this.dtx = scrwidth * (Math.random() / 2 + .5);
+        this.dty = scrheight * Math.random();
       }
-      this.dtx = this.nextX - f.x;
-      this.dty = this.nextY - f.y;
+      this.dtx -= f.x;
+      this.dty -= f.y;
     }
-    f.x = this.nextX + (this.hm.getX() - .5) * this.dtx;
-    f.y = this.nextY + (this.hm.getX() - .5) * this.dty;
+    f.x = easeInOutQuad(this.currentTime, this.currentX, this.dtx, this.moveTime);
+    f.y = easeInOutQuad(this.currentTime, this.currentY, this.dty, this.moveTime);
   }
 }
 
@@ -120,13 +132,14 @@ export class PolygonUPP implements IFormationSubProcessor {
   }
   public process(f: Formation) {
     this.hm.process(dt);
-    f.UFOList[0].x = f.x;
-    f.UFOList[0].y = f.y;
+    const [x, y] = f.getFitPossition(2 * this.radius, 2 * this.radius);
+    f.UFOList[0].x = x;
+    f.UFOList[0].y = y;
     const timeoffset = this.hm.period / (f.UFOList.length - 1);
     for (let i = 1, t = 0; i < f.UFOList.length; ++i, t += timeoffset) {
       const u = f.UFOList[i];
-      u.x = f.x + this.hm.getX(t);
-      u.y = f.y + this.hm.getY(t);
+      u.x = x + this.hm.getX(t);
+      u.y = y + this.hm.getY(t);
     }
   }
 }
@@ -176,8 +189,9 @@ export class WallUPP implements IFormationSubProcessor {
     const numberOfLine = ~~(f.UFOList.length / this.UFOPerLine);
     const w = (numberOfLine - 1) * this.offset;
     const h = (this.UFOPerLine - 1) * this.offset;
-    const x = f.x - w / 2;
-    const y = scrheight / 2 + (f.y / scrheight - .5) * (scrheight - h) - h / 2;
+    let [x, y] = f.getFitPossition(w, h);
+    x -= w / 2;
+    y -= h / 2;
     for (let i = numberOfLine; i--; ) {
       for (let j = this.UFOPerLine; j--; ) {
         const u = f.UFOList[i * this.UFOPerLine + j];
@@ -196,8 +210,10 @@ export class PyramidUPP implements IFormationSubProcessor {
       ++maxLine;
     }
     const s = (maxLine - 1) * this.offset;
-    const x = f.x - s / 2;
-    const y = scrheight / 2 + (f.y / scrheight - .5) * (scrheight - s);
+    // tslint:disable prefer-const
+    let [x, y] = f.getFitPossition(s, s);
+    // tslint:enable prefer-const
+    x -= s / 2;
     for (let i = -1; ++i < maxLine; ) {
       const rs = i * this.offset;
       for (let j = -1; ++j <= i; ) {

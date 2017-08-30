@@ -70,10 +70,10 @@ imageLoader
         speed: 500,
       },
       image: images[5],
-      live: 10,
+      live: 5,
     }, 10)],
     new RandomPositionSPP(),
-    new PyramidUPP(),
+    new PolygonUPP(),
   );
 
   gameloop();
