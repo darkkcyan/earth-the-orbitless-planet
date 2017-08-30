@@ -35,6 +35,9 @@ export default class Formation {
   }
 }
 
+// Every class name with postfix "SPP" is used as selfPositionProcessor in Formation.
+// Every class name with postfix "UPP" is used as UFOPOsitionProcessor in Formation.
+
 export class StraightForwardSPP implements IFormationSubProcessor {
   constructor(
     public speed: number = 400,
@@ -47,6 +50,7 @@ export class StraightForwardSPP implements IFormationSubProcessor {
     if (f.y > scrheight) {
       if (this.bound) {
         this.angle = PI2 - this.angle;
+        f.y = 2 * scrheight - f.y;
       } else {
         f.y -= scrheight;
       }
@@ -54,6 +58,7 @@ export class StraightForwardSPP implements IFormationSubProcessor {
     if (f.y < 0) {
       if (this.bound) {
         this.angle = PI2 - this.angle;
+        f.y *= -1;
       } else {
         f.y += scrheight;
       }
@@ -178,6 +183,28 @@ export class WallUPP implements IFormationSubProcessor {
         const u = f.UFOList[i * this.UFOPerLine + j];
         u.x = x + i * this.offset;
         u.y = y + j * this.offset;
+      }
+    }
+  }
+}
+
+export class PyramidUPP implements IFormationSubProcessor {
+  constructor(public offset = 100) {}
+  public process(f: Formation) {
+    let maxLine = 0;
+    while ((maxLine + 1) * maxLine / 2 < f.UFOList.length) {
+      ++maxLine;
+    }
+    console.log(maxLine);
+    const s = (maxLine - 1) * this.offset;
+    const x = f.x - s / 2;
+    const y = scrheight / 2 + (f.y / scrheight - .5) * (scrheight - s);
+    for (let i = -1; ++i < maxLine; ) {
+      const rs = i * this.offset;
+      for (let j = -1; ++j <= i; ) {
+        const u = f.UFOList[i * (i + 1) / 2 + j];
+        u.x = x + rs;
+        u.y = y - rs / 2 + j * this.offset;
       }
     }
   }

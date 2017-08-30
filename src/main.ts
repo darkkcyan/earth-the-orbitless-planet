@@ -21,6 +21,7 @@ import {Circle, Rectangle} from "./shapes";
 import SpatialHashMap, {ICollidable} from "./SpatialHashMap";
 import UFOFormation, {
   PolygonUPP,
+  PyramidUPP,
   RandomPositionSPP,
   StraightForwardSPP,
   StraightLineUPP,
@@ -56,7 +57,7 @@ imageLoader
     }
     return ans;
   }
-  new UFOFormation(
+  const x = new UFOFormation(
     [...rep({
       bulletConfig: {
         color: "red",
@@ -64,9 +65,9 @@ imageLoader
         speed: 500,
       },
       image: images[5],
-    }, 15)],
-    new TowardPlayerSPP(),
-    new WallUPP(),
+    }, 10)],
+    new StraightForwardSPP(),
+    new PyramidUPP(),
   );
 
   gameloop();
