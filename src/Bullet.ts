@@ -14,7 +14,7 @@ export interface IBulletConfig {
 
 export default class Bullet implements ICollidable {
   public static Respawner = new ObjectRespawner(Bullet);
-  public static TAIL_LENGTH = 50;
+  public static TAIL_LENGTH = 20;
   public collisionShape: Circle = new Circle(0, 0, 0);
   public speed: number;
   public angle: number;
@@ -65,12 +65,11 @@ export default class Bullet implements ICollidable {
     ctx.lineCap = "round";
     ctx.strokeStyle = this.color;
     ctx.globalAlpha = .3;
-    ctx.moveTo(x, y);
-    ctx.lineTo(x - Math.cos(this.angle) * Bullet.TAIL_LENGTH, y - Math.sin(this.angle) * Bullet.TAIL_LENGTH);
+    ctx.moveTo(x - Math.cos(this.angle) * Bullet.TAIL_LENGTH, y - Math.sin(this.angle) * Bullet.TAIL_LENGTH);
+    ctx.lineTo(x, y);
     ctx.stroke();
     ctx.beginPath();
     ctx.globalAlpha = 1;
-    ctx.moveTo(x, y);
     ctx.lineTo(x, y);
     ctx.stroke();
     return this.isDead;
