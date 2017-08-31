@@ -9,14 +9,14 @@ import Particle from "./Particle";
 import {Rectangle} from "./shapes";
 import {ICollidable, Tag} from "./SpatialHashMap";
 
-export interface IEnemyUFOConfig {
+export interface IEnemyConfig {
   image: HTMLImageElement;
   bulletConfig: IBulletConfig;
   live: number;
 }
 
-export default class EnemyUFO implements ICollidable {
-  public static Respawner = new ObjectRespawner(EnemyUFO);
+export default class Enemy implements ICollidable {
+  public static Respawner = new ObjectRespawner(Enemy);
   [index: number]: (any) => boolean | void;
   public static offsetAlpha = .05;
   public static maxNumberOfShadow = 5;
@@ -31,18 +31,18 @@ export default class EnemyUFO implements ICollidable {
   public x: number = 0;
   public y: number = 0;
 
-  private config: IEnemyUFOConfig;
+  private config: IEnemyConfig;
   private previousPos: number[][] = [];
   private captureTimeLeft: number;
   private fireTime: number;
   private hitCooltime: number = 0;
   private live: number;
 
-  public init(config: IEnemyUFOConfig) {
+  public init(config: IEnemyConfig) {
     this.config = config;
     this.previousPos = [];
     this.captureTimeLeft = 0;
-    this.fireTime = randRange(EnemyUFO.fireTimeRange);
+    this.fireTime = randRange(Enemy.fireTimeRange);
     this.collisionShape = new Rectangle(
       0, 0,
       this.config.image.width * .9, this.config.image.height * .9,
@@ -57,19 +57,19 @@ export default class EnemyUFO implements ICollidable {
   }
 
   public [Events.process]() {
-    while (this.previousPos.length > EnemyUFO.maxNumberOfShadow) {
+    while (this.previousPos.length > Enemy.maxNumberOfShadow) {
       this.previousPos.shift();
     }
     this.captureTimeLeft -= dt;
     if (this.captureTimeLeft <= 0) {
-      this.captureTimeLeft += EnemyUFO.captureTime;
+      this.captureTimeLeft += Enemy.captureTime;
       this.previousPos.push([this.x, this.y]);
     }
 
     this.fireTime -= dt;
     if (this.fireTime <= 0) {
-      this.fireTime += randRange(EnemyUFO.fireTimeRange);
-      const towardPlayer = Math.random() < EnemyUFO.fireTowardPlayerProbability;
+      this.fireTime += randRange(Enemy.fireTimeRange);
+      const towardPlayer = Math.random() < Enemy.fireTowardPlayerProbability;
       let angle: number = Math.PI;
       if (towardPlayer)  {
         angle = Math.atan2(player.y - this.y, player.x - this.x);
@@ -92,7 +92,7 @@ export default class EnemyUFO implements ICollidable {
     }
     if (this.isdead()) {
       Particle.createPartical(20, this.x, this.y, 3, "rgb(255, 27, 242)", 100);
-      EnemyUFO.Respawner.free(this);
+      Enemy.Respawner.free(this);
       return true;
     }
     return false;
@@ -115,9 +115,9 @@ export default class EnemyUFO implements ICollidable {
     const w = this.config.image.width;
     const h = this.config.image.height;
     for (
-      let i = 0, alpha = EnemyUFO.offsetAlpha;
+      let i = 0, alpha = Enemy.offsetAlpha;
       i < this.previousPos.length - 1;
-      ++i, alpha += EnemyUFO.offsetAlpha
+      ++i, alpha += Enemy.offsetAlpha
     ) {
       ctx.globalAlpha = alpha;
       const [x, y] = this.previousPos[i];

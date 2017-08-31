@@ -1,4 +1,13 @@
 import ctx, {celm, scrheight, scrwidth} from "./canvas";
+import EnemyFormation, {
+  PolygonEPP,
+  PyramidEPP,
+  RandomPositionSPP,
+  StraightForwardSPP,
+  StraightLineEPP,
+  TowardPlayerSPP,
+  WallEPP,
+} from "./EnemyFormation";
 import {emit, Events} from "./EventListener";
 import {gameloop, setPlayer} from "./game";
 import {images, ImagesId, onload} from "./imageLoader";
@@ -6,15 +15,6 @@ import "./loadImages";
 import Planet from "./Planet";
 import Player from "./Player";
 import StarField from "./StarField";
-import UFOFormation, {
-  PolygonUPP,
-  PyramidUPP,
-  RandomPositionSPP,
-  StraightForwardSPP,
-  StraightLineUPP,
-  TowardPlayerSPP,
-  WallUPP,
-} from "./UFOFormation";
 
 // tslint:disable no-shadowed-variable
 onload(() => {
@@ -42,10 +42,10 @@ onload(() => {
       live: 5,
     });
   }
-  const x = new UFOFormation(
+  const x = new EnemyFormation(
     u,
     new RandomPositionSPP(),
-    new PolygonUPP(),
+    new PolygonEPP(),
   );
 
   new StarField(100, 50);

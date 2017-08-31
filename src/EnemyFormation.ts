@@ -1,13 +1,9 @@
 import {scrheight, scrwidth} from "./canvas";
 import {easeInOutQuad} from "./ease";
-import EnemyUFO, {IEnemyUFOConfig} from "./EnemyUFO";
+import Enemy, {IEnemyConfig} from "./Enemy";
 import {addListener, Events} from "./EventListener";
 import {dt, player} from "./game";
 import {PI2, randRange, SimpleHarmonicMotion as HarmonicMotion} from "./math";
-
-export interface IUFOFormationConstructor {
-  new (UFOList: Array<IEnemyUFOConfig | number>);
-}
 
 interface IFormationSubProcessor {
   process(f: Formation);
@@ -15,38 +11,38 @@ interface IFormationSubProcessor {
 
 export default class Formation {
   [index: number]: (any?) => boolean | void;
-  public UFOList: EnemyUFO[];
+  public enemyList: Enemy[];
 
   // initialy it will start at the left side of the screen with random y
   public x: number = scrwidth + 100;
   public y: number = scrheight * Math.random();
 
-  private numUFO: number;
+  private numEnemy: number;
 
   constructor(
-    UFOConfigList: IEnemyUFOConfig[],
+    enemyConfigList: IEnemyConfig[],
     public selfPositionProcessor: IFormationSubProcessor,
-    public UFOPositionProcess: IFormationSubProcessor,
+    public enemyPositionProcess: IFormationSubProcessor,
   ) {
-    this.UFOList = UFOConfigList.map((x) => EnemyUFO.Respawner.get().init(x));
-    this.numUFO = UFOConfigList.length;
+    this.enemyList = enemyConfigList.map((x) => Enemy.Respawner.get().init(x));
+    this.numEnemy = enemyConfigList.length;
     addListener(this, [Events.process]);
   }
 
   public [Events.process]() {
-    for (let i = this.UFOList.length; i--; ) {
-      const u = this.UFOList[i];
+    for (let i = this.enemyList.length; i--; ) {
+      const u = this.enemyList[i];
       if (!u) {
         continue;
       }
       if (u.isdead()) {
-        --this.numUFO;
-        this.UFOList[i] = null;
+        --this.numEnemy;
+        this.enemyList[i] = null;
       }
     }
     this.selfPositionProcessor.process(this);
-    this.UFOPositionProcess.process(this);
-    return this.numUFO === 0;
+    this.enemyPositionProcess.process(this);
+    return this.numEnemy === 0;
   }
 
   // return position corresponding to the formation position
@@ -60,7 +56,7 @@ export default class Formation {
 }
 
 // Every class name with postfix "SPP" is used as selfPositionProcessor in Formation.
-// Every class name with postfix "UPP" is used as UFOPOsitionProcessor in Formation.
+// Every class name with postfix "EPP" is used as enemyPOsitionProcessor in Formation.
 
 export class StraightForwardSPP implements IFormationSubProcessor {
   constructor(
@@ -139,7 +135,7 @@ export class TowardPlayerSPP implements IFormationSubProcessor {
   }
 }
 
-export class PolygonUPP implements IFormationSubProcessor {
+export class PolygonEPP implements IFormationSubProcessor {
   private hm: HarmonicMotion;
   constructor(public radius = 100, public period = 3) {
     this.hm = new HarmonicMotion(radius, period);
@@ -147,13 +143,13 @@ export class PolygonUPP implements IFormationSubProcessor {
   public process(f: Formation) {
     this.hm.process(dt);
     const [x, y] = f.getFitPossition(2 * this.radius, 2 * this.radius);
-    if (f.UFOList[0]) {
-      f.UFOList[0].x = x;
-      f.UFOList[0].y = y;
+    if (f.enemyList[0]) {
+      f.enemyList[0].x = x;
+      f.enemyList[0].y = y;
     }
-    const timeoffset = this.hm.period / (f.UFOList.length - 1);
-    for (let i = 1, t = 0; i < f.UFOList.length; ++i, t += timeoffset) {
-      const u = f.UFOList[i];
+    const timeoffset = this.hm.period / (f.enemyList.length - 1);
+    for (let i = 1, t = 0; i < f.enemyList.length; ++i, t += timeoffset) {
+      const u = f.enemyList[i];
       if (!u) {
         continue;
       }
@@ -163,7 +159,7 @@ export class PolygonUPP implements IFormationSubProcessor {
   }
 }
 
-export class StraightLineUPP implements IFormationSubProcessor {
+export class StraightLineEPP implements IFormationSubProcessor {
   constructor(public offset = 100) {
   }
   public process(f: Formation) {
@@ -177,7 +173,7 @@ export class StraightLineUPP implements IFormationSubProcessor {
     let py = -this.offset * Math.sin(angle);
     let x = f.x;
     let y = f.y;
-    for (const u of f.UFOList) {
+    for (const u of f.enemyList) {
       if (u) {
         u.x = x;
         u.y = y;
@@ -204,18 +200,18 @@ export class StraightLineUPP implements IFormationSubProcessor {
   }
 }
 
-export class WallUPP implements IFormationSubProcessor {
-  constructor(public UFOPerLine = 5, public offset = 100) {}
+export class WallEPP implements IFormationSubProcessor {
+  constructor(public enemyPerLine = 5, public offset = 100) {}
   public process(f: Formation) {
-    const numberOfLine = ~~(f.UFOList.length / this.UFOPerLine);
+    const numberOfLine = ~~(f.enemyList.length / this.enemyPerLine);
     const w = (numberOfLine - 1) * this.offset;
-    const h = (this.UFOPerLine - 1) * this.offset;
+    const h = (this.enemyPerLine - 1) * this.offset;
     let [x, y] = f.getFitPossition(w, h);
     x -= w / 2;
     y -= h / 2;
     for (let i = numberOfLine; i--; ) {
-      for (let j = this.UFOPerLine; j--; ) {
-        const u = f.UFOList[i * this.UFOPerLine + j];
+      for (let j = this.enemyPerLine; j--; ) {
+        const u = f.enemyList[i * this.enemyPerLine + j];
         if (u) {
           u.x = x + i * this.offset;
           u.y = y + j * this.offset;
@@ -225,11 +221,11 @@ export class WallUPP implements IFormationSubProcessor {
   }
 }
 
-export class PyramidUPP implements IFormationSubProcessor {
+export class PyramidEPP implements IFormationSubProcessor {
   constructor(public offset = 100) {}
   public process(f: Formation) {
     let maxLine = 0;
-    while ((maxLine + 1) * maxLine / 2 < f.UFOList.length) {
+    while ((maxLine + 1) * maxLine / 2 < f.enemyList.length) {
       ++maxLine;
     }
     const s = (maxLine - 1) * this.offset;
@@ -240,7 +236,7 @@ export class PyramidUPP implements IFormationSubProcessor {
     for (let i = -1; ++i < maxLine; ) {
       const rs = i * this.offset;
       for (let j = -1; ++j <= i; ) {
-        const u = f.UFOList[i * (i + 1) / 2 + j];
+        const u = f.enemyList[i * (i + 1) / 2 + j];
         if (u) {
           u.x = x + rs;
           u.y = y - rs / 2 + j * this.offset;
