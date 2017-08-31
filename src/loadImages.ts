@@ -22,7 +22,7 @@ for (const [id, cb] of [
 
 const UFOw = 100;
 const UFOh = 40;
-loadPrerender(ImagesId.UFOWhite, UFOw, UFOh, () => {
+loadPrerender(ImagesId.UFOHit, UFOw, UFOh, () => {
   renderUFO({color: "black", size: UFOh});
   fillWhite();
 });

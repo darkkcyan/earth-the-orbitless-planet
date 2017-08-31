@@ -11,6 +11,7 @@ import {ICollidable, Tag} from "./SpatialHashMap";
 
 export interface IEnemyConfig {
   image: HTMLImageElement;
+  hitImage?: HTMLImageElement;
   bulletConfig: IBulletConfig;
   live: number;
 }
@@ -124,7 +125,12 @@ export default class Enemy implements ICollidable {
       ctx.drawImage(this.config.image, x - w / 2, y - h / 2);
     }
     ctx.globalAlpha = 1;
-    const img = this.hitCooltime ? images[ImagesId.UFOWhite] : this.config.image;
+    const img = this.hitCooltime
+      ? this.config.hitImage
+        ? this.config.hitImage
+        : images[ImagesId.UFOHit]
+      : this.config.image
+    ;
     ctx.drawImage(img, this.x - w / 2, this.y - h / 2);
     return this.isdead();
   }
