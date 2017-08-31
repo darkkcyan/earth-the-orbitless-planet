@@ -93,7 +93,7 @@ export default class Player implements ICollidable {
       // sideGunList: [],
       sideGunPhaseOffset: Math.PI / 5,
     });
-    addListener(this, [Events.process, Events.collisionCheck, Events.render]);
+    addListener(this, [Events.process, Events.collisionCheck, Events.render + 2]);
   }
 
   public [Events.process]() {
@@ -120,7 +120,7 @@ export default class Player implements ICollidable {
     // console.log("Player hit enemy:", enemycnt, " Player hit bullet", bulletcnt);
   }
 
-  public [Events.render]() {
+  public [Events.render + 2]() {
     this.planet[Events.render]();
     this.rocketGroup[Events.render]();
     this.gunFormation[Events.render]();

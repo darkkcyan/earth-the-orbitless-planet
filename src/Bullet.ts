@@ -33,7 +33,7 @@ export default class Bullet implements ICollidable {
     this.color = config.color;
     this.isDead = false;
     this.tag = config.isPlayerBullet ? Tag.player_bullet : Tag.enemy_bullet;
-    addListener(this, [Events.process, Events.render]);
+    addListener(this, [Events.process, Events.render + 1]);
   }
 
   public [Events.process]() {
@@ -58,7 +58,7 @@ export default class Bullet implements ICollidable {
     return this.isDead;
   }
 
-  public [Events.render]() {
+  public [Events.render + 1]() {
     const {x, y} = this.collisionShape;
     ctx.beginPath();
     ctx.lineWidth = 2 * this.collisionShape.radius;

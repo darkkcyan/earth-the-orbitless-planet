@@ -14,10 +14,10 @@ export default class StarField {
       this.stars.push([scrwidth * Math.random(), scrheight * Math.random()]);
     }
     this[Events.startScroll]();
-    addListener(this, [Events.prerender, Events.startScroll, Events.stopScroll]);
+    addListener(this, [Events.render, Events.startScroll, Events.stopScroll]);
   }
 
-  public [Events.prerender]() {
+  public [Events.render]() {
     ctx.save();
     ctx.shadowColor = ctx.fillStyle = "white";
     ctx.shadowBlur = 4;
