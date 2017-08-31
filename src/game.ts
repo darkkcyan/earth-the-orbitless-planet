@@ -22,8 +22,9 @@ export function gameloop() {
   shm = new SpatialHashMap();  // clear the map every frame
   emit(Events.process);
   emit(Events.collisionCheck);
-  emit(Events.prerender);
-  emit(Events.render);
-  console.log(listeners[Events.process]);
+  for (let i = Events.render; i <= Events.last_render; ++i) {
+    emit(i);
+  }
+  // console.log(listeners[Events.process]);
   requestAnimationFrame(gameloop);
 }

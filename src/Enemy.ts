@@ -18,7 +18,7 @@ export interface IEnemyConfig {
 
 export default class Enemy implements ICollidable {
   public static Respawner = new ObjectRespawner(Enemy);
-  [index: number]: (any) => boolean | void;
+  [index: number]: (any?) => boolean | void;
   public static offsetAlpha = .05;
   public static maxNumberOfShadow = 5;
   public static captureTime = .075;
@@ -32,7 +32,7 @@ export default class Enemy implements ICollidable {
   public x: number = 0;
   public y: number = 0;
 
-  private config: IEnemyConfig;
+  public config: IEnemyConfig;
   private previousPos: number[][] = [];
   private captureTimeLeft: number;
   private fireTime: number;
@@ -49,7 +49,7 @@ export default class Enemy implements ICollidable {
       this.config.image.width * .9, this.config.image.height * .9,
     );
     this.live = config.live;
-    addListener(this, [Events.process, Events.collisionCheck, Events.render]);
+    addListener(this, [Events.process, Events.collisionCheck, Events.render + 2]);
     return this;
   }
 
@@ -67,22 +67,7 @@ export default class Enemy implements ICollidable {
       this.previousPos.push([this.x, this.y]);
     }
 
-    this.fireTime -= dt;
-    if (this.fireTime <= 0) {
-      this.fireTime += randRange(Enemy.fireTimeRange);
-      const towardPlayer = Math.random() < Enemy.fireTowardPlayerProbability;
-      let angle: number = Math.PI;
-      if (towardPlayer)  {
-        angle = Math.atan2(player.y - this.y, player.x - this.x);
-      } else if (player.x > this.x) {
-        angle = 0;
-      }
-      Bullet.Respawner.get().init(
-        this.config.bulletConfig,
-        this.x, this.y,
-        angle,
-      );
-    }
+    this.processFire();
 
     this.collisionShape.x = this.x - this.collisionShape.width / 2;
     this.collisionShape.y = this.y - this.collisionShape.height / 2;
@@ -112,7 +97,7 @@ export default class Enemy implements ICollidable {
     return this.isdead();
   }
 
-  public [Events.render]() {
+  public [Events.render + 2]() {
     const w = this.config.image.width;
     const h = this.config.image.height;
     for (
@@ -135,7 +120,26 @@ export default class Enemy implements ICollidable {
     return this.isdead();
   }
 
-  private free() {
+  protected free() {
     Enemy.Respawner.free(this);
+  }
+
+  protected processFire() {
+    this.fireTime -= dt;
+    if (this.fireTime <= 0) {
+      this.fireTime += randRange(Enemy.fireTimeRange);
+      const towardPlayer = Math.random() < Enemy.fireTowardPlayerProbability;
+      let angle: number = Math.PI;
+      if (towardPlayer)  {
+        angle = Math.atan2(player.y - this.y, player.x - this.x);
+      } else if (player.x > this.x) {
+        angle = 0;
+      }
+      Bullet.Respawner.get().init(
+        this.config.bulletConfig,
+        this.x, this.y,
+        angle,
+      );
+    }
   }
 }

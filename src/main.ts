@@ -1,3 +1,4 @@
+import Boss, {BulletDrop} from "./Boss";
 import ctx, {celm, scrheight, scrwidth} from "./canvas";
 import EnemyFormation, {
   PolygonEPP,
@@ -30,27 +31,40 @@ onload(() => {
     }
     return ans;
   }
-  const u = [];
-  for (let i = 8; i--; ) {
-    u.push({
+  // const u = [];
+  // for (let i = 1; i--; ) {
+  //   u.push({
+  //     bulletConfig: {
+  //       color: "red",
+  //       radius: 6,
+  //       speed: 500,
+  //     },
+  //     hitImage: images[ImagesId.BigHFOHit],
+  //     image: images[ImagesId.BigUFO + i],
+  //     live: 1000,
+  //   });
+  // }
+  // const x = new EnemyFormation(
+  //   u,
+  //   new RandomPositionSPP(),
+  //   new PolygonEPP(300),
+  // );
+
+  new StarField(100, 50);
+  new StarField(100, 65);
+  new StarField(100, 80);
+  new Boss({
       bulletConfig: {
         color: "red",
         radius: 6,
         speed: 500,
       },
-      image: images[ImagesId.UFO + i],
-      live: 5,
-    });
-  }
-  const x = new EnemyFormation(
-    u,
-    new RandomPositionSPP(),
-    new PolygonEPP(),
+      hitImage: images[ImagesId.BigHFOHit],
+      image: images[ImagesId.BigUFO],
+      live: 1000,
+    },
+    [new BulletDrop(3)],
   );
-
-  new StarField(100, 50);
-  new StarField(100, 65);
-  new StarField(100, 80);
   // setTimeout(() => {
   //   emit(Events.stopScroll);
   // }, 10000);
