@@ -20,13 +20,7 @@ onload(() => {
   celm.height = scrheight;
   // tslint:disable no-unused-expression
   // Its actually used expression, tslint does not recognize that
-  const img = images[ImagesId.earthSurface];
-  setPlayer(new Player(new Planet({
-    radius: img.height / 2,
-    spinSpeed: img.height / 2,
-    surfaceMap: img,
-    tiltAngle: Math.PI / 6,
-  })));
+  setPlayer(new Player());
   function rep<T>(obj: T, n: number) {
     const ans: T[] = [];
     for (; n--; ) {

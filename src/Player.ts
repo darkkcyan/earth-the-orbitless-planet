@@ -42,9 +42,13 @@ export default class Player implements ICollidable {
   }
   get y() { return this._y; }
 
-  constructor(private planet: Planet) {
+  private planet: Planet;
+
+  constructor(radius?: number) {
+    radius = radius || images[ImagesId.earthSurface].height / 2;
     const rl = [];
-    this.collisionShape.radius = planet.radius;
+    this.planet = new Planet(images[ImagesId.earthSurface]);
+    this.collisionShape.radius = radius;
     for (let i = 0; i < 3; ++i) {
       rl.push(new Rocket(
         this.planet.radius / 2.5,

@@ -3,51 +3,27 @@ import {Events} from "./EventListener";
 import {dt} from "./game";
 import {HALF_PI, PI2} from "./math";
 
-export interface IPlanetConfig {
-  radius: number;
-  surfaceMap: HTMLImageElement;
-  spinSpeed: number;  // its actually the surfaceMap scroll speed
-  tiltAngle: number;
-  lightSourceAngle?: number;
-}
-
 export default class Planet {
+  public static tiltAngle = Math.PI / 6;
   public x: number = 0;
   public y: number = 0;
 
-  public radius: number;
-  public spinSpeed: number;
-  public tiltAngle: number;
-  public lightSourceAngle: number = 0;
+  public spinSpeed: number; // its actually the surfaceMap scroll speed
 
-  private _surfaceMap: HTMLImageElement;
-  private mapWidth: number;
-  private mapPosition: number;
+  private mapPosition: number = 0;
 
-  set surfaceMap(val: HTMLImageElement) {
-    this._surfaceMap = val;
-    this.mapWidth = this._surfaceMap.width;
-    this.mapPosition = 0;
-  }
-
-  get surfaceMap() {
-    return this._surfaceMap;
-  }
-
-  constructor(config: IPlanetConfig) {
-    this.radius = config.radius;
-    this.spinSpeed = config.spinSpeed;
-    this.surfaceMap = config.surfaceMap;
-    this.tiltAngle = config.tiltAngle;
-    if (config.lightSourceAngle) {
-      this.lightSourceAngle = config.lightSourceAngle;
-    }
+  constructor(
+    private surfaceMap: HTMLImageElement,
+    public radius: number = surfaceMap.height / 2,
+    public lightSourceAngle: number = 0,
+  ) {
+    this.spinSpeed = this.surfaceMap.height / 2;
   }
 
   public [Events.process]() {
     this.mapPosition += dt * this.spinSpeed;
-    if (this.mapPosition > this.mapWidth) {
-      this.mapPosition -= this.mapWidth;
+    if (this.mapPosition > this.surfaceMap.width) {
+      this.mapPosition -= this.surfaceMap.width;
     }
   }
 
@@ -60,7 +36,7 @@ export default class Planet {
     ctx.beginPath();
     ctx.arc(0, 0, this.radius, 0, PI2);
     ctx.clip();
-    ctx.rotate(this.tiltAngle);
+    ctx.rotate(Planet.tiltAngle);
     const px = -this.radius + this.mapPosition;
     const py = -this.radius;
     const magic = 3;  // this number is added
@@ -68,7 +44,7 @@ export default class Planet {
                       // inorder to hide a little line between 2 images.
 
     ctx.drawImage(this.surfaceMap, px, py);
-    ctx.drawImage(this.surfaceMap, px - this.mapWidth + magic, py);
+    ctx.drawImage(this.surfaceMap, px - this.surfaceMap.width + magic, py);
     ctx.restore();
 
     // draw shadow, instead of draw light
