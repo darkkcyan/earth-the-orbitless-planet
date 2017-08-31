@@ -93,7 +93,7 @@ export default class Enemy implements ICollidable {
     }
     if (this.isdead()) {
       Particle.createPartical(20, this.x, this.y, 3, "rgb(255, 27, 242)", 100);
-      Enemy.Respawner.free(this);
+      this.free();
       return true;
     }
     return false;
@@ -133,5 +133,9 @@ export default class Enemy implements ICollidable {
     ;
     ctx.drawImage(img, this.x - w / 2, this.y - h / 2);
     return this.isdead();
+  }
+
+  private free() {
+    Enemy.Respawner.free(this);
   }
 }
