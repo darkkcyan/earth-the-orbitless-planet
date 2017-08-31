@@ -9,6 +9,11 @@ export function easeInOutCubic(t: number, b: number, c: number, d: number) {
   return c / 2 * (t * t * t + 2) + b;
 }
 
+export function easeInCubic(t: number, b: number, c: number, d: number) {
+	t /= d;
+	return c * t * t * t + b;
+}
+
 export function easeOutCubic(t: number, b: number, c: number, d: number) {
   t /= d;
   t--;
