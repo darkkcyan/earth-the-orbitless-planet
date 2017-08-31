@@ -1,9 +1,11 @@
 import ctx, {celm, scrheight, scrwidth} from "./canvas";
+import {emit, Events} from "./EventListener";
 import {gameloop, setPlayer} from "./game";
 import {images, ImagesId, onload} from "./imageLoader";
 import "./loadImages";
 import Planet from "./Planet";
 import Player from "./Player";
+import StarField from "./StarField";
 import UFOFormation, {
   PolygonUPP,
   PyramidUPP,
@@ -45,6 +47,13 @@ onload(() => {
     new RandomPositionSPP(),
     new PolygonUPP(),
   );
+
+  new StarField(100, 50);
+  new StarField(100, 65);
+  new StarField(100, 80);
+  // setTimeout(() => {
+  //   emit(Events.stopScroll);
+  // }, 10000);
 
   gameloop();
 });

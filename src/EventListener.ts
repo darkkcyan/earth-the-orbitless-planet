@@ -66,7 +66,10 @@
 export const enum Events {
   process,
   collisionCheck,
+  prerender,
   render,
+  stopScroll,
+  startScroll,
 }
 
 export interface IHasEventHandler {

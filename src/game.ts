@@ -1,4 +1,4 @@
-import ctx, {celm} from "./canvas";
+import ctx, {celm, scrheight, scrwidth} from "./canvas";
 import {emit, Events, listeners} from "./EventListener";
 import Player from "./Player";
 import SpatialHashMap from "./SpatialHashMap";
@@ -16,10 +16,13 @@ export function setPlayer(t: Player) {
 export function gameloop() {
   dt = (Date.now() - lastTime) / 1000;
   lastTime = Date.now();
+  // ctx.fillStyle = "#01030B";
+  // ctx.fillRect(0, 0, scrwidth, scrheight);
   celm.width ^= 0;
   shm = new SpatialHashMap();  // clear the map every frame
   emit(Events.process);
   emit(Events.collisionCheck);
+  emit(Events.prerender);
   emit(Events.render);
   console.log(listeners[Events.process]);
   requestAnimationFrame(gameloop);
