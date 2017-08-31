@@ -22,8 +22,14 @@ for (const [id, cb] of [
 
 const UFOw = 100;
 const UFOh = 40;
+const BigUFOw = 500;
+const BigUFOh = 200;
 loadPrerender(ImagesId.UFOHit, UFOw, UFOh, () => {
   renderUFO({color: "black", size: UFOh});
+  fillWhite();
+});
+loadPrerender(ImagesId.BigHFOHit, BigUFOw, BigUFOh, () => {
+  renderUFO({color: "black", size: BigUFOh});
   fillWhite();
 });
 
@@ -32,6 +38,9 @@ const UFOColor = "4682B4,20B2AA,F3CE9F,tan,F24300,6ED03D,DC9A3C,848484".split(",
 for (let i = UFOColor.length; i--; ) {
   loadPrerender(ImagesId.UFO + i, UFOw, UFOh, () => {
     renderUFO({color: UFOColor[i], size: UFOh});
+  });
+  loadPrerender(ImagesId.BigUFO + i, BigUFOw, BigUFOh, () => {
+    renderUFO({color: UFOColor[i], size: BigUFOh});
   });
 }
 

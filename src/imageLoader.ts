@@ -47,6 +47,7 @@ export const enum ImagesId {
   gunlv3,
   UFOHit,
   UFO,
-  BigUFO = UFO + 20,  // there are around 10-20 kind of UFO
+  BigHFOHit = UFO + 20,
+  BigUFO,  // there are around 10-20 kind of UFO
   earthSurface = BigUFO + 20,
 }
