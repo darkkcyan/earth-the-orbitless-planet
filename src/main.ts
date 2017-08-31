@@ -1,25 +1,9 @@
-import Bullet from "./Bullet";
 import ctx, {celm, scrheight, scrwidth} from "./canvas";
-import {PLAYER_GUN_COLORSCHEME, UFO_GUN_COLORSCHEME} from "./colorschemes";
-import EnemyUFO from "./EnemyUFO";
-import {emit, Events, listeners} from "./EventListener";
-import {gameloop, player, setPlayer} from "./game";
-import Gun from "./Gun";
-import {images, loadPrerender, onload} from "./imageLoader";
-import {getMousePos} from "./mouse";
+import {gameloop, setPlayer} from "./game";
+import {images, ImagesId, onload} from "./imageLoader";
+import "./loadImages";
 import Planet from "./Planet";
-import {earthsurface as earthsurfaceData} from "./planet-surfaces-data";
 import Player from "./Player";
-import fillWhite from "./prerender/fillWhite";
-import {
-  renderGunLv1,
-  renderGunLv2,
-  renderGunLv3,
-} from "./prerender/gun";
-import {renderPlanetSurface} from "./prerender/planet";
-import {renderUFO} from "./prerender/UFO";
-import {Circle, Rectangle} from "./shapes";
-import SpatialHashMap, {ICollidable} from "./SpatialHashMap";
 import UFOFormation, {
   PolygonUPP,
   PyramidUPP,
@@ -31,29 +15,18 @@ import UFOFormation, {
 } from "./UFOFormation";
 
 // tslint:disable no-shadowed-variable
-loadPrerender(0, 140, 70, () => {renderPlanetSurface(earthsurfaceData); });
-loadPrerender(1, 60, 25, () => renderGunLv1({size: 25, colorScheme: PLAYER_GUN_COLORSCHEME}));
-loadPrerender(2, 60, 25, () => renderGunLv2({size: 25, colorScheme: PLAYER_GUN_COLORSCHEME}));
-loadPrerender(3, 60, 25, () => renderGunLv3({size: 25, colorScheme: PLAYER_GUN_COLORSCHEME}));
-loadPrerender(4, 60, 25, () => renderGunLv3({size: 25, colorScheme: UFO_GUN_COLORSCHEME}));
-loadPrerender(5, 100, 40, () => renderUFO({color: "#F200ED", size: 40}));
-loadPrerender(6, 100, 40, () => {
-  renderUFO({color: "black", size: 40});
-  fillWhite();
-});
 onload(() => {
-  const [img, gunImg] = images;
   celm.width = scrwidth;
   celm.height = scrheight;
   // tslint:disable no-unused-expression
   // Its actually used expression, tslint does not recognize that
+  const img = images[ImagesId.earthSurface];
   setPlayer(new Player(new Planet({
     radius: img.height / 2,
     spinSpeed: img.height / 2,
     surfaceMap: img,
     tiltAngle: Math.PI / 6,
   })));
-  const u = new EnemyUFO();
   function rep<T>(obj: T, n: number) {
     const ans: T[] = [];
     for (; n--; ) {
@@ -61,16 +34,20 @@ onload(() => {
     }
     return ans;
   }
-  const x = new UFOFormation(
-    [...rep({
+  const u = [];
+  for (let i = 8; i--; ) {
+    u.push({
       bulletConfig: {
         color: "red",
         radius: 6,
         speed: 500,
       },
-      image: images[5],
+      image: images[ImagesId.UFO + i],
       live: 5,
-    }, 10)],
+    });
+  }
+  const x = new UFOFormation(
+    u,
     new RandomPositionSPP(),
     new PolygonUPP(),
   );

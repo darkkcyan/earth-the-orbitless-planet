@@ -1,7 +1,7 @@
 import {addListener, Events} from "./EventListener";
 import {shm} from "./game";
 import Gun from "./Gun";
-import {images} from "./imageLoader";
+import {images, ImagesId} from "./imageLoader";
 import {
   HALF_PI,
   PI2,
@@ -62,7 +62,7 @@ export default class Player implements ICollidable {
           radius: 5,
           speed: 1200,
         },
-        image: images[3],
+        image: images[ImagesId.gunlv3],
         reloadTime: .2,
       }),
       planetRadius: 45,
@@ -73,7 +73,7 @@ export default class Player implements ICollidable {
           radius: 3,
           speed: 1000,
         },
-        image: images[1],
+        image: images[ImagesId.gunlv2],
         reloadTime: .2,
         rotate: true,
       }), new Gun({
@@ -83,7 +83,7 @@ export default class Player implements ICollidable {
           radius: 4,
           speed: 1100,
         },
-        image: images[2],
+        image: images[ImagesId.gunlv1],
         reloadTime: .2,
       })],
       // sideGunList: [],

@@ -40,3 +40,13 @@ export function onload(cb: () => void) {
     }
   }
 }
+
+export const enum ImagesId {
+  gunlv1,
+  gunlv2,
+  gunlv3,
+  UFOWhite,
+  UFO,
+  BigUFO = UFO + 20,  // there are around 10-20 kind of UFO
+  earthSurface = BigUFO + 20,
+}
