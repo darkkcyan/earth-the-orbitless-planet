@@ -1,8 +1,8 @@
 import Boss, {
   AimPlayerBullerDrop,
   AimPlayerMultipleBullet,
-  RandomBulletSpread,
   RandomBulletDrop,
+  RandomBulletSpread,
 } from "./Boss";
 import ctx, {celm, scrheight, scrwidth} from "./canvas";
 import EnemyFormation, {
@@ -62,17 +62,18 @@ onload(() => {
       bulletConfig: {
         color: "red",
         radius: 6,
-        speed: 500,
+        speed: 800,
       },
+      fireTimeRange: [.1, .2],
       hitImage: images[ImagesId.BigHFOHit],
       image: images[ImagesId.BigUFO],
       live: 1000,
     },
     [
-      // new RandomBulletDrop(3),
+      new RandomBulletDrop(),
       // new AimPlayerBullerDrop(),
       // new AimPlayerMultipleBullet(),
-      new RandomBulletSpread(5),
+      // new RandomBulletSpread(5),
     ],
     1.5,
   );

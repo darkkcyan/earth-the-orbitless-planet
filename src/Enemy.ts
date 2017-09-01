@@ -14,6 +14,7 @@ export interface IEnemyConfig {
   hitImage?: HTMLImageElement;
   bulletConfig: IBulletConfig;
   live: number;
+  fireTimeRange?: [number, number];
 }
 
 export default class Enemy implements ICollidable {
@@ -33,6 +34,9 @@ export default class Enemy implements ICollidable {
   public y: number = 0;
 
   public config: IEnemyConfig;
+
+  protected canFire: boolean;
+
   private previousPos: number[][] = [];
   private captureTimeLeft: number;
   private fireTime: number;
@@ -67,7 +71,13 @@ export default class Enemy implements ICollidable {
       this.previousPos.push([this.x, this.y]);
     }
 
-    this.processFire();
+    this.canFire = false;
+    this.fireTime -= dt;
+    if (this.fireTime <= 0) {
+      this.fireTime += randRange(this.config.fireTimeRange || Enemy.fireTimeRange);
+      this.canFire = true;
+    }
+    this.autoFire();
 
     this.collisionShape.x = this.x - this.collisionShape.width / 2;
     this.collisionShape.y = this.y - this.collisionShape.height / 2;
@@ -121,6 +131,9 @@ export default class Enemy implements ICollidable {
   }
 
   public fire(angle: number = Math.PI, offsetX = 0, offsetY = 0) {
+    if (!this.canFire) {
+      return ;
+    }
     Bullet.Respawner.get().init(
       this.config.bulletConfig,
       this.x + offsetX, this.y + offsetY,
@@ -132,18 +145,14 @@ export default class Enemy implements ICollidable {
     Enemy.Respawner.free(this);
   }
 
-  protected processFire() {
-    this.fireTime -= dt;
-    if (this.fireTime <= 0) {
-      this.fireTime += randRange(Enemy.fireTimeRange);
-      const towardPlayer = Math.random() < Enemy.fireTowardPlayerProbability;
-      let angle: number = Math.PI;
-      if (towardPlayer)  {
-        angle = Math.atan2(player.y - this.y, player.x - this.x);
-      } else if (player.x > this.x) {
-        angle = 0;
-      }
-      this.fire(angle);
+  protected autoFire() {
+    const towardPlayer = Math.random() < Enemy.fireTowardPlayerProbability;
+    let angle: number = Math.PI;
+    if (towardPlayer)  {
+      angle = Math.atan2(player.y - this.y, player.x - this.x);
+    } else if (player.x > this.x) {
+      angle = 0;
     }
+    this.fire(angle);
   }
 }

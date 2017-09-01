@@ -35,16 +35,28 @@ export default class Boss extends Enemy {
     return super[Events.process]();
   }
 
-  public fire(angle: number = Math.PI, offsetX = randNeg(25), offsetY = randNeg(50)) {
-    super.fire(angle, offsetX, offsetY);
+  public fire(angle: number = Math.PI, numBullet = 5, offsetX = 0, offsetY = 0) {
+    if (!this.canFire) {
+      return ;
+    }
+    const d = this.config.bulletConfig.radius * 3;
+    const px = d * Math.sin(-angle);
+    const py = d * Math.cos(-angle);
+    offsetX -= px * (numBullet - 1) / 2;
+    offsetY -= py * (numBullet - 1) / 2;
+    while (numBullet --) {
+      super.fire(angle, offsetX, offsetY);
+      offsetX += px;
+      offsetY += py;
+    }
   }
 
   protected free() {
     // YES, do nothing, cuz only one boss
   }
 
-  protected processFire() {
-    // Still do nothing, the skill will handle this
+  protected autoFire() {
+    // No auto fire
   }
 
 }
@@ -75,28 +87,26 @@ export class MoveToPosition implements IBossSkill {
 }
 
 export class RandomBulletDrop extends MoveToPosition {
-  public currentTime: number;
-  constructor(moveTime = 2, public towardPlayerProbability = .5) {
+  constructor(moveTime = .5, public shootTime = 2, public towardPlayerProbability = .5) {
     super(moveTime);
   }
 
   public init(b: Boss) {
+    super.init(b);
     if (Math.random() < this.towardPlayerProbability) {
-      super.init(b, undefined, player.y);
-    } else {
-      super.init(b);
-      if (Math.abs(this.dy) < scrheight / 3) {
-        this.dy = (b.y < scrheight / 2 ? scrheight : -scrheight) / 3;
-      }
+      this.dy = player.y - b.y;
     }
   }
 
   public process(b: Boss) {
-    const shootProbability = easeInCubic(this.currentTime, 0, 1, this.moveTime);
-    if (Math.random() < shootProbability) {
-      b.fire();
+    if (this.currentTime < this.moveTime) {
+      console.log(this.currentTime, this.moveTime);
+      super.process(b);
+    } else {
+      this.currentTime += dt;
+      b.fire(Math.PI, 7);
     }
-    return super.process(b);
+    return this.currentTime > this.moveTime + this.shootTime;
   }
 }
 
@@ -104,7 +114,7 @@ export class AimPlayerBullerDrop implements IBossSkill {
   public currentTime: number;
   public dx: number;
   public prevX: number;
-  constructor(public moveTime = 4, public speedRatio = 2.5, public bulletDropProbability = .15) {}
+  constructor(public moveTime = 4, public speedRatio = 2.5) {}
 
   public init(b: Boss) {
     this.currentTime = 0;
@@ -117,7 +127,7 @@ export class AimPlayerBullerDrop implements IBossSkill {
     b.x = easeInOutQuad(this.currentTime, this.prevX, this.dx, this.moveTime);
     const dy = (player.y - b.y) * this.speedRatio * dt;
     b.y += dy;
-    if (Math.random() < this.bulletDropProbability && this.currentTime > .7) {
+    if (this.currentTime > this.moveTime / 4) {
       b.fire();
     }
     return this.currentTime > this.moveTime;
@@ -125,14 +135,12 @@ export class AimPlayerBullerDrop implements IBossSkill {
 }
 
 export class AimPlayerMultipleBullet extends MoveToPosition {
-  public currentReloadTime: number;
-  constructor(moveTime = 1.5, public shootTime = 4, public reloadTime = .1) {
+  constructor(moveTime = 1.5, public shootTime = 4) {
     super(moveTime);
   }
 
   public init(b: Boss) {
     super.init(b, scrwidth / 2, scrheight / 2);
-    this.currentReloadTime = 0;
   }
 
   public process(b: Boss) {
@@ -140,13 +148,7 @@ export class AimPlayerMultipleBullet extends MoveToPosition {
       super.process(b);
     } else {
       this.currentTime += dt;
-      this.currentReloadTime += dt;
-      if (this.currentReloadTime > this.reloadTime) {
-        this.currentReloadTime -= this.reloadTime;
-        for (let i = 3; i--; ) {
-          b.fire(Math.atan2(player.y - b.y, player.x - b.x));
-        }
-      }
+      b.fire(Math.atan2(player.y - b.y, player.x - b.x));
     }
     return this.currentTime > this.moveTime + this.shootTime;
   }
@@ -171,8 +173,9 @@ export class RandomBulletSpread extends MoveToPosition {
       super.process(b);
     } else {
       this.currentTime += dt;
-      const rayNum = Math.floor(Math.random() * this.numberOfRay);
-      b.fire(Math.PI - this.spreadAngle * (rayNum / (this.numberOfRay - 1) - .5));
+      for (let i = this.numberOfRay; i--; ) {
+        b.fire(Math.PI - this.spreadAngle * (i / (this.numberOfRay - 1) - .5));
+      }
     }
     return this.currentTime > this.moveTime + this.shootTime;
   }
