@@ -1,4 +1,4 @@
-import Boss, {BulletDrop} from "./Boss";
+import Boss, {RandomBulletDrop} from "./Boss";
 import ctx, {celm, scrheight, scrwidth} from "./canvas";
 import EnemyFormation, {
   PolygonEPP,
@@ -63,7 +63,7 @@ onload(() => {
       image: images[ImagesId.BigUFO],
       live: 1000,
     },
-    [new BulletDrop(3)],
+    [new RandomBulletDrop(3)],
   );
   // setTimeout(() => {
   //   emit(Events.stopScroll);

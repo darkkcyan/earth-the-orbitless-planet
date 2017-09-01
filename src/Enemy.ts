@@ -120,6 +120,14 @@ export default class Enemy implements ICollidable {
     return this.isdead();
   }
 
+  public fire(angle: number, offsetX = 0, offsetY = 0) {
+    Bullet.Respawner.get().init(
+      this.config.bulletConfig,
+      this.x + offsetX, this.y + offsetY,
+      angle,
+    );
+  }
+
   protected free() {
     Enemy.Respawner.free(this);
   }
@@ -135,11 +143,7 @@ export default class Enemy implements ICollidable {
       } else if (player.x > this.x) {
         angle = 0;
       }
-      Bullet.Respawner.get().init(
-        this.config.bulletConfig,
-        this.x, this.y,
-        angle,
-      );
+      this.fire(angle);
     }
   }
 }
