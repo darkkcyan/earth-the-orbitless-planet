@@ -4,7 +4,7 @@ import {easeInCubic, easeInOutQuad} from "./ease";
 import Enemy, {IEnemyConfig} from "./Enemy";
 import {Events} from "./EventListener";
 import {dt, player} from "./game";
-import {randNeg} from "./math";
+import {randNeg, randRange} from "./math";
 
 interface IBossSkill {
   init(boss: Boss);
@@ -147,6 +147,32 @@ export class AimPlayerMultipleBullet extends MoveToPosition {
           b.fire(Math.atan2(player.y - b.y, player.x - b.x));
         }
       }
+    }
+    return this.currentTime > this.moveTime + this.shootTime;
+  }
+}
+
+export class RandomBulletSpread extends MoveToPosition {
+  constructor(
+    public numberOfRay = 3,
+    moveTime = 1.5,
+    public shootTime = 3,
+    public spreadAngle = Math.PI / 2,
+  ) {
+    super(moveTime);
+  }
+
+  public init(b: Boss) {
+    super.init(b, randRange([scrwidth * 2 / 3, scrwidth]));
+  }
+
+  public process(b: Boss) {
+    if (this.currentTime < this.moveTime) {
+      super.process(b);
+    } else {
+      this.currentTime += dt;
+      const rayNum = Math.floor(Math.random() * this.numberOfRay);
+      b.fire(Math.PI - this.spreadAngle * (rayNum / (this.numberOfRay - 1) - .5));
     }
     return this.currentTime > this.moveTime + this.shootTime;
   }
