@@ -4,6 +4,7 @@ import {easeInCubic, easeInOutQuad} from "./ease";
 import Enemy, {IEnemyConfig} from "./Enemy";
 import {Events} from "./EventListener";
 import {dt, player} from "./game";
+import {randNeg} from "./math";
 
 interface IBossSkill {
   init(boss: Boss);
@@ -34,6 +35,10 @@ export default class Boss extends Enemy {
     return super[Events.process]();
   }
 
+  public fire(angle: number = Math.PI, offsetX = randNeg(25), offsetY = randNeg(50)) {
+    super.fire(angle, offsetX, offsetY);
+  }
+
   protected free() {
     // YES, do nothing, cuz only one boss
   }
@@ -41,6 +46,7 @@ export default class Boss extends Enemy {
   protected processFire() {
     // Still do nothing, the skill will handle this
   }
+
 }
 
 export class MoveToPosition implements IBossSkill {
@@ -88,8 +94,32 @@ export class RandomBulletDrop extends MoveToPosition {
   public process(b: Boss) {
     const shootProbability = easeInCubic(this.currentTime, 0, 1, this.moveTime);
     if (Math.random() < shootProbability) {
-      b.fire(Math.PI, (Math.random() - .5) * 50, (Math.random() - .5) * 100);
+      b.fire();
     }
     return super.process(b);
+  }
+}
+
+export class AimPlayerBullerDrop implements IBossSkill {
+  public currentTime: number;
+  public dx: number;
+  public prevX: number;
+  constructor(public moveTime = 4, public speedRatio = 2.5, public bulletDropProbability = .15) {}
+
+  public init(b: Boss) {
+    this.currentTime = 0;
+    this.dx = scrwidth * (Math.random() / 2 + .5) - b.x;
+    this.prevX = b.x;
+  }
+
+  public process(b: Boss) {
+    this.currentTime += dt;
+    b.x = easeInOutQuad(this.currentTime, this.prevX, this.dx, this.moveTime);
+    const dy = (player.y - b.y) * this.speedRatio * dt;
+    b.y += dy;
+    if (Math.random() < this.bulletDropProbability && this.currentTime > .7) {
+      b.fire();
+    }
+    return this.currentTime > this.moveTime;
   }
 }

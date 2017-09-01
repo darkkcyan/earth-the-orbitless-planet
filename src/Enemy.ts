@@ -120,7 +120,7 @@ export default class Enemy implements ICollidable {
     return this.isdead();
   }
 
-  public fire(angle: number, offsetX = 0, offsetY = 0) {
+  public fire(angle: number = Math.PI, offsetX = 0, offsetY = 0) {
     Bullet.Respawner.get().init(
       this.config.bulletConfig,
       this.x + offsetX, this.y + offsetY,

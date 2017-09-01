@@ -14,6 +14,10 @@ export function randRange(range: number[]) {
   return range[0] + Math.random() * (range[1] - range[0]);
 }
 
+export function randNeg(range) {
+  return (Math.random() * 2 - 1) * range;
+}
+
 /**
  * https://en.wikipedia.org/wiki/Simple_harmonic_motion
  * This class is made with some helper function to compute the position x, position y, ...
