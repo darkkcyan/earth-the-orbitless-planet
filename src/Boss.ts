@@ -123,3 +123,31 @@ export class AimPlayerBullerDrop implements IBossSkill {
     return this.currentTime > this.moveTime;
   }
 }
+
+export class AimPlayerMultipleBullet extends MoveToPosition {
+  public currentReloadTime: number;
+  constructor(moveTime = 1.5, public shootTime = 4, public reloadTime = .1) {
+    super(moveTime);
+  }
+
+  public init(b: Boss) {
+    super.init(b, scrwidth / 2, scrheight / 2);
+    this.currentReloadTime = 0;
+  }
+
+  public process(b: Boss) {
+    if (this.currentTime < this.moveTime) {
+      super.process(b);
+    } else {
+      this.currentTime += dt;
+      this.currentReloadTime += dt;
+      if (this.currentReloadTime > this.reloadTime) {
+        this.currentReloadTime -= this.reloadTime;
+        for (let i = 3; i--; ) {
+          b.fire(Math.atan2(player.y - b.y, player.x - b.x));
+        }
+      }
+    }
+    return this.currentTime > this.moveTime + this.shootTime;
+  }
+}

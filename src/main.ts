@@ -1,4 +1,4 @@
-import Boss, {AimPlayerBullerDrop, RandomBulletDrop} from "./Boss";
+import Boss, {AimPlayerBullerDrop, AimPlayerMultipleBullet, RandomBulletDrop} from "./Boss";
 import ctx, {celm, scrheight, scrwidth} from "./canvas";
 import EnemyFormation, {
   PolygonEPP,
@@ -63,7 +63,7 @@ onload(() => {
       image: images[ImagesId.BigUFO],
       live: 1000,
     },
-    [new RandomBulletDrop(3), new AimPlayerBullerDrop()],
+    [new RandomBulletDrop(3), new AimPlayerBullerDrop(), new AimPlayerMultipleBullet()],
     1.5,
   );
   // setTimeout(() => {
