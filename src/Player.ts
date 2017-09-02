@@ -69,7 +69,7 @@ export default class Player implements ICollidable {
         image: images[ImagesId.gunlv3],
         reloadTime: .2,
       }),
-      planetRadius: 45,
+      planetRadius: this.planet.radius * 1.1,
       sideGunList: [new Gun({
         bulletConfig: {
           color: "yellow",

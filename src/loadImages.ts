@@ -44,4 +44,4 @@ for (let i = UFOColor.length; i--; ) {
   });
 }
 
-loadPrerender(ImagesId.earthSurface, 140, 70, () => {renderPlanetSurface(earthsurface); });
+loadPrerender(ImagesId.earthSurface, 180, 90, () => {renderPlanetSurface(earthsurface); });
