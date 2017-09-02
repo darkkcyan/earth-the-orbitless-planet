@@ -53,6 +53,10 @@ export default class Formation {
       (this.y / scrheight) * (scrheight - height) + height / 2,
     ];
   }
+
+  public isDead() {
+    return this.numEnemy === 0;
+  }
 }
 
 // Every class name with postfix "SPP" is used as selfPositionProcessor in Formation.

@@ -2,6 +2,7 @@ import Bullet from "./Bullet";
 import {scrheight, scrwidth} from "./canvas";
 import {easeInCubic, easeInOutQuad} from "./ease";
 import Enemy, {IEnemyConfig} from "./Enemy";
+import EnemyFormation from "./EnemyFormation";
 import {Events} from "./EventListener";
 import {dt, player} from "./game";
 import {randNeg, randRange} from "./math";
@@ -178,5 +179,44 @@ export class RandomBulletSpread extends MoveToPosition {
       }
     }
     return this.currentTime > this.moveTime + this.shootTime;
+  }
+}
+
+export class SumonFormation extends MoveToPosition {
+  public f: EnemyFormation[];
+  constructor(
+    public formationList: Array<() => EnemyFormation>,
+    public numOfEnemy: number,
+    public waitTime: number = Infinity,  // wait until the formation is dead
+    moveTime?: number,
+  ) {
+    super(moveTime);
+  }
+
+  public init(b: Boss)  {
+    super.init(b, scrwidth - b.config.image.width / 2, scrheight / 2);
+    this.f = [];
+  }
+
+  public process(b: Boss) {
+    let allDead = false;
+    if (this.currentTime < this.moveTime) {
+      super.process(b);
+      if (this.currentTime >= this.moveTime) {
+        for (let i = this.numOfEnemy; i--; ) {
+          const t = this.formationList[Math.floor(this.formationList.length * Math.random())];
+          this.f.push(t());
+        }
+      }
+    } else {
+      this.currentTime += dt;
+      allDead = true;
+      for (const u of this.f) {
+        if (!u.isDead()) {
+          allDead = false;
+        }
+      }
+    }
+    return allDead || this.currentTime > this.moveTime + this.waitTime;
   }
 }

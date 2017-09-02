@@ -3,6 +3,7 @@ import Boss, {
   AimPlayerMultipleBullet,
   RandomBulletDrop,
   RandomBulletSpread,
+  SumonFormation,
 } from "./Boss";
 import ctx, {celm, scrheight, scrwidth} from "./canvas";
 import EnemyFormation, {
@@ -71,9 +72,24 @@ onload(() => {
     },
     [
       new RandomBulletDrop(),
-      // new AimPlayerBullerDrop(),
-      // new AimPlayerMultipleBullet(),
-      // new RandomBulletSpread(5),
+      new AimPlayerBullerDrop(),
+      new AimPlayerMultipleBullet(),
+      new RandomBulletSpread(5),
+      new SumonFormation([
+        () => new EnemyFormation(
+          [{
+            bulletConfig: {
+              color: "red",
+              radius: 6,
+              speed: 500,
+            },
+            image: images[ImagesId.UFO],
+            live: 5,
+          }],
+          new RandomPositionSPP(),
+          new PolygonEPP(),
+        ),
+      ], 3, 3),
     ],
     1.5,
   );
