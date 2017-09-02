@@ -6,5 +6,8 @@ export default {
   format: "iife",
   plugins: [
     sourcemaps()
-  ]
+  ],
+  globals: {
+    dat: "dat",
+  },
 };
