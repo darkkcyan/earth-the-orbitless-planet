@@ -81,6 +81,9 @@ export class MoveToPosition implements IBossSkill {
   }
 
   public process(b: Boss) {
+    if (this.currentTime >= this.moveTime) {
+      return true;
+    }
     this.currentTime += dt;
     b.x = easeInOutQuad(this.currentTime, this.prevX, this.dx, this.moveTime);
     b.y = easeInOutQuad(this.currentTime, this.prevY, this.dy, this.moveTime);
