@@ -53,4 +53,6 @@ export const enum ImagesId {
   last_BigUFO = BigUFO + 20,
   earthSurface,
   moonSurface,
+  alienPlanetSurface,
+  alienPlanetSurfaceWithShield,
 }

@@ -185,8 +185,7 @@ export class RandomBulletSpread extends MoveToPosition {
 export class SumonFormation extends MoveToPosition {
   public f: EnemyFormation[];
   constructor(
-    public formationList: Array<() => EnemyFormation>,
-    public numOfEnemy: number,
+    public formationFactory: () => EnemyFormation[],
     public waitTime: number = Infinity,  // wait until the formation is dead
     moveTime?: number,
   ) {
@@ -203,10 +202,7 @@ export class SumonFormation extends MoveToPosition {
     if (this.currentTime < this.moveTime) {
       super.process(b);
       if (this.currentTime >= this.moveTime) {
-        for (let i = this.numOfEnemy; i--; ) {
-          const t = this.formationList[Math.floor(this.formationList.length * Math.random())];
-          this.f.push(t());
-        }
+        this.f = this.formationFactory();
       }
     } else {
       this.currentTime += dt;

@@ -1,6 +1,6 @@
 import {PLAYER_GUN_COLORSCHEME} from "./colorschemes";
 import {ImagesId, loadPrerender} from "./imageLoader";
-import {earthsurface, moonsurface} from "./planet-surfaces-data";
+import * as surfaces from "./planet-surfaces-data";
 import fillWhite from "./prerender/fillWhite";
 import {
   renderGunLv1,
@@ -48,5 +48,7 @@ function loadPlanetSurface(id: number, p: IPlanetSurface) {
   loadPrerender(id, p.width, p.height, () => {renderPlanetSurface(p); });
 }
 
-loadPlanetSurface(ImagesId.earthSurface, earthsurface);
-loadPlanetSurface(ImagesId.moonSurface, moonsurface);
+loadPlanetSurface(ImagesId.earthSurface, surfaces.earthsurface);
+loadPlanetSurface(ImagesId.moonSurface, surfaces.moonsurface);
+loadPlanetSurface(ImagesId.alienPlanetSurface, surfaces.alienplanetsurface);
+loadPlanetSurface(ImagesId.alienPlanetSurfaceWithShield, surfaces.alienplanetsurfaceiwithshield);
