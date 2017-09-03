@@ -1,13 +1,13 @@
 import {PLAYER_GUN_COLORSCHEME} from "./colorschemes";
 import {ImagesId, loadPrerender} from "./imageLoader";
-import {earthsurface} from "./planet-surfaces-data";
+import {earthsurface, moonsurface} from "./planet-surfaces-data";
 import fillWhite from "./prerender/fillWhite";
 import {
   renderGunLv1,
   renderGunLv2,
   renderGunLv3,
 } from "./prerender/gun";
-import {renderPlanetSurface} from "./prerender/planet";
+import {IPlanetSurface, renderPlanetSurface} from "./prerender/planet";
 import {renderUFO} from "./prerender/UFO";
 
 const gunw = 60;
@@ -44,4 +44,9 @@ for (let i = UFOColor.length; i--; ) {
   });
 }
 
-loadPrerender(ImagesId.earthSurface, 180, 90, () => {renderPlanetSurface(earthsurface); });
+function loadPlanetSurface(id: number, p: IPlanetSurface) {
+  loadPrerender(id, p.width, p.height, () => {renderPlanetSurface(p); });
+}
+
+loadPlanetSurface(ImagesId.earthSurface, earthsurface);
+loadPlanetSurface(ImagesId.moonSurface, moonsurface);

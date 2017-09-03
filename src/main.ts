@@ -1,3 +1,4 @@
+import * as dat from "dat-gui";
 import Boss, {
   AimPlayerBullerDrop,
   AimPlayerMultipleBullet,
@@ -19,6 +20,7 @@ import {emit, Events} from "./EventListener";
 import {gameloop, setPlayer} from "./game";
 import {images, ImagesId, onload} from "./imageLoader";
 import "./loadImages";
+import Moon, {MoonState} from "./Moon";
 import Planet from "./Planet";
 import Player from "./Player";
 import StarField from "./StarField";
@@ -59,43 +61,52 @@ onload(() => {
   new StarField(100, 50);
   new StarField(100, 65);
   new StarField(100, 80);
-  new Boss({
-      bulletConfig: {
-        color: "red",
-        radius: 6,
-        speed: 800,
-      },
-      fireTimeRange: [.1, .2],
-      hitImage: images[ImagesId.BigHFOHit],
-      image: images[ImagesId.BigUFO],
-      live: 1000,
-    },
-    [
-      new RandomBulletDrop(),
-      new AimPlayerBullerDrop(),
-      new AimPlayerMultipleBullet(),
-      new RandomBulletSpread(5),
-      new SumonFormation([
-        () => new EnemyFormation(
-          [{
-            bulletConfig: {
-              color: "red",
-              radius: 6,
-              speed: 500,
-            },
-            image: images[ImagesId.UFO],
-            live: 5,
-          }],
-          new RandomPositionSPP(),
-          new PolygonEPP(),
-        ),
-      ], 3, 3),
-    ],
-    1.5,
-  );
+  // new Boss({
+  //     bulletConfig: {
+  //       color: "red",
+  //       radius: 6,
+  //       speed: 800,
+  //     },
+  //     fireTimeRange: [.1, .2],
+  //     hitImage: images[ImagesId.BigHFOHit],
+  //     image: images[ImagesId.BigUFO],
+  //     live: 1000,
+  //   },
+  //   [
+  //     new RandomBulletDrop(),
+  //     new AimPlayerBullerDrop(),
+  //     new AimPlayerMultipleBullet(),
+  //     new RandomBulletSpread(5),
+  //     new SumonFormation([
+  //       () => new EnemyFormation(
+  //         [{
+  //           bulletConfig: {
+  //             color: "red",
+  //             radius: 6,
+  //             speed: 500,
+  //           },
+  //           image: images[ImagesId.UFO],
+  //           live: 5,
+  //         }],
+  //         new RandomPositionSPP(),
+  //         new PolygonEPP(),
+  //       ),
+  //     ], 3, 3),
+  //   ],
+  //   1.5,
+  // );
+
+  const m = new Moon(scrwidth / 2, scrheight / 2);
+  m.state = MoonState.aroundPlayer;
+
   // setTimeout(() => {
-  //   emit(Events.stopScroll);
-  // }, 10000);
+  //   m.state = MoonState.moveAway;
+  // }, 3000);
+
+  // const g = new dat.GUI();
+  // g.add(Moon, "accelerate", 0, 1000);
+  // g.add(Moon, "maxSpeed", 0, 3000);
+  // g.add(Moon, "minSpeed", 0, 3000);
 
   gameloop();
 });
