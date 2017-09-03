@@ -1,4 +1,5 @@
 import {celm, scrheight, scrwidth} from "./canvas";
+import {clamp} from "./math";
 let currentX: number = 0;
 let currentY: number = 0;
 
@@ -11,16 +12,17 @@ let mouseStatus = MouseStatus.UP;
 
 export let getMouseStatus = () => mouseStatus;
 
-celm.onmousedown = (e: MouseEvent) => {
+window.onmousedown = (e: MouseEvent) => {
   mouseStatus = MouseStatus.DOWN;
 };
 
-celm.onmousemove = (e: MouseEvent) => {
-  currentX = e.offsetX * scrwidth / celm.offsetWidth;
-  currentY = e.offsetY * scrheight / celm.offsetHeight;
+window.onmousemove = (e: MouseEvent) => {
+  const t = celm.getBoundingClientRect();
+  currentX = clamp((e.clientX - t.left) * scrwidth / celm.offsetWidth, 0, scrwidth);
+  currentY = clamp((e.clientY - t.top) * scrheight / celm.offsetHeight, 0, scrheight);
 };
 
-celm.onmouseup = (e: MouseEvent) => {
+window.onmouseup = (e: MouseEvent) => {
   mouseStatus = MouseStatus.UP;
 };
 
