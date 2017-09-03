@@ -17,7 +17,7 @@ import EnemyFormation, {
   WallEPP,
 } from "./EnemyFormation";
 import {emit, Events} from "./EventListener";
-import FinalBoss, {LazerChase, LazerScan} from "./FinalBoss";
+import FinalBoss, {LazerChase, LazerScan, RadialLazerScan} from "./FinalBoss";
 import {gameloop, setPlayer} from "./game";
 import {images, ImagesId, onload} from "./imageLoader";
 import "./loadImages";
@@ -74,14 +74,16 @@ onload(() => {
       live: 1000,
     },
     [
-      new RandomBulletDrop(),
-      new AimPlayerBullerDrop(),
-      new AimPlayerMultipleBullet(),
-      new RandomBulletSpread(5),
+      // new RandomBulletDrop(),
+      // new AimPlayerBullerDrop(),
+      // new AimPlayerMultipleBullet(),
+      // new RandomBulletSpread(5),
       new LazerChase(),
       new LazerChase(3),
       new LazerScan(),
       new LazerScan(2, 2.5, 1.5),
+      new RadialLazerScan(),
+      new RadialLazerScan(3, 1),
       // new SumonFormation(() => [new EnemyFormation(
       //   [{
       //     bulletConfig: {
@@ -96,7 +98,7 @@ onload(() => {
       //   new PolygonEPP(),
       // )], 3),
     ],
-    1.5,
+    .75,
   );
 
   gameloop();

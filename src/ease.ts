@@ -28,3 +28,17 @@ export function easeInOutQuad(t: number, b: number, c: number, d: number) {
   t--;
   return -c / 2 * (t * (t - 2) - 1) + b;
 }
+
+export function easeInCirc(t: number, b: number, c: number, d: number) {
+  t /= d;
+  return -c * (Math.sqrt(1 - t * t) - 1) + b;
+}
+
+export function easeInOutQuint(t: number, b: number, c: number, d: number) {
+  t /= d / 2;
+  if (t < 1) {
+    return c / 2 * t * t * t * t * t + b;
+  }
+  t -= 2;
+  return c / 2 * (t * t * t * t * t + 2) + b;
+}

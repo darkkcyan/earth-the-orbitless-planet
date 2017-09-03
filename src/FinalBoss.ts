@@ -1,11 +1,12 @@
 import Boss, {IBossSkill, LineGuideDrawer, MoveToPosition} from "./Boss";
 import ctx, {scrheight, scrwidth} from "./canvas";
+import {easeInOutQuint} from "./ease";
 import {IEnemyConfig} from "./Enemy";
 import {addListener, Events} from "./EventListener";
 import {dt, player} from "./game";
 import {images, ImagesId} from "./imageLoader";
 import Lazer from "./Lazer";
-import {clamp, randRange} from "./math";
+import {clamp, cross, PI2, randRange} from "./math";
 import Planet from "./Planet";
 import {Circle} from "./shapes";
 
@@ -130,10 +131,7 @@ export class LazerScan implements IBossSkill {
     this.mover.process(b);
     if (this.currentTime > this.moveTime) {
       if (!this.laz.length) {
-        let y = scrheight - b.y;
-        // if (this.numLazer === 1) {
-        //   y += y > scrheight / 2 ? -100 : 100;
-        // }
+        const y = scrheight - b.y;
         this.mover.init(b, b.x, y);
         this.mover.moveTime = this.scanTime;
         for (let i = this.numLazer; i--; ) {
@@ -158,5 +156,66 @@ export class LazerScan implements IBossSkill {
 
   private getPos(i: number) {
     return - ((this.numLazer - 1) / 2 - i) * LazerScan.layerOffset;
+  }
+}
+
+export class RadialLazerScan implements IBossSkill {
+  public mover: MoveToPosition = new MoveToPosition();
+  public currentTime: number;
+  public currentScan: number;
+  public currentAngle: number;
+  public startAngle: number;
+  public changeAngle: number;
+  public guide: LineGuideDrawer;
+  public laz: Lazer;
+
+  constructor(public numberOfScan = 1, public scanTime = 1.5, public waitTime = .5) {}
+
+  public init(b: Boss) {
+    this.mover.init(b, scrwidth / 2, scrheight / 2);
+    this.currentScan = -1;
+    this.currentTime = this.scanTime + this.waitTime;
+  }
+
+  public process(b: Boss) {
+    if (this.mover.process(b)) {
+      this.currentTime += dt;
+      if (this.currentTime > this.scanTime + this.waitTime) {
+        this.currentTime = 0;
+        ++this.currentScan;
+        if (this.currentScan >= this.numberOfScan) {
+          return true;
+        }
+        this.startAngle = this.currentAngle = randRange([0, PI2]);
+        this.guide = new LineGuideDrawer(b.x, b.y, this.currentAngle);
+        this.laz = null;
+      }
+      if (this.currentTime > this.waitTime) {
+        this.guide.remove = true;
+        if (this.currentTime - dt < this.waitTime) {
+          this.laz = Lazer.Respawner.get();
+          this.laz.init({age: this.scanTime}, b.x, b.y, this.currentAngle);
+          let t = cross(
+            Math.cos(this.startAngle), Math.sin(this.startAngle),
+            player.x - b.x, player.y - b.y,
+          );
+          t = (t < 0) ? -1 : +(t > 0);
+          this.changeAngle = Math.PI * t;
+        }
+        this.currentAngle = easeInOutQuint(
+          this.currentTime - this.waitTime,
+          this.startAngle,
+          this.changeAngle,
+          this.scanTime,
+        );
+      }
+      if (this.guide) {
+        this.guide.angle = this.currentAngle;
+      }
+      if (this.laz) {
+        this.laz.angle = this.currentAngle;
+      }
+    }
+    return this.currentScan >= this.numberOfScan;
   }
 }
