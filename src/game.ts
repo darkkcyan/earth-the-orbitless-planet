@@ -14,7 +14,8 @@ export function setPlayer(t: Player) {
 }
 
 export function gameloop() {
-  dt = (Date.now() - lastTime) / 1000;
+  requestAnimationFrame(gameloop);
+  dt = Math.min((Date.now() - lastTime) / 1000, 0.02);
   lastTime = Date.now();
   // ctx.fillStyle = "#01030B";
   // ctx.fillRect(0, 0, scrwidth, scrheight);
@@ -26,5 +27,4 @@ export function gameloop() {
     emit(i);
   }
   // console.log(listeners[Events.process]);
-  requestAnimationFrame(gameloop);
 }
