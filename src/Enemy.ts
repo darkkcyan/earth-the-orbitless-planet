@@ -6,7 +6,7 @@ import {images, ImagesId} from "./imageLoader";
 import {randRange} from "./math";
 import ObjectRespawner from "./ObjectRespawner";
 import Particle from "./Particle";
-import {Rectangle} from "./shapes";
+import {AllKindOfShapes, Rectangle} from "./shapes";
 import {ICollidable, Tag} from "./SpatialHashMap";
 
 export interface IEnemyConfig {
@@ -27,7 +27,7 @@ export default class Enemy implements ICollidable {
   public static fireTimeRange: [number, number] = [1, 2];
   public static fireTowardPlayerProbability = .3;
 
-  public collisionShape: Rectangle;
+  public collisionShape: AllKindOfShapes;
   public tag: number = Tag.enemy;
 
   public x: number = 0;
@@ -79,8 +79,7 @@ export default class Enemy implements ICollidable {
     }
     this.autoFire();
 
-    this.collisionShape.x = this.x - this.collisionShape.width / 2;
-    this.collisionShape.y = this.y - this.collisionShape.height / 2;
+    this.updateCollisionShape();
     shm.insert(this);
 
     if (this.hitCooltime > 0) {
@@ -154,5 +153,10 @@ export default class Enemy implements ICollidable {
       angle = 0;
     }
     this.fire(angle);
+  }
+
+  protected updateCollisionShape() {
+    this.collisionShape.x = this.x - (this.collisionShape as Rectangle).width / 2;
+    this.collisionShape.y = this.y - (this.collisionShape as Rectangle).height / 2;
   }
 }

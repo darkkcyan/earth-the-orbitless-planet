@@ -17,6 +17,7 @@ import EnemyFormation, {
   WallEPP,
 } from "./EnemyFormation";
 import {emit, Events} from "./EventListener";
+import FinalBoss, {LazerChase} from "./FinalBoss";
 import {gameloop, setPlayer} from "./game";
 import {images, ImagesId, onload} from "./imageLoader";
 import "./loadImages";
@@ -61,35 +62,36 @@ onload(() => {
   new StarField(100, 50);
   new StarField(100, 65);
   new StarField(100, 80);
-  new Boss({
+  new FinalBoss({
       bulletConfig: {
-        color: "red",
+        color: "lawngreen",
         radius: 6,
         speed: 800,
       },
       fireTimeRange: [.1, .2],
-      hitImage: images[ImagesId.BigHFOHit],
-      image: images[ImagesId.BigUFO],
+      // hitImage: images[ImagesId.BigHFOHit],
+      image: images[ImagesId.alienPlanetSurfaceWithShield],
       live: 1000,
     },
     [
-      new RandomBulletDrop(),
-      new AimPlayerBullerDrop(),
-      new AimPlayerMultipleBullet(),
-      new RandomBulletSpread(5),
-      new SumonFormation(() => [new EnemyFormation(
-        [{
-          bulletConfig: {
-            color: "red",
-            radius: 6,
-            speed: 500,
-          },
-          image: images[ImagesId.UFO],
-          live: 5,
-        }],
-        new RandomPositionSPP(),
-        new PolygonEPP(),
-      )], 3),
+      // new RandomBulletDrop(),
+      // new AimPlayerBullerDrop(),
+      // new AimPlayerMultipleBullet(),
+      // new RandomBulletSpread(5),
+      new LazerChase(3),
+      // new SumonFormation(() => [new EnemyFormation(
+      //   [{
+      //     bulletConfig: {
+      //       color: "red",
+      //       radius: 6,
+      //       speed: 500,
+      //     },
+      //     image: images[ImagesId.UFO],
+      //     live: 5,
+      //   }],
+      //   new RandomPositionSPP(),
+      //   new PolygonEPP(),
+      // )], 3),
     ],
     1.5,
   );

@@ -14,8 +14,8 @@ export default class Planet {
 
   constructor(
     private surfaceMap: HTMLImageElement,
-    public radius: number = surfaceMap.height / 2,
     public lightSourceAngle: number = 0,
+    public radius: number = surfaceMap.height / 2,
   ) {
     this.spinSpeed = this.surfaceMap.height / 2;
   }
