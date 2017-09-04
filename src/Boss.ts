@@ -105,7 +105,6 @@ export class RandomBulletDrop extends MoveToPosition {
 
   public process(b: Boss) {
     if (this.currentTime < this.moveTime) {
-      console.log(this.currentTime, this.moveTime);
       super.process(b);
     } else {
       this.currentTime += dt;

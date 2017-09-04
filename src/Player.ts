@@ -25,6 +25,7 @@ export default class Player implements ICollidable {
   public tag: number = Tag.player;
   public x: number = 0;
   public y: number = 0;
+  public planet: Planet;
 
   public live: number = 3;
 
@@ -32,8 +33,6 @@ export default class Player implements ICollidable {
 
   private rocketGroup: RocketGroup;
   private gunFormation: GunFormation;
-
-  private planet: Planet;
 
   constructor(radius?: number) {
     radius = radius || images[ImagesId.earthSurface].height / 2;
@@ -101,22 +100,23 @@ export default class Player implements ICollidable {
   }
 
   public [Events.collisionCheck]() {
-    let bulletcnt = 0;
-    let enemycnt = 0;
     for (const obj of shm.retrive(this)) {
-      if (obj.tag === Tag.enemy) {
-        ++enemycnt;
-      } else if (obj.tag === Tag.enemy_bullet) {
+      if (obj.tag === Tag.enemy || obj.tag === Tag.enemy_bullet) {
+        this.loseLive();
+      }
+      if (obj.tag === Tag.enemy_bullet) {
         obj.tag = Tag.no_tag;
-        ++bulletcnt;
       }
     }
-    // console.log("Player hit enemy:", enemycnt, " Player hit bullet", bulletcnt);
   }
 
   public [Events.render + 3]() {
     this.planet[Events.render]();
     this.rocketGroup[Events.render]();
     this.gunFormation[Events.render]();
+  }
+
+  public loseLive() {
+    --this.live;
   }
 }

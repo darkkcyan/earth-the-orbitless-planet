@@ -2,6 +2,7 @@ import ctx, {scrheight, scrwidth} from "./canvas";
 import {easeInCubic, easeOutCubic} from "./ease";
 import {addListener, Events} from "./EventListener";
 import {dt, player} from "./game";
+import {dot} from "./math";
 import ObjectRespawner from "./ObjectRespawner";
 
 export interface ILazerConfig {
@@ -46,6 +47,16 @@ export default class Lazer {
   }
 
   public [Events.collisionCheck]() {
+    const ax = player.x - this.x;
+    const ay = player.y - this.y;
+    const bx = Math.cos(this.angle);
+    const by = Math.sin(this.angle);
+    if (dot(ax, ay, bx, by) > 0) {
+      const d = Math.abs(dot(ax, ay, -by, bx));
+      if (d < player.planet.radius + this.getRadius()) {
+        player.loseLive();
+      }
+    }
 
     return this.isDead();
   }

@@ -22,6 +22,10 @@ export function cross(x1: number, y1: number, x2: number, y2: number) {
   return x1 * y2 - x2 * y1;
 }
 
+export function dot(x1: number, y1: number, x2: number, y2: number) {
+  return x1 * x2 + y1 * y2;
+}
+
 /**
  * https://en.wikipedia.org/wiki/Simple_harmonic_motion
  * This class is made with some helper function to compute the position x, position y, ...

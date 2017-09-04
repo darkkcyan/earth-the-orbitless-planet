@@ -75,29 +75,29 @@ onload(() => {
       live: 1000,
     },
     [
-      // new RandomBulletDrop(),
-      // new AimPlayerBullerDrop(),
-      // new AimPlayerMultipleBullet(),
-      // new RandomBulletSpread(5),
+      new RandomBulletDrop(),
+      new AimPlayerBullerDrop(),
+      new AimPlayerMultipleBullet(),
+      new RandomBulletSpread(5),
       new LazerChase(),
       new LazerChase(3),
       new LazerScan(),
       new LazerScan(2, 2.5, 1.5),
       new RadialLazerScan(),
       new RadialLazerScan(3, 1),
-      // new SumonFormation(() => [new EnemyFormation(
-      //   [{
-      //     bulletConfig: {
-      //       color: "red",
-      //       radius: 6,
-      //       speed: 500,
-      //     },
-      //     image: images[ImagesId.UFO],
-      //     live: 5,
-      //   }],
-      //   new RandomPositionSPP(),
-      //   new PolygonEPP(),
-      // )], 3),
+      new SumonFormation(() => [new EnemyFormation(
+        [{
+          bulletConfig: {
+            color: "red",
+            radius: 6,
+            speed: 500,
+          },
+          image: images[ImagesId.UFO],
+          live: 5,
+        }],
+        new RandomPositionSPP(),
+        new PolygonEPP(),
+      )], 3),
     ],
     .75,
   );
