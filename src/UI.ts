@@ -1,6 +1,6 @@
 import ctx, {scrheight, scrwidth} from "./canvas";
 import {addListener, Events} from "./EventListener";
-import {score} from "./game";
+import {player, score} from "./game";
 
 addListener({
   [Events.render + 10]() {
@@ -29,8 +29,8 @@ function renderGameUI() {
   ctx.closePath();
   ctx.moveTo(-lw, 0);
   ctx.lineTo(-lw, viewHeight);
-  ctx.lineTo(100, viewHeight);
-  ctx.arc(100, 0, viewHeight, Math.PI / 2, 0, true);
+  ctx.lineTo(70, viewHeight);
+  ctx.arc(70, 0, viewHeight, Math.PI / 2, 0, true);
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
@@ -38,6 +38,7 @@ function renderGameUI() {
   ctx.textAlign = "right";
   ctx.fillText("" + score, scrwidth, 0);
   ctx.textAlign = "left";
+  ctx.fillText("" + player.live, fontSize + 10, 0);
   ctx.fillStyle = "red";
   ctx.fillText("\u{1F49A}", 0, 0);
 }

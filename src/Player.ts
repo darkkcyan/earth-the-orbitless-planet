@@ -23,24 +23,15 @@ export default class Player implements ICollidable {
   public followMouse = true;
   public collisionShape: Circle = new Circle(0, 0, 0);
   public tag: number = Tag.player;
+  public x: number = 0;
+  public y: number = 0;
+
+  public live: number = 3;
 
   [index: number]: (any) => boolean | void;
 
   private rocketGroup: RocketGroup;
-  private _x: number = 0;
-  private _y: number = 0;
   private gunFormation: GunFormation;
-
-  set x(val: number) {
-    this.collisionShape.x = this.gunFormation.x = this.planet.x = this._x = val;
-    this.rocketGroup.x = val - this.planet.radius - 10;
-  }
-  get x() { return this._x; }
-
-  set y(val: number) {
-    this.collisionShape.y = this.gunFormation.y = this.rocketGroup.y = this.planet.y = this._y = val;
-  }
-  get y() { return this._y; }
 
   private planet: Planet;
 
@@ -100,6 +91,9 @@ export default class Player implements ICollidable {
     if (this.followMouse) {
       [this.x, this.y] = getMousePos();
     }
+    this.collisionShape.x = this.gunFormation.x = this.planet.x = this.x;
+    this.rocketGroup.x = this.x - this.planet.radius - 10;
+    this.collisionShape.y = this.gunFormation.y = this.rocketGroup.y = this.planet.y = this.y;
     this.planet[Events.process]();
     this.rocketGroup[Events.process]();
     this.gunFormation[Events.process]();
