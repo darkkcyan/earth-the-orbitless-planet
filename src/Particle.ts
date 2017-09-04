@@ -2,7 +2,7 @@ import ctx from "./canvas";
 import {easeOutCubic} from "./ease";
 import {addListener, Events} from "./EventListener";
 import {dt} from "./game";
-import {PI2} from "./math";
+import {PI2, randNeg} from "./math";
 import ObjectRespawner from "./ObjectRespawner";
 
 export default class Partical {
@@ -19,7 +19,8 @@ export default class Partical {
     age: number = 60,
   ) {
     while (num --) {
-      Partical.Respawner.get().init(x, y, radius, color, age);
+      Partical.Respawner.get().init(
+        x + randNeg(radius), y + randNeg(radius), radius + randNeg(radius - 3), color, age);
     }
   }
 

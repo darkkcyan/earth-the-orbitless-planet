@@ -1,5 +1,7 @@
+import ctx from "./canvas";
+import {easeOutCubic} from "./ease";
 import {addListener, Events} from "./EventListener";
-import {shm} from "./game";
+import {dt, shm} from "./game";
 import Gun from "./Gun";
 import {images, ImagesId} from "./imageLoader";
 import {
@@ -8,6 +10,7 @@ import {
   SimpleHarmonicMotion as HarmonicMotion,
 } from "./math";
 import {getMousePos} from "./mouse";
+import Particle from "./Particle";
 import Planet from "./Planet";
 import {
   HarmonicMotionPlayerGunFormation as GunFormation ,
@@ -20,6 +23,8 @@ import {Circle} from "./shapes";
 import {ICollidable, Tag} from "./SpatialHashMap";
 
 export default class Player implements ICollidable {
+  public static respawnTime = 2;
+  public static relaxTime = 3;
   public followMouse = true;
   public collisionShape: Circle = new Circle(0, 0, 0);
   public tag: number = Tag.player;
@@ -33,12 +38,14 @@ export default class Player implements ICollidable {
 
   private rocketGroup: RocketGroup;
   private gunFormation: GunFormation;
+  private currentTime: number;
 
   constructor(radius?: number) {
     radius = radius || images[ImagesId.earthSurface].height / 2;
     const rl = [];
     this.planet = new Planet(images[ImagesId.earthSurface]);
     this.collisionShape.radius = radius;
+    this.currentTime = Player.relaxTime;
     for (let i = 0; i < 3; ++i) {
       rl.push(new Rocket(
         this.planet.radius / 2.5,
@@ -96,27 +103,54 @@ export default class Player implements ICollidable {
     this.planet[Events.process]();
     this.rocketGroup[Events.process]();
     this.gunFormation[Events.process]();
+    if (this.currentTime > 0) {
+      this.currentTime -= dt;
+    }
     shm.insert(this);
   }
 
   public [Events.collisionCheck]() {
     for (const obj of shm.retrive(this)) {
-      if (obj.tag === Tag.enemy || obj.tag === Tag.enemy_bullet) {
-        this.loseLive();
-      }
-      if (obj.tag === Tag.enemy_bullet) {
-        obj.tag = Tag.no_tag;
+      if (this.currentTime < 0) {
+        if (obj.tag === Tag.enemy || obj.tag === Tag.enemy_bullet) {
+          this.loseLive();
+        }
+        if (obj.tag === Tag.enemy_bullet) {
+          obj.tag = Tag.no_tag;
+        }
       }
     }
   }
 
   public [Events.render + 3]() {
-    this.planet[Events.render]();
-    this.rocketGroup[Events.render]();
-    this.gunFormation[Events.render]();
+    if (this.currentTime < Player.relaxTime) {
+      this.planet[Events.render]();
+      this.rocketGroup[Events.render]();
+      this.gunFormation[Events.render]();
+    }
+    if (this.isRelax()) {
+      const r = this.planet.radius * 1.4;
+      ctx.save();
+      ctx.lineWidth = 10;
+      ctx.fillStyle = ctx.strokeStyle = "#00DCFF";
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, r, 0, PI2);
+      ctx.globalAlpha = easeOutCubic(this.currentTime, 0, .5, Player.relaxTime);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  public isRelax() {
+    return this.currentTime > 0 && this.currentTime < Player.relaxTime;
   }
 
   public loseLive() {
-    --this.live;
+    if (this.currentTime < 0) {
+      --this.live;
+      Particle.createPartical(100, this.x, this.y, 6, "cyan");
+      this.currentTime = Player.relaxTime + Player.respawnTime;
+    }
   }
 }
