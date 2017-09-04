@@ -7,6 +7,8 @@ export let player: Player = null;
 export let dt: number = null;
 export let shm: SpatialHashMap = null;
 
+export let score = 0;
+
 let lastTime = Date.now();
 
 export function setPlayer(t: Player) {

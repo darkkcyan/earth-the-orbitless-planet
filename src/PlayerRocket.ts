@@ -67,7 +67,6 @@ export class PlayerRocket {
     ctx.translate(x, y);
     ctx.shadowBlur = 20;
     ctx.globalAlpha *= 0.5;
-    ctx.beginPath();
     const d: Array<[number, string]> = [
       [1, "red"],
       [magic, "yellow"],

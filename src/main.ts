@@ -25,6 +25,7 @@ import Moon, {MoonState} from "./Moon";
 import Planet from "./Planet";
 import Player from "./Player";
 import StarField from "./StarField";
+import "./UI";
 
 // tslint:disable no-shadowed-variable
 onload(() => {

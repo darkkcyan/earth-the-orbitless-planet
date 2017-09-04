@@ -67,7 +67,7 @@ export const enum Events {
   process,
   collisionCheck,
   render,
-  last_render = render + 5,
+  last_render = render + 10,
   stopScroll,
   startScroll,
 }
