@@ -58,7 +58,7 @@ export default class Lazer {
       }
     }
 
-    return this.isDead();
+    return this.currentTime > this.config.age - Lazer.sumonTime * 2;
   }
 
   public [Events.render + 1]() {
