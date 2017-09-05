@@ -27,7 +27,15 @@ export default class FinalBoss extends Boss {
   }
 
   public [Events.render + 2]() {
-    this.planet[Events.render]();
+    if (this.hitCooltime) {
+      ctx.beginPath();
+      ctx.fillStyle = "gainsboro";
+      ctx.arc(this.x, this.y, this.planet.radius, 0, PI2);
+      ctx.fill();
+    } else {
+      this.planet[Events.render]();
+    }
+    return this.isdead();
   }
 
   protected updateCollisionShape() {
