@@ -1,7 +1,7 @@
 import Bullet, {IBulletConfig} from "./Bullet";
 import ctx from "./canvas";
 import {addListener, Events} from "./EventListener";
-import {dt, player, shm} from "./game";
+import {dt, increaseScore, player, shm} from "./game";
 import {images, ImagesId} from "./imageLoader";
 import {randRange} from "./math";
 import ObjectRespawner from "./ObjectRespawner";
@@ -10,6 +10,7 @@ import {AllKindOfShapes, Rectangle} from "./shapes";
 import {ICollidable, Tag} from "./SpatialHashMap";
 
 export interface IEnemyConfig {
+  rewardScore: number;
   image: HTMLImageElement;
   hitImage?: HTMLImageElement;
   bulletConfig: IBulletConfig;
@@ -88,6 +89,8 @@ export default class Enemy implements ICollidable {
     if (this.isdead()) {
       Particle.createPartical(20, this.x, this.y, 3, "rgb(255, 27, 242)", 100);
       this.free();
+
+      increaseScore(this.config.rewardScore);
       return true;
     }
     return false;
