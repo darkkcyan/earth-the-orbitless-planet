@@ -35,6 +35,7 @@ export default class Enemy implements ICollidable {
   public y: number = 0;
 
   public config: IEnemyConfig;
+  public live: number;
 
   protected canFire: boolean;
   protected hitCooltime: number = 0;
@@ -42,7 +43,6 @@ export default class Enemy implements ICollidable {
   private previousPos: number[][] = [];
   private captureTimeLeft: number;
   private fireTime: number;
-  private live: number;
 
   public init(config: IEnemyConfig) {
     this.x = this.y = scrwidth;  // avoid hitting player when just respawn

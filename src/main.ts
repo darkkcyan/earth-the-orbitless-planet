@@ -59,7 +59,7 @@ onload(() => {
   }
   const x = new EnemyFormation(
     u,
-    new RandomPositionSPP(),
+    new TowardPlayerSPP(),
     new PolygonEPP(),
   );
 

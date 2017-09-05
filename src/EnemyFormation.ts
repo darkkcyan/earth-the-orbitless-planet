@@ -14,7 +14,7 @@ export default class Formation {
   public enemyList: Enemy[];
 
   // initialy it will start at the left side of the screen with random y
-  public x: number = scrwidth + 100;
+  public x: number = scrwidth * 1.5;
   public y: number = scrheight * Math.random();
 
   private numEnemy: number;
@@ -30,6 +30,7 @@ export default class Formation {
   }
 
   public [Events.process]() {
+    console.log("still alive");
     for (let i = this.enemyList.length; i--; ) {
       const u = this.enemyList[i];
       if (!u) {
@@ -56,6 +57,14 @@ export default class Formation {
 
   public isDead() {
     return this.numEnemy === 0;
+  }
+
+  public forceDead() {
+    for (const u of this.enemyList) {
+      if (u && u.x < -2 * u.config.image.width) {
+        u.live = 0;
+      }
+    }
   }
 }
 
@@ -87,6 +96,7 @@ export class StraightForwardSPP implements IFormationSubProcessor {
         f.y += scrheight;
       }
     }
+    f.forceDead();
   }
 }
 
@@ -136,6 +146,7 @@ export class TowardPlayerSPP implements IFormationSubProcessor {
     } else if (d * s > 40) {
       f.y += 200 * s * dt * this.pyRatio;
     }
+    f.forceDead();
   }
 }
 
