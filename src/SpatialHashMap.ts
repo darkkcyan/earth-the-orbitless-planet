@@ -17,6 +17,8 @@ export const enum Tag {
   enemy_bullet,
   enemy,
   powerup,
+  evil_moon,
+  good_moon,
   no_tag,
 }
 

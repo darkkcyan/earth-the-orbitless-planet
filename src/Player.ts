@@ -31,7 +31,7 @@ export default class Player implements ICollidable {
   public planet: Planet;
 
   public live: number = 3;
-  public level: number = 100;
+  public level: number = 7;
 
   [index: number]: (any) => boolean | void;
 
@@ -82,15 +82,17 @@ export default class Player implements ICollidable {
       return false;
     }
     for (const obj of shm.retrive(this)) {
+      const t = obj.tag;
       if (this.currentTime < 0) {
-        if (obj.tag === Tag.enemy || obj.tag === Tag.enemy_bullet) {
-          this.loseLive();
-        }
-        if (obj.tag === Tag.enemy_bullet) {
+        if (t === Tag.enemy_bullet) {
           obj.tag = Tag.no_tag;
         }
+        if ([Tag.enemy, Tag.enemy_bullet, Tag.evil_moon].indexOf(t) > -1) {
+          this.loseLive();
+          return false;
+        }
       }
-      if (obj.tag === Tag.powerup) {
+      if (t === Tag.powerup) {
         this.gunFormation = getPlayerGunFormation(++this.level);
       }
     }

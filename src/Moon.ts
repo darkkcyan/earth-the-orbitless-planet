@@ -1,7 +1,9 @@
 import {addListener, Events} from "./EventListener";
-import {dt, player} from "./game";
+import {dt, player, shm} from "./game";
 import {images, ImagesId} from "./imageLoader";
 import Planet from "./Planet";
+import {Circle} from "./shapes";
+import {ICollidable, Tag} from "./SpatialHashMap";
 
 export const enum MoonState {
   noState,
@@ -10,15 +12,19 @@ export const enum MoonState {
   moveAway,
 }
 
-export default class Moon {
+export default class Moon implements ICollidable {
   [index: number]: (any?) => boolean | void;
   public state: number = MoonState.noState;
 
   public velX = 0;
   public velY = 0;
   public planet = new Planet(images[ImagesId.moonSurface]);
+  public collisionShape: Circle;
+  public tag: Tag;
+  public damage = 1.5;
 
   constructor(public x: number, public y: number) {
+    this.collisionShape = new Circle(x, y, this.planet.radius);
     addListener(this, [Events.process, Events.collisionCheck, Events.render + 1]);
   }
 
@@ -32,16 +38,20 @@ export default class Moon {
         accelerate = 260;
         maxSpeed = 600;
         minSpeed = 0;
+        this.tag = Tag.evil_moon;
         break;
       case MoonState.aroundPlayer:
         accelerate = 200;
         maxSpeed = 1500;
         minSpeed = 600;
+        this.tag = Tag.good_moon;
         break;
       case MoonState.moveAway:
         accelerate = -50;
         maxSpeed = 600;
         minSpeed = 0;
+        this.tag = Tag.evil_moon;
+        break;
     }
     this.velX += Math.cos(angle) * accelerate * dt;
     this.velY += Math.sin(angle) * accelerate * dt;
@@ -58,9 +68,10 @@ export default class Moon {
     }
     this.x += this.velX;
     this.y += this.velY;
-    this.planet.x = this.x;
-    this.planet.y = this.y;
+    this.collisionShape.x = this.planet.x = this.x;
+    this.collisionShape.y = this.planet.y = this.y;
     this.planet[Events.process]();
+    shm.insert(this);
   }
 
   public [Events.collisionCheck]() {
