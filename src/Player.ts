@@ -12,9 +12,7 @@ import {
 import {getMousePos} from "./mouse";
 import Particle from "./Particle";
 import Planet from "./Planet";
-import {
-  HarmonicMotionPlayerGunFormation as GunFormation ,
-} from "./PlayerGunFormation";
+import getPlayerGunFormation, {HarmonicMotionPlayerGunFormation} from "./PlayerGunFormation";
 import {
   PlayerRocket as Rocket,
   PlayerRocketGroup as RocketGroup,
@@ -33,11 +31,12 @@ export default class Player implements ICollidable {
   public planet: Planet;
 
   public live: number = 3;
+  public level: number = 100;
 
   [index: number]: (any) => boolean | void;
 
   private rocketGroup: RocketGroup;
-  private gunFormation: GunFormation;
+  private gunFormation: HarmonicMotionPlayerGunFormation;
   private currentTime: number;
 
   constructor(radius?: number) {
@@ -54,43 +53,7 @@ export default class Player implements ICollidable {
       ));
     }
     this.rocketGroup = new RocketGroup(rl, new HarmonicMotion(this.planet.radius / 4, 2));
-    this.gunFormation = new GunFormation({
-      hm: new HarmonicMotion(HALF_PI / 3, 2),
-      mainGun: new Gun({
-        bulletConfig: {
-          color: "red",
-          isPlayerBullet: true,
-          radius: 5,
-          speed: 1200,
-        },
-        image: images[ImagesId.gunlv3],
-        reloadTime: .2,
-      }),
-      planetRadius: this.planet.radius * 1.1,
-      sideGunList: [new Gun({
-        bulletConfig: {
-          color: "yellow",
-          damage: 10,
-          isPlayerBullet: true,
-          radius: 3,
-          speed: 1000,
-        },
-        image: images[ImagesId.gunlv2],
-        reloadTime: .2,
-        rotate: true,
-      }), new Gun({
-        bulletConfig: {
-          color: "blue",
-          isPlayerBullet: true,
-          radius: 4,
-          speed: 1100,
-        },
-        image: images[ImagesId.gunlv1],
-        reloadTime: .2,
-      })],
-      // sideGunList: [],
-      sideGunPhaseOffset: Math.PI / 5,
-    });
+    this.gunFormation = getPlayerGunFormation(this.level);
     addListener(this, [Events.process, Events.collisionCheck, Events.render + 3]);
   }
 
@@ -104,6 +67,7 @@ export default class Player implements ICollidable {
     if (this.followMouse) {
       [this.x, this.y] = getMousePos();
     }
+    this.gunFormation.planetRadius = this.planet.radius * 1.1;
     this.collisionShape.x = this.gunFormation.x = this.planet.x = this.x;
     this.rocketGroup.x = this.x - this.planet.radius - 10;
     this.collisionShape.y = this.gunFormation.y = this.rocketGroup.y = this.planet.y = this.y;
@@ -114,6 +78,9 @@ export default class Player implements ICollidable {
   }
 
   public [Events.collisionCheck]() {
+    if (this.currentTime > Player.relaxTime) {
+      return false;
+    }
     for (const obj of shm.retrive(this)) {
       if (this.currentTime < 0) {
         if (obj.tag === Tag.enemy || obj.tag === Tag.enemy_bullet) {
@@ -123,7 +90,12 @@ export default class Player implements ICollidable {
           obj.tag = Tag.no_tag;
         }
       }
+      if (obj.tag === Tag.powerup) {
+        this.gunFormation = getPlayerGunFormation(++this.level);
+      }
     }
+    // return this.live < 0;
+    return false;
   }
 
   public [Events.render + 3]() {
@@ -150,9 +122,19 @@ export default class Player implements ICollidable {
     return this.currentTime > 0 && this.currentTime < Player.relaxTime;
   }
 
+  public justDead() {
+    return this.currentTime > Player.relaxTime;
+  }
+
   public loseLive() {
     if (this.currentTime < 0) {
       --this.live;
+      if (this.level > 10) {
+        this.level >>= 1;
+      } else {
+        this.level -= +(this.level > 0) + +(this.level > 2) + +(this.level > 5) + +(this.level > 8);
+      }
+      this.gunFormation = getPlayerGunFormation(this.level);
       Particle.createPartical(100, this.x, this.y, 6, "cyan");
       this.currentTime = Player.relaxTime + Player.respawnTime;
     }

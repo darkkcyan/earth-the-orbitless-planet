@@ -33,7 +33,7 @@ export default class PowerUp implements ICollidable {
 
   public [Events.collisionCheck]() {
     // no need to check in shm
-    if (isCollision(player.collisionShape, this.collisionShape)) {
+    if (!player.justDead() && isCollision(player.collisionShape, this.collisionShape)) {
       this.isDead = true;
     }
     return this.isDead;

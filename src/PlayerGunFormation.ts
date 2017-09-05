@@ -1,38 +1,42 @@
 import ctx from "./canvas";
 import {Events} from "./EventListener";
 import {dt} from "./game";
-import Gun from "./Gun";
-import {PI2, SimpleHarmonicMotion as HarMonicmotion} from "./math";
+import Gun, {IGunConfig} from "./Gun";
+import {images, ImagesId} from "./imageLoader";
+import {PI2, SimpleHarmonicMotion as HarmonicMotion} from "./math";
 import {getMouseStatus, MouseStatus} from "./mouse";
 
-export interface IPlayerGunFormationConfig {
-  planetRadius: number;
-  mainGun?: Gun;
-  sideGunList: Gun[];
-  sideGunPhaseOffset: number;
-  hm: HarMonicmotion;
-}
+// export interface IPlayerGunFormationConfig {
+//   planetRadius: number;
+//   mainGun?: Gun;
+//   sideGunList: Gun[];
+//   sideGunPhaseOffset: number;
+//   hm: HarMonicmotion;
+// }
 
 export class HarmonicMotionPlayerGunFormation {
   public x: number = 0;
   public y: number = 0;
 
-  private planetRadius: number;
-  private mainGun: Gun= null;
-  private leftSideGunList: Gun[];
-  private rightSideGunList: Gun[];
-  private sideGunPhaseOffset: number;
-  private hm: HarMonicmotion;
+  public planetRadius: number;
+  public mainGun: Gun = null;
+  public sideGunPhaseOffset: number;
+  public hm: HarmonicMotion;
+  public leftSideGunList: Gun[];
+  public rightSideGunList: Gun[];
 
-  constructor(config: IPlayerGunFormationConfig) {
-    this.planetRadius = config.planetRadius;
-    if (config.mainGun) {
-      this.mainGun = config.mainGun;
-    }
-    this.leftSideGunList = config.sideGunList.map((gun) => gun.clone());
-    this.rightSideGunList = config.sideGunList.map((gun) => gun.clone());
-    this.sideGunPhaseOffset = config.sideGunPhaseOffset;
-    this.hm = config.hm;
+  // constructor(config: IPlayerGunFormationConfig) {
+  //   this.planetRadius = config.planetRadius;
+  //   if (config.mainGun) {
+  //     this.mainGun = config.mainGun;
+  //   }
+  //   this.sideGunPhaseOffset = config.sideGunPhaseOffset;
+  //   this.hm = config.hm;
+  // }
+
+  public setSideGun(gl: Gun[]) {
+    this.leftSideGunList = gl.map((gun) => gun.clone());
+    this.rightSideGunList = gl;
   }
 
   public [Events.process]() {
@@ -72,4 +76,56 @@ export class HarmonicMotionPlayerGunFormation {
       this.mainGun[Events.render]();
     }
   }
+}
+
+const playerBulletColor: string[] = [
+  "darkturquoise",
+  "aquamarine",
+  "springgreen",
+];
+function getPlayerGun(gunLv: number) {
+  if (gunLv === 0) {
+    return null;
+  }
+  const rotate = gunLv < 0;
+  gunLv = Math.abs(gunLv);
+  return new Gun({
+    bulletConfig: {
+      color: playerBulletColor[gunLv - 1],
+      damage: gunLv,
+      isPlayerBullet: true,
+      radius: 4 + gunLv * 3,
+      speed: 850 + gunLv * 150,
+    },
+    image: images[ImagesId.playerGun + gunLv],
+    reloadTime: .55 - gunLv * .1,
+    rotate,
+  });
+}
+
+const playerGunFormationData: number[][] = [
+// [hm.amplitute (actually it is Math.PI / hm.amplitute, hm.period,
+//  sideGunPhaseOffset (same as hm.amplitute), mainGunLv, sidegun0lv, sidegun1lv, ...]
+  [0, 1, 0, 1],
+  [6, 2, 0, 0, 1],
+  [6, 2, 0, 1, -1],
+  [6, 2, 0, 2, -1],
+  [6, 2, 0, 1, -2],
+  [6, 2, 0, 2, -2],
+  [4, 2, 6, 3, 1, -1],
+  [4, 2, 6, 3, 1, -2],
+  [4, 2, 6, 3, 2, -2],
+  [4, 2, 6, 3, 2, -3],
+];
+
+export default function getPlayerGunFormation(playerLevel: number) {
+  playerLevel = Math.min(playerLevel, playerGunFormationData.length - 1);
+  const dat = playerGunFormationData[playerLevel];
+  const ret = new HarmonicMotionPlayerGunFormation();
+  const [amplitute, period, sideGunPhaseOffset, mainGunLv, ...sideGunLv] = dat;
+  ret.hm = new HarmonicMotion(Math.PI / amplitute, period);
+  ret.sideGunPhaseOffset = Math.PI / sideGunPhaseOffset;
+  ret.mainGun = getPlayerGun(mainGunLv);
+  ret.setSideGun(sideGunLv.map((x) => getPlayerGun(x)));
+  return ret;
 }

@@ -42,6 +42,7 @@ export function onload(cb: () => void) {
 }
 
 export const enum ImagesId {
+  playerGun,
   gunlv1,
   gunlv2,
   gunlv3,
