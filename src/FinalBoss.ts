@@ -202,7 +202,7 @@ export class RadialLazerScan implements IBossSkill {
         this.guide.remove = true;
         if (this.currentTime - dt < this.waitTime) {
           this.laz = Lazer.Respawner.get();
-          this.laz.init({age: this.scanTime}, b.x, b.y, this.currentAngle);
+          this.laz.init({age: this.scanTime + Lazer.sumonTime * 2}, b.x, b.y, this.currentAngle);
           let t = cross(
             Math.cos(this.startAngle), Math.sin(this.startAngle),
             player.x - b.x, player.y - b.y,
