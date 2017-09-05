@@ -1,5 +1,5 @@
 import Bullet, {IBulletConfig} from "./Bullet";
-import ctx from "./canvas";
+import ctx, {scrwidth} from "./canvas";
 import {addListener, Events} from "./EventListener";
 import {dt, increaseScore, player, shm} from "./game";
 import {images, ImagesId} from "./imageLoader";
@@ -37,14 +37,15 @@ export default class Enemy implements ICollidable {
   public config: IEnemyConfig;
 
   protected canFire: boolean;
+  protected hitCooltime: number = 0;
 
   private previousPos: number[][] = [];
   private captureTimeLeft: number;
   private fireTime: number;
-  private hitCooltime: number = 0;
   private live: number;
 
   public init(config: IEnemyConfig) {
+    this.x = this.y = scrwidth;  // avoid hitting player when just respawn
     this.config = config;
     this.previousPos = [];
     this.captureTimeLeft = 0;
@@ -54,6 +55,7 @@ export default class Enemy implements ICollidable {
       this.config.image.width * .9, this.config.image.height * .9,
     );
     this.live = config.live;
+    this.hitCooltime = 0;
     addListener(this, [Events.process, Events.collisionCheck, Events.render + 2]);
     return this;
   }
@@ -103,7 +105,7 @@ export default class Enemy implements ICollidable {
         obj.tag = Tag.no_tag;  // cannot do this from Bullet because if the bullet
                                // was proccesed first, then Enemy couldnot "see" the bullet.
         --this.live;
-        this.hitCooltime = 5;
+        this.hitCooltime = 3;
       }
     }
     return this.isdead();

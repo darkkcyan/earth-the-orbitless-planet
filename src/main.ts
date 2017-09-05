@@ -71,7 +71,7 @@ onload(() => {
       },
       fireTimeRange: [.1, .2],
       // hitImage: images[ImagesId.BigHFOHit],
-      image: images[ImagesId.alienPlanetSurfaceWithShield],
+      image: images[ImagesId.alienPlanetSurface],
       live: 1000,
       rewardScore: 10000000,
     },
