@@ -94,6 +94,12 @@ export default class Player implements ICollidable {
   }
 
   public [Events.process]() {
+    if (this.currentTime > 0) {
+      this.currentTime -= dt;
+    }
+    if (this.currentTime > Player.relaxTime) {
+      return ;
+    }
     if (this.followMouse) {
       [this.x, this.y] = getMousePos();
     }
@@ -103,9 +109,6 @@ export default class Player implements ICollidable {
     this.planet[Events.process]();
     this.rocketGroup[Events.process]();
     this.gunFormation[Events.process]();
-    if (this.currentTime > 0) {
-      this.currentTime -= dt;
-    }
     shm.insert(this);
   }
 
