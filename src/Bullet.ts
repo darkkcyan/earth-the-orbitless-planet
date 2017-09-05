@@ -6,6 +6,7 @@ import {Circle} from "./shapes";
 import {ICollidable, Tag} from "./SpatialHashMap";
 
 export interface IBulletConfig {
+  damage?: number;
   radius: number;
   color: string;
   speed: number;
@@ -21,6 +22,7 @@ export default class Bullet implements ICollidable {
   public color: string;
   public isDead: boolean;
   public tag: number;
+  public damage: number;
 
   [index: number]: (any) => boolean | void;
 
@@ -32,6 +34,7 @@ export default class Bullet implements ICollidable {
     this.angle = angle;
     this.color = config.color;
     this.isDead = false;
+    this.damage = config.damage || 1;
     this.tag = config.isPlayerBullet ? Tag.player_bullet : Tag.enemy_bullet;
     addListener(this, [Events.process, Events.render + 1]);
   }

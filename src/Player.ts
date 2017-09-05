@@ -70,6 +70,7 @@ export default class Player implements ICollidable {
       sideGunList: [new Gun({
         bulletConfig: {
           color: "yellow",
+          damage: 10,
           isPlayerBullet: true,
           radius: 3,
           speed: 1000,

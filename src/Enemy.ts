@@ -102,10 +102,9 @@ export default class Enemy implements ICollidable {
   public [Events.collisionCheck]() {
     for (const obj of shm.retrive(this)) {
       if (obj.tag === Tag.player_bullet) {
-        // TODO: decrease health
+        this.live -= (obj as Bullet).damage;
         obj.tag = Tag.no_tag;  // cannot do this from Bullet because if the bullet
                                // was proccesed first, then Enemy couldnot "see" the bullet.
-        --this.live;
         this.hitCooltime = 3;
       }
     }
