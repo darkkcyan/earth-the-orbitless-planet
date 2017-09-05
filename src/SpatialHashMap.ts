@@ -16,6 +16,7 @@ export const enum Tag {
   player_bullet,
   enemy_bullet,
   enemy,
+  powerup,
   no_tag,
 }
 

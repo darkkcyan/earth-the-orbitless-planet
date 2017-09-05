@@ -1,6 +1,6 @@
 import Bullet, {IBulletConfig} from "./Bullet";
 import ctx, {scrwidth} from "./canvas";
-import {addListener, Events} from "./EventListener";
+import {addListener, emit, Events} from "./EventListener";
 import {dt, increaseScore, player, shm} from "./game";
 import {images, ImagesId} from "./imageLoader";
 import {randRange} from "./math";
@@ -93,6 +93,7 @@ export default class Enemy implements ICollidable {
       this.free();
 
       increaseScore(this.config.rewardScore);
+      emit(Events.enemyDead, this);
       return true;
     }
     return false;

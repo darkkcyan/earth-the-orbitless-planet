@@ -70,6 +70,7 @@ export const enum Events {
   last_render = render + 10,
   stopScroll,
   startScroll,
+  enemyDead,
 }
 
 export interface IHasEventHandler {

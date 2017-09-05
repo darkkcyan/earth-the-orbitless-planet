@@ -24,6 +24,7 @@ import "./loadImages";
 import Moon, {MoonState} from "./Moon";
 import Planet from "./Planet";
 import Player from "./Player";
+import "./PowerUp";
 import StarField from "./StarField";
 import "./UI";
 
@@ -41,24 +42,25 @@ onload(() => {
     }
     return ans;
   }
-  // const u = [];
-  // for (let i = 1; i--; ) {
-  //   u.push({
-  //     bulletConfig: {
-  //       color: "red",
-  //       radius: 6,
-  //       speed: 500,
-  //     },
-  //     hitImage: images[ImagesId.BigHFOHit],
-  //     image: images[ImagesId.BigUFO + i],
-  //     live: 1000,
-  //   });
-  // }
-  // const x = new EnemyFormation(
-  //   u,
-  //   new RandomPositionSPP(),
-  //   new PolygonEPP(300),
-  // );
+  const u = [];
+  for (let i = 8; i--; ) {
+    u.push({
+      bulletConfig: {
+        color: "red",
+        radius: 6,
+        speed: 500,
+      },
+      hitImage: images[ImagesId.UFOHit],
+      image: images[ImagesId.UFO + i],
+      live: 10,
+      rewardScore: 100,
+    });
+  }
+  const x = new EnemyFormation(
+    u,
+    new RandomPositionSPP(),
+    new PolygonEPP(),
+  );
 
   new StarField(100, 50);
   new StarField(100, 65);
