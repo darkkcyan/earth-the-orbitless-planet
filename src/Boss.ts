@@ -3,7 +3,7 @@ import ctx, {scrheight, scrwidth} from "./canvas";
 import {easeInCubic, easeInOutQuad} from "./ease";
 import Enemy, {IEnemyConfig} from "./Enemy";
 import EnemyFormation from "./EnemyFormation";
-import {addListener, Events} from "./EventListener";
+import {addListener, emit, Events} from "./EventListener";
 import {dt, player} from "./game";
 import {randNeg, randRange} from "./math";
 
@@ -33,7 +33,11 @@ export default class Boss extends Enemy {
       }
       this.currentSkill.init(this);
     }
-    return super[Events.process]();
+    const ret = super[Events.process]();
+    if (this.isdead()) {
+      emit(Events.bossDefeated, this);
+    }
+    return ret;
   }
 
   public fire(angle: number = Math.PI, offsetX = 0, offsetY = 0) {

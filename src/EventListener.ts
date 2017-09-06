@@ -73,6 +73,8 @@ export const enum Events {
   enemyDead,
   enemyFormationDead,
   enemyFormationManagerFinish,
+  bossDefeated,
+  victory,
 }
 
 export interface IHasEventHandler {

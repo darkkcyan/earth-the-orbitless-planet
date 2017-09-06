@@ -27,15 +27,20 @@ import Moon, {MoonState} from "./Moon";
 import Planet from "./Planet";
 import Player from "./Player";
 import "./PowerUp";
+import scriptController, {scripts} from "./scripts";
 import StarField from "./StarField";
 import "./UI";
 
 // tslint:disable no-shadowed-variable
 onload(() => {
-  celm.width = scrwidth;
-  celm.height = scrheight;
   // tslint:disable no-unused-expression
   // Its actually used expression, tslint does not recognize that
+  new StarField(100, 50);
+  new StarField(100, 65);
+  new StarField(100, 80);
+
+  celm.width = scrwidth;
+  celm.height = scrheight;
   const p = new Player();
   setPlayer(p);
   function rep<T>(n: number, fn: () => T) {
@@ -57,17 +62,39 @@ onload(() => {
     rewardScore: 100,
   };
 
-  new EFM(([] as IEFC[]).concat(rep(5, () => ({
-    cost: 50,
-    enemyConfigList: rep(8, () => u),
-    enemyPositionProcess: new RandomPositionSPP(),
-    selfPositionProcessor: new PolygonEPP(),
-  }))));
-  addListener({
-    [Events.enemyFormationManagerFinish]() {
-      alert("all done");
+  scripts.push({
+    callEnemyFormationManager() {
+      new EFM(([] as IEFC[]).concat(rep(5, () => ({
+        cost: 50,
+        enemyConfigList: rep(8, () => u),
+        enemyPositionProcess: new RandomPositionSPP(),
+        selfPositionProcessor: new PolygonEPP(),
+      }))));
     },
-  }, [Events.enemyFormationManagerFinish]);
+    callBoss() {
+      new Boss({
+        bulletConfig: {
+          color: "red",
+          radius: 10,
+          speed: 600,
+        },
+        fireTimeRange: [.1, .2],
+        hitImage: images[ImagesId.BigHFOHit],
+        image: images[ImagesId.BigUFO],
+        live: 100,
+        rewardScore: 1000000,
+      }, [
+        new AimPlayerBullerDrop(),
+        new RandomBulletSpread(),
+      ]);
+    },
+  });
+  addListener({
+    [Events.victory]() {
+      alert("VICTORY");
+    },
+  }, [Events.victory]);
+  scriptController.startWave(0);
   // new EnemyFormation(
   //   u,
   //   new RandomPositionSPP(),
@@ -83,10 +110,6 @@ onload(() => {
   //   new RandomPositionSPP(),
   //   new PolygonEPP(),
   // );
-
-  new StarField(100, 50);
-  new StarField(100, 65);
-  new StarField(100, 80);
 
   gameloop();
 });

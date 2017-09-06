@@ -7,13 +7,13 @@ export default class StarField {
   [index: number]: (any?) => boolean | void;
   public stars: Array<[number, number]> = [];
   private speed: number = 0;
-  private accelerate: number;
+  private accelerate: number = 0;
 
   constructor(numberOfStar: number, public scrollSpeed: number) {
     while (numberOfStar--) {
       this.stars.push([scrwidth * Math.random(), scrheight * Math.random()]);
     }
-    this[Events.startScroll]();
+    // this[Events.startScroll]();
     addListener(this, [Events.render, Events.startScroll, Events.stopScroll]);
   }
 
