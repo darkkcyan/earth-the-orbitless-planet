@@ -1,11 +1,11 @@
 import {scrheight, scrwidth} from "./canvas";
 import {easeInOutQuad} from "./ease";
 import Enemy, {IEnemyConfig} from "./Enemy";
-import {addListener, Events} from "./EventListener";
+import {addListener, emit, Events} from "./EventListener";
 import {dt, player} from "./game";
 import {PI2, randRange, SimpleHarmonicMotion as HarmonicMotion} from "./math";
 
-interface IFormationSubProcessor {
+export interface IFormationSubProcessor {
   process(f: Formation);
 }
 
@@ -23,6 +23,7 @@ export default class Formation {
     enemyConfigList: IEnemyConfig[],
     public selfPositionProcessor: IFormationSubProcessor,
     public enemyPositionProcess: IFormationSubProcessor,
+    public cost = 1,
   ) {
     this.enemyList = enemyConfigList.map((x) => Enemy.Respawner.get().init(x));
     this.numEnemy = enemyConfigList.length;
@@ -30,7 +31,6 @@ export default class Formation {
   }
 
   public [Events.process]() {
-    console.log("still alive");
     for (let i = this.enemyList.length; i--; ) {
       const u = this.enemyList[i];
       if (!u) {
@@ -43,6 +43,9 @@ export default class Formation {
     }
     this.selfPositionProcessor.process(this);
     this.enemyPositionProcess.process(this);
+    if (!this.numEnemy) {
+      emit(Events.enemyFormationDead, this);
+    }
     return this.numEnemy === 0;
   }
 

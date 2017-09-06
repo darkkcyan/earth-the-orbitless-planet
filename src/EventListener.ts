@@ -71,6 +71,8 @@ export const enum Events {
   stopScroll,
   startScroll,
   enemyDead,
+  enemyFormationDead,
+  enemyFormationManagerFinish,
 }
 
 export interface IHasEventHandler {
