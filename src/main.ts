@@ -17,7 +17,7 @@ import EnemyFormation, {
   WallEPP,
 } from "./EnemyFormation";
 import {emit, Events} from "./EventListener";
-import FinalBoss, {LazerChase, LazerScan, RadialLazerScan} from "./FinalBoss";
+import FinalBoss, {LazerChase, LazerScan, RadialLazerScan, SumonMoon} from "./FinalBoss";
 import {gameloop, setPlayer} from "./game";
 import {images, ImagesId, onload} from "./imageLoader";
 import "./loadImages";
@@ -43,8 +43,6 @@ onload(() => {
     }
     return ans;
   }
-  const m = new Moon(scrwidth, scrheight / 2);
-  m.state = MoonState.aroundPlayer;
   const u = [];
   for (let i = 7; i--; ) {
     u.push({
@@ -59,65 +57,66 @@ onload(() => {
       rewardScore: 100,
     });
   }
-  new EnemyFormation(
-    u,
-    new RandomPositionSPP(),
-    new PolygonEPP(),
-  );
-  new EnemyFormation(
-    u,
-    new RandomPositionSPP(),
-    new PolygonEPP(),
-  );
-  new EnemyFormation(
-    u,
-    new RandomPositionSPP(),
-    new PolygonEPP(),
-  );
+  // new EnemyFormation(
+  //   u,
+  //   new RandomPositionSPP(),
+  //   new PolygonEPP(),
+  // );
+  // new EnemyFormation(
+  //   u,
+  //   new RandomPositionSPP(),
+  //   new PolygonEPP(),
+  // );
+  // new EnemyFormation(
+  //   u,
+  //   new RandomPositionSPP(),
+  //   new PolygonEPP(),
+  // );
 
   new StarField(100, 50);
   new StarField(100, 65);
   new StarField(100, 80);
-  // new FinalBoss({
-  //     bulletConfig: {
-  //       color: "lawngreen",
-  //       radius: 6,
-  //       speed: 800,
-  //     },
-  //     fireTimeRange: [.1, .2],
-  //     // hitImage: images[ImagesId.BigHFOHit],
-  //     image: images[ImagesId.alienPlanetSurface],
-  //     live: 1000,
-  //     rewardScore: 10000000,
-  //   },
-  //   [
-  //     // new RandomBulletDrop(),
-  //     // new AimPlayerBullerDrop(),
-  //     // new AimPlayerMultipleBullet(),
-  //     // new RandomBulletSpread(5),
-  //     // new LazerChase(),
-  //     // new LazerChase(3),
-  //     // new LazerScan(),
-  //     // new LazerScan(2, 2.5, 1.5),
-  //     // new RadialLazerScan(),
-  //     new RadialLazerScan(3, 1),
-  //     // new SumonFormation(() => [new EnemyFormation(
-  //     //   [{
-  //     //     bulletConfig: {
-  //     //       color: "red",
-  //     //       radius: 6,
-  //     //       speed: 500,
-  //     //     },
-  //     //     image: images[ImagesId.UFO],
-  //     //     live: 5,
-  //     //     rewardScore: 100,
-  //     //   }],
-  //     //   new RandomPositionSPP(),
-  //     //   new PolygonEPP(),
-  //     // )], 3),
-  //   ],
-  //   1.75,
-  // );
+  new FinalBoss({
+      bulletConfig: {
+        color: "lawngreen",
+        radius: 6,
+        speed: 800,
+      },
+      fireTimeRange: [.1, .2],
+      // hitImage: images[ImagesId.BigHFOHit],
+      image: images[ImagesId.alienPlanetSurface],
+      live: 1000,
+      rewardScore: 10000000,
+    },
+    [
+      // new RandomBulletDrop(),
+      // new AimPlayerBullerDrop(),
+      // new AimPlayerMultipleBullet(),
+      // new RandomBulletSpread(5),
+      // new LazerChase(),
+      // new LazerChase(3),
+      // new LazerScan(),
+      // new LazerScan(2, 2.5, 1.5),
+      // new RadialLazerScan(),
+      // new RadialLazerScan(3, 1),
+      new SumonMoon(5),
+      // new SumonFormation(() => [new EnemyFormation(
+      //   [{
+      //     bulletConfig: {
+      //       color: "red",
+      //       radius: 6,
+      //       speed: 500,
+      //     },
+      //     image: images[ImagesId.UFO],
+      //     live: 5,
+      //     rewardScore: 100,
+      //   }],
+      //   new RandomPositionSPP(),
+      //   new PolygonEPP(),
+      // )], 3),
+    ],
+    1.75,
+  );
 
   gameloop();
 });

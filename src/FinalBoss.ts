@@ -7,6 +7,7 @@ import {dt, player} from "./game";
 import {images, ImagesId} from "./imageLoader";
 import Lazer from "./Lazer";
 import {clamp, cross, PI2, randRange} from "./math";
+import Moon, {MoonState} from "./Moon";
 import Planet from "./Planet";
 import {Circle} from "./shapes";
 
@@ -225,5 +226,32 @@ export class RadialLazerScan implements IBossSkill {
       }
     }
     return this.currentScan >= this.numberOfScan;
+  }
+}
+
+export class SumonMoon implements IBossSkill {
+  public moon: Moon;
+  private mover: MoveToPosition = new MoveToPosition(1.5);
+  private currentTime: number;
+
+  constructor(public waitTime) {}
+
+  public init(b: Boss) {
+    this.moon = new Moon(b.x, b.y);
+    this.moon.state = MoonState.chasePlayer;
+    this.mover.init(b);
+    this.currentTime = 0;
+  }
+
+  public process(b: Boss) {
+    this.currentTime += dt;
+    if (this.mover.process(b) && this.mover.moveTime + this.currentTime < this.waitTime) {
+      this.mover.init(b);
+    }
+    if (this.currentTime > this.waitTime) {
+      this.moon.state = MoonState.moveAway;
+      return true;
+    }
+    return false;
   }
 }

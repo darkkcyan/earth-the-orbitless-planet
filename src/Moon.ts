@@ -1,3 +1,4 @@
+import {scrheight, scrwidth} from "./canvas";
 import {addListener, Events} from "./EventListener";
 import {dt, player, shm} from "./game";
 import {images, ImagesId} from "./imageLoader";
@@ -28,6 +29,15 @@ export default class Moon implements ICollidable {
     addListener(this, [Events.process, Events.collisionCheck, Events.render + 1]);
   }
 
+  public isDead() {
+    return this.state === MoonState.moveAway && (
+      this.x < -this.planet.radius ||
+      this.x > scrwidth + this.planet.radius ||
+      this.y < -this.planet.radius ||
+      this.y > scrheight + this.planet.radius
+    );
+  }
+
   public [Events.process]() {
     const angle = Math.atan2(player.y - this.y, player.x - this.x);
     let accelerate: number;
@@ -36,7 +46,7 @@ export default class Moon implements ICollidable {
     switch (this.state) {
       case MoonState.chasePlayer:
         accelerate = 260;
-        maxSpeed = 600;
+        maxSpeed = 800;
         minSpeed = 0;
         this.tag = Tag.evil_moon;
         break;
@@ -71,14 +81,20 @@ export default class Moon implements ICollidable {
     this.collisionShape.x = this.planet.x = this.x;
     this.collisionShape.y = this.planet.y = this.y;
     this.planet[Events.process]();
-    shm.insert(this);
+    if (!this.isDead()) {
+      shm.insert(this);
+      return false;
+    }
+    return true;
   }
 
   public [Events.collisionCheck]() {
     // TODO: add content
+    return this.isDead();
   }
 
   public [Events.render + 1]() {
     this.planet[Events.render]();
+    return this.isDead();
   }
 }
