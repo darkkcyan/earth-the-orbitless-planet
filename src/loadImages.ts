@@ -44,11 +44,21 @@ for (let i = UFOColor.length; i--; ) {
   });
 }
 
-function loadPlanetSurface(id: number, p: IPlanetSurface) {
-  loadPrerender(id, p.width, p.height, () => {renderPlanetSurface(p); });
+export const planetSurfaceScale = [];
+function loadPlanetSurface(id: number, p: IPlanetSurface, scaleRatio = 1) {
+  planetSurfaceScale[id] = scaleRatio;
+  loadPrerender(id, p.width / scaleRatio, p.height / scaleRatio, () => {renderPlanetSurface(p); });
 }
 
 loadPlanetSurface(ImagesId.earthSurface, surfaces.earthsurface);
 loadPlanetSurface(ImagesId.moonSurface, surfaces.moonsurface);
 loadPlanetSurface(ImagesId.alienPlanetSurface, surfaces.alienplanetsurface);
 loadPlanetSurface(ImagesId.alienPlanetSurfaceWithShield, surfaces.alienplanetsurfaceiwithshield);
+loadPlanetSurface(ImagesId.neptuneSurface, surfaces.neptunesurface, 8);
+loadPlanetSurface(ImagesId.uranusSurface, surfaces.uranussurface, 8);
+loadPlanetSurface(ImagesId.saturnSurface, surfaces.saturnsurface, 8);
+loadPlanetSurface(ImagesId.jupiterSurface, surfaces.jupitersurface, 8);
+loadPlanetSurface(ImagesId.marsSurface, surfaces.marssurface, 2);
+loadPlanetSurface(ImagesId.venusSurface, surfaces.venussurface, 2);
+loadPlanetSurface(ImagesId.mercurySurface, surfaces.mercurysurface, 2);
+loadPlanetSurface(ImagesId.sunSurface, surfaces.sunsurface);

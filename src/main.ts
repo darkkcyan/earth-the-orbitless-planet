@@ -64,7 +64,7 @@ onload(() => {
 
   scripts.push({
     callEnemyFormationManager() {
-      new EFM(([] as IEFC[]).concat(rep(5, () => ({
+      new EFM(([] as IEFC[]).concat(rep(3, () => ({
         cost: 50,
         enemyConfigList: rep(8, () => u),
         enemyPositionProcess: new RandomPositionSPP(),

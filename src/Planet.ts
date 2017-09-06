@@ -20,10 +20,14 @@ export default class Planet {
     this.spinSpeed = this.surfaceMap.height / 2;
   }
 
+  public getScaleRatio() {
+    return this.radius / this.surfaceMap.height * 2;
+  }
+
   public [Events.process]() {
     this.mapPosition += dt * this.spinSpeed;
-    if (this.mapPosition > this.surfaceMap.width) {
-      this.mapPosition -= this.surfaceMap.width;
+    if (this.mapPosition > this.surfaceMap.width * this.getScaleRatio()) {
+      this.mapPosition -= this.surfaceMap.width * this.getScaleRatio();
     }
   }
 
@@ -43,8 +47,10 @@ export default class Planet {
                       // to the previous image's position
                       // inorder to hide a little line between 2 images.
 
-    ctx.drawImage(this.surfaceMap, px, py);
-    ctx.drawImage(this.surfaceMap, px - this.surfaceMap.width + magic, py);
+    const nw = this.surfaceMap.width * this.getScaleRatio();
+    const nh = this.radius * 2;
+    ctx.drawImage(this.surfaceMap, px, py, nw, nh);
+    ctx.drawImage(this.surfaceMap, px - nw + magic, py, nw, nh);
     ctx.restore();
 
     // draw shadow, instead of draw light
