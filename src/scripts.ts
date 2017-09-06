@@ -28,13 +28,17 @@ const scriptController = {
   [Events.enemyFormationManagerFinish]() {
     // tslint:disable no-unused-expression
     if (this.currentWave !== 5) {
-      const imgId = ImagesId.first_planet_surface + this.currentWave + +(this.currentWave >= 4)
-      new BackgroundPlanet(imgId, Math.PI * +(imgId === ImagesId.sunSurface));
+      const imgId = ImagesId.first_planet_surface + this.currentWave + +(this.currentWave >= 4);
+      new BackgroundPlanet(
+        imgId,
+        Math.PI * +(imgId === ImagesId.sunSurface),
+        (imgId === ImagesId.jupiterSurface),
+      );
     }
     setTimeout(() => {
       emit(Events.stopScroll);
       scripts[this.currentWave].callBoss();
-    }, 3000);
+    }, 5000);
   },
   [Events.bossDefeated]() {
     this.startWave(++this.currentWave);
@@ -53,10 +57,16 @@ class BackgroundPlanet extends Planet {
   constructor(
     surfaceMapId: number,
     lightSourceAngle: number = 0,
+    hasRing: boolean,
   ) {
-    super(images[surfaceMapId], lightSourceAngle, images[surfaceMapId].height / 2 * planetSurfaceScale[surfaceMapId]);
+    super(
+      images[surfaceMapId],
+      lightSourceAngle,
+      images[surfaceMapId].height / 2 * planetSurfaceScale[surfaceMapId],
+      hasRing,
+    );
     addListener(this, [Events.startScroll, Events.stopScroll, Events.process, Events.render]);
-    this.x = scrwidth + this.radius;
+    this.x = scrwidth + this.radius * 2;
     this.y = scrheight / 2;
   }
 

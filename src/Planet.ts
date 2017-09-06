@@ -16,6 +16,7 @@ export default class Planet {
     private surfaceMap: HTMLImageElement,
     public lightSourceAngle: number = 0,
     public radius: number = surfaceMap.height / 2,
+    private hasRing = false,
   ) {
     this.spinSpeed = this.surfaceMap.height / 2;
   }
@@ -37,10 +38,10 @@ export default class Planet {
 
     // draw surface map
     ctx.save();
+    ctx.rotate(Planet.tiltAngle);
     ctx.beginPath();
     ctx.arc(0, 0, this.radius, 0, PI2);
     ctx.clip();
-    ctx.rotate(Planet.tiltAngle);
     const px = -this.radius + this.mapPosition;
     const py = -this.radius;
     const magic = 3;  // this number is added
@@ -54,12 +55,26 @@ export default class Planet {
     ctx.restore();
 
     // draw shadow, instead of draw light
+    ctx.save();
     ctx.rotate(this.lightSourceAngle);
     ctx.beginPath();
     ctx.arc(this.radius, 0, this.radius * Math.SQRT2, -Math.PI * 3 / 4, Math.PI * 3 / 4, true);
     ctx.arc(0, 0, this.radius, HALF_PI, - HALF_PI);
     ctx.fillStyle = "rgba(0,0,0,0.5)";  // gray color with half alpha, make it feels like shadow
     ctx.fill();
+    ctx.restore();
+
+    if (this.hasRing) {
+      ctx.rotate(Planet.tiltAngle);
+      ctx.scale(1, .1);
+      const ang1 = Math.PI / 7.3;
+      const ang2 = Math.PI / 3.5;
+      ctx.beginPath();
+      ctx.arc(0, 0, this.radius * 1.1, -ang1, Math.PI + ang1);
+      ctx.arc(0, 0, this.radius * 1.6, Math.PI + ang2, -ang2, true);
+      ctx.fillStyle = "rgba(183,160,146,.5)";
+      ctx.fill();
+    }
     ctx.restore();
   }
 }
