@@ -35,7 +35,7 @@ export default class EnemyFormationManager {
       return ;
     }
     const nextFormationConfig = this.formationConfigList.pop();
-    if (this.currentCost + (nextFormationConfig.cost || 1) <= this.maxCost) {
+    if (this.currentCost + (nextFormationConfig.cost || 100) <= this.maxCost) {
       // tslint:disable no-unused-expression
       this.currentCost += (new EnemyFormation(
         nextFormationConfig.enemyConfigList,

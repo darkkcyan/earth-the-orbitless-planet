@@ -1,5 +1,20 @@
 import Boss from "./Boss";
+import {IBulletConfig} from "./Bullet";
 import {scrheight, scrwidth} from "./canvas";
+import {IEnemyConfig} from "./Enemy";
+import {
+  // tslint:disable ordered-imports
+  RandomPositionSPP,
+  StraightForwardSPP,
+  TowardPlayerSPP,
+
+  PolygonEPP,
+  PyramidEPP,
+  StraightLineEPP,
+  WallEPP,
+  // tslint:enable ordered-imports
+} from "./EnemyFormation";
+import {IEnemyFormationConfig} from "./EnemyFormationManager";
 import {addListener, emit, Events} from "./EventListener";
 import {dt} from "./game";
 import {images, ImagesId} from "./imageLoader";
@@ -91,4 +106,116 @@ class BackgroundPlanet extends Planet {
     super[Events.render]();
     return this.x < -this.radius;
   }
+}
+
+const totalWaves = 9;
+const UFOConfig: IEnemyConfig[] = [];
+const UFOBulletConfig: IBulletConfig = {
+  color: "#4B0082",
+  radius: 6,
+  speed: 500,
+};
+for (let i = -1; ++i < totalWaves; ) {
+  UFOConfig[i] = {
+    bulletConfig: UFOBulletConfig,
+    fireTimeRange: [3, 8],
+    image: images[ImagesId.UFO + i],
+    live: i + 1,
+    rewardScore: i * 100,
+  };
+}
+
+function repFn<T>(n: number, fn: () => T) {
+  const ans: T[] = [];
+  while (n--) {
+    ans.push(fn());
+  }
+  return ans;
+}
+
+function repVal<T>(n: number, v: T) {
+  const ans: T[] = [];
+  while (n--) {
+    ans.push(v);
+  }
+  return ans;
+}
+
+function getSimilarUFOFormations(waveNum: number) {
+  const t = [1, 1, 3, 3, 6, 6, 10, 10, 15];
+  return ([] as IEnemyFormationConfig[]).concat(
+    // appetizer
+    repFn<IEnemyFormationConfig>(5 * (waveNum + 1), () => ({
+      cost: ~~(100 / (waveNum + 1)),
+      enemyConfigList: [UFOConfig[waveNum]],
+      enemyPositionProcess: new PyramidEPP(),
+      selfPositionProcessor: new RandomPositionSPP(),
+    })),
+    // big wall
+    repFn<IEnemyFormationConfig>(3, () => ({
+      enemyConfigList: repVal(7 * Math.min(waveNum + 1, 5), UFOConfig[waveNum]),
+      enemyPositionProcess: new WallEPP(7),
+      selfPositionProcessor: new RandomPositionSPP(),
+    })),
+    // random wheel
+    repFn<IEnemyFormationConfig>(10, () => ({
+      cost: 33,
+      enemyConfigList: repVal(2 + waveNum, UFOConfig[waveNum]),
+      enemyPositionProcess: new PolygonEPP(),
+      selfPositionProcessor: new RandomPositionSPP(),
+    })),
+    // straight pyramid
+    repFn<IEnemyFormationConfig>(10, () => ({
+      cost: 50,
+      enemyConfigList: repVal(t[waveNum], UFOConfig[waveNum]),
+      enemyPositionProcess: new PyramidEPP(),
+      selfPositionProcessor: new StraightForwardSPP(undefined, Math.PI),
+    })),
+    // zigzag
+    repFn<IEnemyFormationConfig>(waveNum < 6 ? 1 : 3, () => ({
+      enemyConfigList: repVal(10 + 5 * waveNum, UFOConfig[waveNum]),
+      enemyPositionProcess: new StraightLineEPP(),
+      selfPositionProcessor: new StraightForwardSPP(),
+    })),
+    // speed driller
+    repFn<IEnemyFormationConfig>(waveNum * 2 + 2, () => ({
+      cost: ~~(100 / (waveNum + 1)),
+      enemyConfigList: [UFOConfig[waveNum]],
+      enemyPositionProcess: new PyramidEPP(),
+      selfPositionProcessor: new StraightForwardSPP(1000, undefined, false),
+    })),
+    // random
+    repFn<IEnemyFormationConfig>(10 + 5 * waveNum, () => {
+      let numUFO = 0;
+      let epp;
+      switch (Math.floor(Math.random() * 5)) {
+        case 0:
+          numUFO = 2;
+          epp = new WallEPP(Math.floor(Math.random() * 2) * 3);
+          break;
+        case 1:
+          numUFO = 4;
+          epp = new WallEPP(2);
+          break;
+        case 2:
+          numUFO = 3;
+          epp = new PyramidEPP();
+          break;
+        case 3:
+          numUFO = 3;
+          epp = new WallEPP(Math.floor(Math.random() * 2) * 3);
+          break;
+        case 4:
+          numUFO = 2;
+          epp = new PolygonEPP();
+          break;
+      }
+      return {
+        cost: 20,
+        enemyConfigList: repVal(numUFO, UFOConfig[waveNum]),
+        enemyPositionProcess: epp,
+        selfPositionProcessor: new RandomPositionSPP(),
+      };
+    }),
+  );
 }

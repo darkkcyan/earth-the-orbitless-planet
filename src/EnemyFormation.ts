@@ -23,7 +23,7 @@ export default class Formation {
     enemyConfigList: IEnemyConfig[],
     public selfPositionProcessor: IFormationSubProcessor,
     public enemyPositionProcess: IFormationSubProcessor,
-    public cost = 1,
+    public cost = 100,
   ) {
     this.enemyList = enemyConfigList.map((x) => Enemy.Respawner.get().init(x));
     this.numEnemy = enemyConfigList.length;
