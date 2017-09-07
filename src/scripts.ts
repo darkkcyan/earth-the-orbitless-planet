@@ -1,3 +1,4 @@
+import Boss from "./Boss";
 import {scrheight, scrwidth} from "./canvas";
 import {addListener, emit, Events} from "./EventListener";
 import {dt} from "./game";
@@ -16,9 +17,9 @@ export const scripts: IScriptWave[] = [];
 const scriptController = {
   currentWave: 0,
   startWave(wave: number) {
+    Boss.activeBosses.length = 0;
     if (wave >= scripts.length) {
       emit(Events.victory);
-      emit(Events.startScroll);
       return;
     }
     emit(Events.startScroll);

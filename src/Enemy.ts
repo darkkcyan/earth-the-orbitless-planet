@@ -89,7 +89,7 @@ export default class Enemy implements ICollidable {
       --this.hitCooltime;
     }
     if (this.isdead()) {
-      Particle.createPartical(20, this.x, this.y, 3, "rgb(255, 27, 242)", 100);
+      this.createParticle();
       this.free();
 
       increaseScore(this.config.rewardScore);
@@ -143,6 +143,10 @@ export default class Enemy implements ICollidable {
       this.x + offsetX, this.y + offsetY,
       angle,
     );
+  }
+
+  public createParticle() {
+    Particle.createPartical(20, this.x, this.y, 3, "rgb(255, 27, 242)", 100);
   }
 
   protected free() {

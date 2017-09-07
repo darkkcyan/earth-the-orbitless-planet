@@ -6,6 +6,7 @@ import EnemyFormation from "./EnemyFormation";
 import {addListener, emit, Events} from "./EventListener";
 import {dt, player} from "./game";
 import {randNeg, randRange} from "./math";
+import Particle from "./Particle";
 
 export interface IBossSkill {
   init(boss: Boss);
@@ -13,6 +14,8 @@ export interface IBossSkill {
 }
 
 export default class Boss extends Enemy {
+  public static activeBosses: Boss[] = [];
+
   private currentSkill: IBossSkill = null;
   private relaxSkill: MoveToPosition;  // boss need to relax too :D
   constructor(config: IEnemyConfig, private skills: IBossSkill[], relaxTime = 2) {
@@ -21,6 +24,7 @@ export default class Boss extends Enemy {
     this.y = scrheight / 2;
     this.init(config);
     this.relaxSkill = new MoveToPosition(relaxTime);
+    Boss.activeBosses.push(this);
   }
 
   public [Events.process]() {
@@ -35,7 +39,9 @@ export default class Boss extends Enemy {
     }
     const ret = super[Events.process]();
     if (this.isdead()) {
-      emit(Events.bossDefeated, this);
+      if (Boss.activeBosses.every((b) => b.isdead())) {
+        emit(Events.bossDefeated, this);
+      }
     }
     return ret;
   }
@@ -55,6 +61,10 @@ export default class Boss extends Enemy {
       offsetX += px;
       offsetY += py;
     }
+  }
+
+  public createParticle() {
+    Particle.createPartical(50, this.x, this.y, 20, "#FF4500", 70);
   }
 
   protected free() {

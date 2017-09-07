@@ -81,7 +81,23 @@ onload(() => {
         fireTimeRange: [.1, .2],
         hitImage: images[ImagesId.BigHFOHit],
         image: images[ImagesId.BigUFO],
-        live: 100,
+        live: 1000,
+        rewardScore: 1000000,
+      }, [
+        new AimPlayerBullerDrop(),
+        new RandomBulletSpread(),
+      ]);
+
+      new Boss({
+        bulletConfig: {
+          color: "red",
+          radius: 10,
+          speed: 600,
+        },
+        fireTimeRange: [.1, .2],
+        hitImage: images[ImagesId.BigHFOHit],
+        image: images[ImagesId.BigUFO],
+        live: 1000,
         rewardScore: 1000000,
       }, [
         new AimPlayerBullerDrop(),
@@ -91,7 +107,7 @@ onload(() => {
   });
   addListener({
     [Events.victory]() {
-      alert("VICTORY");
+      // alert("VICTORY");
     },
   }, [Events.victory]);
   scriptController.startWave(0);
