@@ -3,6 +3,7 @@ import {easeInOutQuad} from "./ease";
 import Enemy, {IEnemyConfig} from "./Enemy";
 import {addListener, emit, Events} from "./EventListener";
 import {dt, player} from "./game";
+import {images} from "./imageLoader";
 import {PI2, randRange, SimpleHarmonicMotion as HarmonicMotion} from "./math";
 
 export interface IFormationSubProcessor {
@@ -64,7 +65,7 @@ export default class Formation {
 
   public forceDead() {
     for (const u of this.enemyList) {
-      if (u && u.x < -2 * u.config.image.width) {
+      if (u && u.x < -2 * images[u.config.imageId].width) {
         u.live = 0;
       }
     }
@@ -219,9 +220,9 @@ export class StraightLineEPP implements IFormationSubProcessor {
 }
 
 export class WallEPP implements IFormationSubProcessor {
-  constructor(public enemyPerLine = 5, public offset = 100) {}
+  constructor(public enemyPerLine = 1, public offset = 100) {}
   public process(f: Formation) {
-    const numberOfLine = ~~(f.enemyList.length / this.enemyPerLine);
+    const numberOfLine = Math.floor(f.enemyList.length / this.enemyPerLine);
     const w = (numberOfLine - 1) * this.offset;
     const h = (this.enemyPerLine - 1) * this.offset;
     let [x, y] = f.getFitPossition(w, h);

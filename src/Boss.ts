@@ -5,6 +5,7 @@ import Enemy, {IEnemyConfig} from "./Enemy";
 import EnemyFormation from "./EnemyFormation";
 import {addListener, emit, Events} from "./EventListener";
 import {dt, player} from "./game";
+import {images} from "./imageLoader";
 import {randNeg, randRange} from "./math";
 import Particle from "./Particle";
 
@@ -20,7 +21,7 @@ export default class Boss extends Enemy {
   private relaxSkill: MoveToPosition;  // boss need to relax too :D
   constructor(config: IEnemyConfig, private skills: IBossSkill[], relaxTime = 2) {
     super();
-    this.x = scrwidth + config.image.width;
+    this.x = scrwidth + images[config.imageId].width;
     this.y = scrheight / 2;
     this.init(config);
     this.relaxSkill = new MoveToPosition(relaxTime);
@@ -211,7 +212,7 @@ export class SumonFormation extends MoveToPosition {
   }
 
   public init(b: Boss)  {
-    super.init(b, scrwidth - b.config.image.width / 2, scrheight / 2);
+    super.init(b, scrwidth - images[b.config.imageId].width / 2, scrheight / 2);
     this.f = [];
   }
 

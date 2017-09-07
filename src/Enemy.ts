@@ -11,8 +11,8 @@ import {ICollidable, Tag} from "./SpatialHashMap";
 
 export interface IEnemyConfig {
   rewardScore: number;
-  image: HTMLImageElement;
-  hitImage?: HTMLImageElement;
+  imageId: number;
+  hitImageId?: number;
   bulletConfig: IBulletConfig;
   live: number;
   fireTimeRange?: [number, number];
@@ -50,10 +50,8 @@ export default class Enemy implements ICollidable {
     this.previousPos = [];
     this.captureTimeLeft = 0;
     this.fireTime = randRange(Enemy.fireTimeRange);
-    this.collisionShape = new Rectangle(
-      0, 0,
-      this.config.image.width * .9, this.config.image.height * .9,
-    );
+    const i = images[config.imageId];
+    this.collisionShape = new Rectangle(0, 0, i.width * .9, i.height * .9);
     this.live = config.live;
     this.hitCooltime = 0;
     addListener(this, [Events.process, Events.collisionCheck, Events.render + 2]);
@@ -112,8 +110,9 @@ export default class Enemy implements ICollidable {
   }
 
   public [Events.render + 2]() {
-    const w = this.config.image.width;
-    const h = this.config.image.height;
+    const img = images[this.config.imageId];
+    const w = img.width;
+    const h = img.height;
     for (
       let i = 0, alpha = Enemy.offsetAlpha;
       i < this.previousPos.length - 1;
@@ -121,16 +120,14 @@ export default class Enemy implements ICollidable {
     ) {
       ctx.globalAlpha = alpha;
       const [x, y] = this.previousPos[i];
-      ctx.drawImage(this.config.image, x - w / 2, y - h / 2);
+      ctx.drawImage(img, x - w / 2, y - h / 2);
     }
     ctx.globalAlpha = 1;
-    const img = this.hitCooltime
-      ? this.config.hitImage
-        ? this.config.hitImage
-        : images[ImagesId.UFOHit]
-      : this.config.image
-    ;
-    ctx.drawImage(img, this.x - w / 2, this.y - h / 2);
+    const hitimg = images[this.hitCooltime
+      ? this.config.hitImageId ? this.config.hitImageId : ImagesId.UFOHit
+      : this.config.imageId
+    ];
+    ctx.drawImage(hitimg, this.x - w / 2, this.y - h / 2);
     return this.isdead();
   }
 

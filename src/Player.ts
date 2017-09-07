@@ -31,7 +31,7 @@ export default class Player implements ICollidable {
   public planet: Planet;
 
   public live: number = 3;
-  public level: number = 7;
+  public level: number = 0;
 
   [index: number]: (any) => boolean | void;
 

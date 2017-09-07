@@ -57,6 +57,10 @@ export default class PowerUp implements ICollidable {
 addListener({
   [Events.enemyDead](e: Enemy) {
     // tslint:disable no-unused-expression
-    new PowerUp(e.x, e.y);
+    // there are around 200 UFO in a stage, and I want there will be 5 power per stage
+    const powerUpDropProbability = 4 / 200;
+    if (Math.random() < powerUpDropProbability) {
+      new PowerUp(e.x, e.y);
+    }
   },
 }, [Events.enemyDead]);

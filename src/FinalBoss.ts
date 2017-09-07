@@ -12,10 +12,10 @@ import Planet from "./Planet";
 import {Circle} from "./shapes";
 
 export default class FinalBoss extends Boss {
-  protected planet: Planet;
+  public planet: Planet;
   constructor(config: IEnemyConfig, skills: IBossSkill[], relaxTime = 1) {
     super(config, skills, relaxTime);
-    this.planet = new Planet(config.image, Math.PI);
+    this.planet = new Planet(images[config.imageId], Math.PI);
     this.collisionShape = new Circle(0, 0, this.planet.radius);
   }
 
