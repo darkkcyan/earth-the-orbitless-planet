@@ -56,7 +56,6 @@ onload(() => {
       radius: 6,
       speed: 500,
     },
-    hitImage: images[ImagesId.UFOHit],
     image: images[ImagesId.UFO],
     live: 8,
     rewardScore: 100,

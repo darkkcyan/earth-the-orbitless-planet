@@ -33,8 +33,7 @@ loadPrerender(ImagesId.BigHFOHit, BigUFOw, BigUFOh, () => {
   fillWhite();
 });
 
-// colors of UFO are currently got from here https://en.wikipedia.org/wiki/Solar_System#/media/File:Planets2013.svg
-const UFOColor = "4682B4,20B2AA,F3CE9F,tan,F24300,6ED03D,DC9A3C,848484".split(",").map((x) => "#" + x);
+const UFOColor = "red,orange,yellow,#ADFF2F,#00FF7F,darkcyan,#9370DB,crimson,dimgray".split(",");
 for (let i = UFOColor.length; i--; ) {
   loadPrerender(ImagesId.UFO + i, UFOw, UFOh, () => {
     renderUFO({color: UFOColor[i], size: UFOh});
