@@ -26,7 +26,7 @@ import "./loadImages";
 import Moon, {MoonState} from "./Moon";
 import Planet from "./Planet";
 import Player from "./Player";
-import "./PowerUp";
+import PowerUp from "./PowerUp";
 import scriptController from "./scripts";
 import StarField from "./StarField";
 import "./UI";
@@ -48,7 +48,12 @@ onload(() => {
       // alert("VICTORY");
     },
   }, [Events.victory]);
-  scriptController.startStage(0);
+
+  for (let i = 15; i-- ;) {
+    new PowerUp(scrwidth, scrheight / 2);
+  }
+  scriptController.currentStage = 5;
+  scriptController[Events.enemyFormationManagerFinish]();
 
   gameloop();
 });

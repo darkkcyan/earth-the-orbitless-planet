@@ -1,9 +1,10 @@
+import Boss from "./Boss";
 import ctx from "./canvas";
 import Enemy from "./Enemy";
-import {addListener, Events} from "./EventListener";
+import {addListener, Events, IHasEventHandler} from "./EventListener";
 import {dt, player, shm} from "./game";
 import {images, ImagesId} from "./imageLoader";
-import {PI2} from "./math";
+import {PI2, randRange} from "./math";
 import {Circle, isCollision} from "./shapes";
 import {ICollidable, Tag} from "./SpatialHashMap";
 
@@ -54,13 +55,15 @@ export default class PowerUp implements ICollidable {
   }
 }
 
-addListener({
+const t = {
+  enemyLeft: 25,
   [Events.enemyDead](e: Enemy) {
-    // tslint:disable no-unused-expression
-    // there are around 200 UFO in a stage, and I want there will be 5 power per stage
-    const powerUpDropProbability = 4 / 200;
-    if (Math.random() < powerUpDropProbability) {
+    if (!--this.enemyLeft || e instanceof Boss) {
+      // tslint:disable no-unused-expression
       new PowerUp(e.x, e.y);
+      this.enemyLeft = Math.ceil(randRange([25, 60]));
     }
   },
-}, [Events.enemyDead]);
+};
+
+addListener(t, [Events.enemyDead]);

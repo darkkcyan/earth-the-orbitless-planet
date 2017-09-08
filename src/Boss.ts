@@ -24,12 +24,13 @@ export default class Boss extends Enemy {
     this.x = scrwidth + images[config.imageId].width;
     this.y = scrheight / 2;
     this.init(config);
-    this.relaxSkill = new MoveToPosition(relaxTime);
+    this.currentSkill = this.relaxSkill = new MoveToPosition(relaxTime);
+    this.currentSkill.init(this);
     Boss.activeBosses.push(this);
   }
 
   public [Events.process]() {
-    if (!this.currentSkill || this.currentSkill.process(this)) {
+    if (this.currentSkill.process(this)) {
       if (this.currentSkill !== this.relaxSkill) {
         this.currentSkill = this.relaxSkill;  // boss need to relax
                                                    // and during the relax time it move to random position
@@ -49,9 +50,6 @@ export default class Boss extends Enemy {
 
   public fire(angle: number = Math.PI, offsetX = 0, offsetY = 0) {
     let numBullet = 5;
-    if (!this.canFire) {
-      return ;
-    }
     const d = this.config.bulletConfig.radius * 3;
     const px = d * Math.sin(-angle);
     const py = d * Math.cos(-angle);

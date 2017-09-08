@@ -49,7 +49,7 @@ export default class Enemy implements ICollidable {
     this.config = config;
     this.previousPos = [];
     this.captureTimeLeft = 0;
-    this.fireTime = randRange(Enemy.fireTimeRange);
+    this.fireTime = randRange([0, (this.config.fireTimeRange || Enemy.fireTimeRange)[1]]);
     const i = images[config.imageId];
     this.collisionShape = new Rectangle(0, 0, i.width * .9, i.height * .9);
     this.live = config.live;
@@ -132,14 +132,13 @@ export default class Enemy implements ICollidable {
   }
 
   public fire(angle: number = Math.PI, offsetX = 0, offsetY = 0) {
-    if (!this.canFire) {
-      return ;
+    if (this.canFire) {
+      Bullet.Respawner.get().init(
+        this.config.bulletConfig,
+        this.x + offsetX, this.y + offsetY,
+        angle,
+      );
     }
-    Bullet.Respawner.get().init(
-      this.config.bulletConfig,
-      this.x + offsetX, this.y + offsetY,
-      angle,
-    );
   }
 
   public createParticle() {
@@ -153,10 +152,8 @@ export default class Enemy implements ICollidable {
   protected autoFire() {
     const towardPlayer = Math.random() < Enemy.fireTowardPlayerProbability;
     let angle: number = Math.PI;
-    if (towardPlayer)  {
+    if (towardPlayer) {
       angle = Math.atan2(player.y - this.y, player.x - this.x);
-    } else if (player.x > this.x) {
-      angle = 0;
     }
     this.fire(angle);
   }

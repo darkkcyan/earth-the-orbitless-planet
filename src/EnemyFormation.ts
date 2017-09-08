@@ -115,24 +115,23 @@ export class RandomPositionSPP implements IFormationSubProcessor {
     public moveTime = 1.5,
     public towardPlayerProbability = .05,
   ) {
-    this.currentTime = this.moveTime;
+    this.currentTime = 2 * this.moveTime;
   }
 
   public process(f: Formation) {
     this.currentTime += dt;
     if (this.currentTime >= this.moveTime) {
-      this.currentTime = 0;
       this.currentX = f.x;
       this.currentY = f.y;
-      if (Math.random() <= this.towardPlayerProbability) {
+      this.dty = scrheight * Math.random();
+      if (Math.random() <= this.towardPlayerProbability && this.currentTime < 2 * this.moveTime) {
         this.dtx = player.x;
-        this.dty = player.y;
       } else {
         this.dtx = scrwidth * (Math.random() / 2 + .5);
-        this.dty = scrheight * Math.random();
       }
       this.dtx -= f.x;
       this.dty -= f.y;
+      this.currentTime = 0;
     }
     f.x = easeInOutQuad(this.currentTime, this.currentX, this.dtx, this.moveTime);
     f.y = easeInOutQuad(this.currentTime, this.currentY, this.dty, this.moveTime);
