@@ -1,6 +1,6 @@
 import ctx from "./canvas";
 import {easeOutCubic} from "./ease";
-import {addListener, Events} from "./EventListener";
+import {addListener, emit, Events} from "./EventListener";
 import {dt, shm} from "./game";
 import Gun from "./Gun";
 import {images, ImagesId} from "./imageLoader";
@@ -58,11 +58,15 @@ export default class Player implements ICollidable {
   }
 
   public [Events.process]() {
+    if (this.isdead()) {
+      emit(Events.playerdead);
+      return true;
+    }
     if (this.currentTime > 0) {
       this.currentTime -= dt;
     }
     if (this.currentTime > Player.relaxTime) {
-      return ;
+      return false;
     }
     if (this.followMouse) {
       [this.x, this.y] = getMousePos();
@@ -75,6 +79,7 @@ export default class Player implements ICollidable {
     this.rocketGroup[Events.process]();
     this.gunFormation[Events.process]();
     shm.insert(this);
+    return false;
   }
 
   public [Events.collisionCheck]() {
@@ -96,8 +101,7 @@ export default class Player implements ICollidable {
         this.gunFormation = getPlayerGunFormation(++this.level);
       }
     }
-    // return this.live < 0;
-    return false;
+    return this.isdead();
   }
 
   public [Events.render + 3]() {
@@ -118,10 +122,15 @@ export default class Player implements ICollidable {
       ctx.stroke();
       ctx.restore();
     }
+    return this.isdead();
   }
 
   public isRelax() {
     return this.currentTime > 0 && this.currentTime < Player.relaxTime;
+  }
+
+  public isdead() {
+    return this.live < 1;
   }
 
   public justDead() {
