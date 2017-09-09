@@ -1,8 +1,17 @@
 import Boss from "./Boss";
 import {processButton} from "./Button";
 import ctx, {celm, scrheight, scrwidth} from "./canvas";
+import {easeInOutQuint} from "./ease";
 import {addListener, Events} from "./EventListener";
-import {GameState, gameState, ISavedData, ISessionData, player, score, storageName} from "./game";
+import {
+  changeGameStage,
+  GameState, gameState,
+  ISavedData, ISessionData,
+  newPlayer,
+  player, score,
+  storageName,
+} from "./game";
+import scriptsController from "./scripts";
 
 addListener({
   [Events.render + 10]() {
@@ -12,6 +21,26 @@ addListener({
   },
 }, [Events.render + 10]);
 
+export function changeScreen(cb: () => void) {
+  let currentTime = 0;
+  const changeTime = 3000;
+  addListener({
+    [Events.render + 10]() {
+      currentTime += 16;
+      if (currentTime - 16 < changeTime / 2 && currentTime > changeTime / 2) {
+        cb();
+      }
+      if (currentTime < changeTime) {
+        const x = easeInOutQuint(currentTime, -scrwidth * 2, scrwidth * 4, changeTime);
+        ctx.fillStyle = "black";
+        ctx.fillRect(x, 0, scrwidth * 2, scrheight);
+      }
+      return currentTime > changeTime;
+    },
+  }, [Events.render + 10]);
+}
+
+let preventButtonClick = false;
 function renderMenu() {
   celm.style.cursor = "auto";
 
@@ -41,20 +70,33 @@ function renderMenu() {
     ctx.fillText(sd.isLose ? "GAME OVER" : "YOU WON", x, 320);
   }
 
-  ctx.font = "30px Arial";
-  const btw = 300;
-  const bth = 50;
+  ctx.font = "60px Arial";
+  const btw = 600;
+  const bth = 70;
   processButton(x, 600, btw, bth, "NEW GAME", () => {
-    alert("Cool");
+    if (preventButtonClick) {
+      return;
+    }
+    preventButtonClick = true;
+    changeScreen(() => {
+      changeGameStage(GameState.ingame);
+      newPlayer();
+      scriptsController.startStage(0);
+      preventButtonClick = false;
+    });
   });
   if (ld.lastLive) {
     processButton(x, 700, btw, bth, "CONTINUE", () => {
+      if (preventButtonClick) {
+        return;
+      }
       alert("Awesome");
     });
   }
 }
 
 function renderGameUI() {
+  celm.style.cursor = "none";
   const fontSize = 30;
   const viewHeight = fontSize + 5;
   ctx.fillStyle = "rgba(0,190,255,.546)";

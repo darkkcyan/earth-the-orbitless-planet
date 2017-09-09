@@ -38,10 +38,10 @@ onload(() => {
     highscore: 0,
     lastLive: 100,
   } as ISavedData));
-  // sessionStorage.setItem(storageName, JSON.stringify({
-  //   isLose: true,
-  //   lastScore: 100,
-  // } as ISessionData));
+  sessionStorage.setItem(storageName, JSON.stringify({
+    isLose: true,
+    lastScore: 100,
+  } as ISessionData));
   // tslint:disable no-unused-expression
   // Its actually used expression, tslint does not recognize that
   new StarField(100, 90);

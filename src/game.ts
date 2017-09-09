@@ -9,6 +9,7 @@ export interface ISavedData {
   lastLive?: number;
   lastScore?: number;
   lastGunLevel?: number;
+  lastStage?: number;
 }
 
 export interface ISessionData {
