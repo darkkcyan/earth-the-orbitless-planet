@@ -55,15 +55,18 @@ export default class PowerUp implements ICollidable {
   }
 }
 
-const t = {
-  enemyLeft: 25,
-  [Events.enemyDead](e: Enemy) {
-    if (!--this.enemyLeft || e instanceof Boss) {
-      // tslint:disable no-unused-expression
-      new PowerUp(e.x, e.y);
-      this.enemyLeft = Math.ceil(randRange([25, 60]));
-    }
-  },
-};
+addListener({
+  [Events.postgamereset]() {
+    let enemyLeft = 25;
 
-addListener(t, [Events.enemyDead]);
+    addListener({
+      [Events.enemyDead](e: Enemy) {
+        if (!--enemyLeft || e instanceof Boss) {
+          // tslint:disable no-unused-expression
+          new PowerUp(e.x, e.y);
+          enemyLeft = Math.ceil(randRange([25, 60]));
+        }
+      },
+    }, [Events.enemyDead]);
+  },
+}, [Events.postgamereset]);

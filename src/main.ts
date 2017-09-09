@@ -1,70 +1,82 @@
-import * as dat from "dat-gui";
-import Boss, {
-  AimPlayerBullerDrop,
-  AimPlayerMultipleBullet,
-  RandomBulletDrop,
-  RandomBulletSpread,
-  SumonFormation,
-} from "./Boss";
 import ctx, {celm, scrheight, scrwidth} from "./canvas";
-import {IEnemyConfig} from "./Enemy";
-import EnemyFormation, {
-  PolygonEPP,
-  PyramidEPP,
-  RandomPositionSPP,
-  StraightForwardSPP,
-  StraightLineEPP,
-  TowardPlayerSPP,
-  WallEPP,
-} from "./EnemyFormation";
-import EFM, {IEnemyFormationConfig as IEFC} from "./EnemyFormationManager";
-import {addListener, emit, Events} from "./EventListener";
-import FinalBoss, {LazerChase, LazerScan, RadialLazerScan, SumonMoon} from "./FinalBoss";
-import {gameloop, ISavedData, ISessionData, newPlayer, storageName} from "./game";
-import {images, ImagesId, onload} from "./imageLoader";
+import {addListener, emit, Events, listeners} from "./EventListener";
+import {
+  changeGameStage,
+  gameloop,
+  GameState,
+  ISavedData, ISessionData,
+  newPlayer, player,
+  resetScore, score,
+  storageName,
+} from "./game";
+import {onload} from "./imageLoader";
 import "./loadImages";
-import Moon, {MoonState} from "./Moon";
-import Planet from "./Planet";
-import Player from "./Player";
 import "./PowerUp";
-import PowerUp from "./PowerUp";
 import scriptController from "./scripts";
 import StarField from "./StarField";
 import "./UI";
+import {changeScreen} from "./UI";
+
+const lis = {
+  [Events.gamereset]() {
+    listeners[Events.process] = [];
+    listeners[Events.collisionCheck] = [];
+    listeners[Events.startScroll] = [];
+    listeners[Events.stopScroll] = [];
+    listeners[Events.enemyDead] = [];
+    listeners[Events.enemyFormationDead] = [];
+    for (let i = Events.render; i < Events.last_render; ++i) {
+      listeners[i] = [];
+    }
+
+    if (!localStorage.getItem(storageName)) {
+      localStorage.setItem(storageName, JSON.stringify({
+        highscore: 0,
+      } as ISavedData));
+    }
+    resetScore();
+    // tslint:disable no-unused-expression
+    // Its actually used expression, tslint does not recognize that
+    new StarField(100, 90);
+    new StarField(100, 100);
+    new StarField(100, 110);
+    celm.width = scrwidth;
+    celm.height = scrheight;
+    changeGameStage(GameState.mainmenu);
+    emit(Events.postgamereset);
+    emit(Events.startScroll);
+  },
+  [Events.playerdead]() {
+    const ld = JSON.parse(localStorage.getItem(storageName)) as ISavedData;
+    const sd: ISessionData = {
+      isLose: true,
+      lastScore: score,
+    };
+    ld.highscore = Math.max(ld.highscore, score);
+    ld.lastLive = 3;
+    localStorage.setItem(storageName, JSON.stringify(ld));
+    sessionStorage.setItem(storageName, JSON.stringify(sd));
+    changeScreen(() => emit(Events.gamereset));
+  },
+  [Events.victory]() {
+    const ld = JSON.parse(localStorage.getItem(storageName)) as ISavedData;
+    const sd: ISessionData = {
+      isLose: false,
+      lastScore: score,
+    };
+    ld.highscore = Math.max(ld.highscore, score);
+    ld.lastLive = ld.lastGunLevel = ld.lastStage = null;
+    localStorage.setItem(storageName, JSON.stringify(ld));
+    sessionStorage.setItem(storageName, JSON.stringify(sd));
+    changeScreen(() => emit(Events.gamereset));
+  },
+};
+addListener(lis, [Events.gamereset, Events.playerdead, Events.victory]);
 
 // tslint:disable no-shadowed-variable
+celm.style.display = "none";
 onload(() => {
-  localStorage.setItem(storageName, JSON.stringify({
-    highscore: 0,
-    lastLive: 100,
-  } as ISavedData));
-  sessionStorage.setItem(storageName, JSON.stringify({
-    isLose: true,
-    lastScore: 100,
-  } as ISessionData));
-  // tslint:disable no-unused-expression
-  // Its actually used expression, tslint does not recognize that
-  new StarField(100, 90);
-  new StarField(100, 100);
-  new StarField(100, 110);
-
-  celm.width = scrwidth;
-  celm.height = scrheight;
-  emit(Events.startScroll);
-  // newPlayer();
-  // addListener({
-  //   [Events.victory]() {
-  //     // alert("VICTORY");
-  //   },
-  //   [Events.playerdead]() {
-  //     alert("ur dead");
-  //   },
-  // }, [Events.victory, Events.playerdead]);
-
-  // for (let i = 20; i-- ;) {
-  //   new PowerUp(scrwidth, scrheight / 2);
-  // }
-  // scriptController.startStage(5);
-
+  celm.style.display = "block";
+  lis[Events.gamereset]();
   gameloop();
 });

@@ -23,7 +23,7 @@ import EnemyFormation, {
 import EnemyFormationManager, {IEnemyFormationConfig} from "./EnemyFormationManager";
 import {addListener, emit, Events} from "./EventListener";
 import FinalBoss, {LazerChase, LazerScan, RadialLazerScan, SumonMoon} from "./FinalBoss";
-import {dt} from "./game";
+import {dt, ISavedData, player, resetScore, storageName} from "./game";
 import {images, ImagesId} from "./imageLoader";
 import {planetSurfaceScale} from "./loadImages";
 import {clamp} from "./math";
@@ -46,6 +46,15 @@ const scriptController = {
       getUFOFormationConfig(this.currentStage),
       this.currentStage < 3 ? 300 : 1000,
     );
+    const ld = JSON.parse(localStorage.getItem(storageName)) as ISavedData;
+    if (this.currentStage === 0) {
+      ld.lastGunLevel = ld.lastLive = ld.lastStage = null;
+    } else {
+      ld.lastGunLevel = player.level;
+      ld.lastLive = player.live;
+      ld.lastStage = this.currentStage;
+    }
+    localStorage.setItem(storageName, JSON.stringify(ld));
   },
   [Events.enemyFormationManagerFinish]() {
     // tslint:disable no-unused-expression

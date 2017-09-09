@@ -8,18 +8,23 @@ import {
   GameState, gameState,
   ISavedData, ISessionData,
   newPlayer,
-  player, score,
+  player,
+  score,
   storageName,
 } from "./game";
 import scriptsController from "./scripts";
 
 addListener({
-  [Events.render + 10]() {
-    ctx.save();
-    [renderMenu, renderGameUI][gameState]();
-    ctx.restore();
+  [Events.postgamereset]() {
+    addListener({
+      [Events.render + 10]() {
+        ctx.save();
+        [renderMenu, renderGameUI][gameState]();
+        ctx.restore();
+      },
+    }, [Events.render + 10]);
   },
-}, [Events.render + 10]);
+}, [Events.postgamereset]);
 
 export function changeScreen(cb: () => void) {
   let currentTime = 0;
@@ -81,7 +86,8 @@ function renderMenu() {
     changeScreen(() => {
       changeGameStage(GameState.ingame);
       newPlayer();
-      scriptsController.startStage(0);
+      player.setGunLv(30);
+      scriptsController.startStage(8);
       preventButtonClick = false;
     });
   });
@@ -90,7 +96,15 @@ function renderMenu() {
       if (preventButtonClick) {
         return;
       }
-      alert("Awesome");
+      preventButtonClick = true;
+      changeScreen(() => {
+        changeGameStage(GameState.ingame);
+        newPlayer();
+        player.live = ld.lastLive;
+        player.setGunLv(ld.lastGunLevel);
+        scriptsController.startStage(ld.lastStage);
+        preventButtonClick = false;
+      });
     });
   }
 }

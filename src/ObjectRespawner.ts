@@ -20,7 +20,7 @@ export default class ObjectRespawner<T> {
   [index: number]: (any) => boolean | void;
 
   constructor(private ctor: IConstructor<T>) {
-    addListener(this, [Events.process]);
+    addListener(this, [Events.clean]);
   }
 
   public assign(numberOfObject: number) {
@@ -48,7 +48,7 @@ export default class ObjectRespawner<T> {
     }
   }
 
-  public [Events.process]() {
+  public [Events.clean]() {
     this.clean();
   }
 

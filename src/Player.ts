@@ -145,9 +145,14 @@ export default class Player implements ICollidable {
       } else {
         this.level -= +(this.level > 0) + +(this.level > 2) + +(this.level > 5) + +(this.level > 8);
       }
-      this.gunFormation = getPlayerGunFormation(this.level);
+      this.setGunLv(this.level);
       Particle.createPartical(100, this.x, this.y, 6, "cyan");
       this.currentTime = Player.relaxTime + Player.respawnTime;
     }
+  }
+
+  public setGunLv(lv: number) {
+    this.level = lv;
+    this.gunFormation = getPlayerGunFormation(this.level);
   }
 }

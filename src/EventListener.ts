@@ -68,6 +68,7 @@ export const enum Events {
   collisionCheck,
   render,
   last_render = render + 10,
+  clean,
   stopScroll,
   startScroll,
   enemyDead,
@@ -76,6 +77,8 @@ export const enum Events {
   bossDefeated,
   victory,
   playerdead,
+  gamereset,
+  postgamereset,
 }
 
 export interface IHasEventHandler {
