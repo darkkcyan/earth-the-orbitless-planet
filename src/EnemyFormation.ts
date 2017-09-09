@@ -15,7 +15,7 @@ export default class Formation {
   public enemyList: Enemy[];
 
   // initialy it will start at the left side of the screen with random y
-  public x: number = scrwidth * 1.5;
+  public x: number = scrwidth * 1.25;
   public y: number = scrheight * Math.random();
 
   private numEnemy: number;

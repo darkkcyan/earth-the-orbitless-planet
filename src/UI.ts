@@ -86,8 +86,7 @@ function renderMenu() {
     changeScreen(() => {
       changeGameStage(GameState.ingame);
       newPlayer();
-      player.setGunLv(70);
-      scriptsController.startStage(8);
+      scriptsController.startStage(0);
       preventButtonClick = false;
     });
   });
