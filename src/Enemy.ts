@@ -90,7 +90,6 @@ export default class Enemy implements ICollidable {
       this.createParticle();
       this.free();
 
-      increaseScore(this.config.rewardScore);
       emit(Events.enemyDead, this);
       return true;
     }
@@ -103,6 +102,9 @@ export default class Enemy implements ICollidable {
         this.live -= (obj as Bullet).damage;
         obj.tag = Tag.no_tag;  // cannot do this from Bullet because if the bullet
                                // was proccesed first, then Enemy couldnot "see" the bullet.
+        if (this.isdead()) {
+          increaseScore(this.config.rewardScore);
+        }
         this.hitCooltime = 3;
       }
     }
@@ -152,7 +154,7 @@ export default class Enemy implements ICollidable {
   protected autoFire() {
     const towardPlayer = Math.random() < Enemy.fireTowardPlayerProbability;
     let angle: number = Math.PI;
-    if (towardPlayer) {
+    if (towardPlayer && player.x < this.x) {
       angle = Math.atan2(player.y - this.y, player.x - this.x);
     }
     this.fire(angle);
