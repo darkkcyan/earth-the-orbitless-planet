@@ -124,6 +124,14 @@ const playerGunFormationData: number[][] = [
   [4, 2, 6, 3, 2, -2],
   [4, 2, 6, 3, 2, -2],
   [4, 2, 6, 3, 2, -3],
+  [4, 2, 6, 3, 2, -3],
+  [4, 2, 6, 3, 2, -3],
+  [4, 2, 6, 3, 2, -3],
+  [4, 2, 6, 3, 2, -3],
+  [4, 2, 6, 3, 2, -3],
+  [4, 2, 6, 3, 2, -3],
+  [4, 2, 6, 3, 2, -3],
+  [4, 2, 6, 3, 3, -3],
 ];
 
 export default function getPlayerGunFormation(playerLevel: number) {
