@@ -6,7 +6,6 @@ import SpatialHashMap from "./SpatialHashMap";
 export const storageName = "etop-data";
 export interface ISavedData {
   highscore: number;
-  lastLive?: number;
   lastGunLevel?: number;
   lastStage?: number;
 }
@@ -35,13 +34,19 @@ export function newPlayer() {
 }
 
 export let score = 0;
+let nextLiveUp = 500000;
 
 export function increaseScore(s: number) {
   score += s;
+  if (score >= nextLiveUp) {
+    nextLiveUp += 500000;
+    ++player.live;
+  }
 }
 
 export function resetScore() {
   score = 0;
+  nextLiveUp = 100000;
 }
 
 let lastTime = Date.now();

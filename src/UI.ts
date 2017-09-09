@@ -86,11 +86,12 @@ function renderMenu() {
     changeScreen(() => {
       changeGameStage(GameState.ingame);
       newPlayer();
-      scriptsController.startStage(0);
+      player.setGunLv(70);
+      scriptsController.startStage(8);
       preventButtonClick = false;
     });
   });
-  if (ld.lastLive) {
+  if (ld.lastGunLevel !== null) {
     processButton(x, 700, btw, bth, "CONTINUE", () => {
       if (preventButtonClick) {
         return;
@@ -99,7 +100,6 @@ function renderMenu() {
       changeScreen(() => {
         changeGameStage(GameState.ingame);
         newPlayer();
-        player.live = ld.lastLive;
         player.setGunLv(ld.lastGunLevel);
         scriptsController.startStage(ld.lastStage);
         preventButtonClick = false;

@@ -48,10 +48,9 @@ const scriptController = {
     );
     const ld = JSON.parse(localStorage.getItem(storageName)) as ISavedData;
     if (this.currentStage === 0) {
-      ld.lastGunLevel = ld.lastLive = ld.lastStage = null;
+      ld.lastGunLevel = ld.lastStage = null;
     } else {
       ld.lastGunLevel = player.level;
-      ld.lastLive = player.live;
       ld.lastStage = this.currentStage;
     }
     localStorage.setItem(storageName, JSON.stringify(ld));

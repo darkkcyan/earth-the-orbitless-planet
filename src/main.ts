@@ -53,7 +53,6 @@ const lis = {
       lastScore: score,
     };
     ld.highscore = Math.max(ld.highscore, score);
-    ld.lastLive = 3;
     localStorage.setItem(storageName, JSON.stringify(ld));
     sessionStorage.setItem(storageName, JSON.stringify(sd));
     changeScreen(() => emit(Events.gamereset));
@@ -65,7 +64,7 @@ const lis = {
       lastScore: score,
     };
     ld.highscore = Math.max(ld.highscore, score);
-    ld.lastLive = ld.lastGunLevel = ld.lastStage = null;
+    ld.lastGunLevel = ld.lastStage = null;
     localStorage.setItem(storageName, JSON.stringify(ld));
     sessionStorage.setItem(storageName, JSON.stringify(sd));
     changeScreen(() => emit(Events.gamereset));
