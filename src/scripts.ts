@@ -29,7 +29,7 @@ import {planetSurfaceScale} from "./loadImages";
 import {clamp} from "./math";
 import Planet from "./Planet";
 
-const totalStages = 9;
+export const totalStages = 9;
 
 const scriptController = {
   currentStage: 0,

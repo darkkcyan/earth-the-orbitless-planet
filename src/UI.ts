@@ -12,7 +12,7 @@ import {
   score,
   storageName,
 } from "./game";
-import scriptsController from "./scripts";
+import scriptsController, {totalStages} from "./scripts";
 
 addListener({
   [Events.postgamereset]() {
@@ -135,8 +135,6 @@ function renderGameUI() {
   ctx.fillText("" + score, scrwidth, 0);
   ctx.textAlign = "left";
   ctx.fillText("" + player.live, fontSize + 10, 0);
-  ctx.fillStyle = "red";
-  ctx.fillText("\u{1F49A}", 0, 0);
   if (Boss.activeBosses.length) {
     let totalBossLive = 0;
     let currentBossLive = 0;
@@ -151,5 +149,9 @@ function renderGameUI() {
     const y = 10;
     ctx.fillRect(x, y, bossLiveBarWidth * (1 - currentBossLive / totalBossLive), bossLiveBarHeight);
     ctx.strokeRect(x, y, bossLiveBarWidth, bossLiveBarHeight);
+  } else {
+    ctx.fillText(`Stage: ${scriptsController.currentStage + 1}/${totalStages}`, scrwidth / 2 - 100, 0);
   }
+  ctx.fillStyle = "red";
+  ctx.fillText("\u{1F49A}", 0, 0);
 }
