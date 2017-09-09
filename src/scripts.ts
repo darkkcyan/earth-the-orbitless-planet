@@ -36,7 +36,7 @@ const scriptController = {
   startStage(stage: number) {
     Boss.activeBosses.length = 0;
     if (stage >= totalStages) {
-      emit(Events.victory);
+      setTimeout(() => emit(Events.victory), 2000);
       return;
     }
     emit(Events.startScroll);

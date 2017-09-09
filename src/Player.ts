@@ -59,7 +59,7 @@ export default class Player implements ICollidable {
 
   public [Events.process]() {
     if (this.isdead()) {
-      emit(Events.playerdead);
+      setTimeout(() => emit(Events.playerdead), 2000);
       return true;
     }
     if (this.currentTime > 0) {
