@@ -233,31 +233,3 @@ export class SumonFormation extends MoveToPosition {
     return allDead || this.currentTime > this.moveTime + this.waitTime;
   }
 }
-
-export class LineGuideDrawer {
-  [index: number]: (any?) => boolean | void;
-  public offset: number = 0;
-  public remove = false;
-  constructor(public x: number, public y: number, public angle: number) {
-    addListener(this, [Events.render + 1]);
-  }
-
-  public [Events.render + 1]() {
-    const w = 10;
-    ctx.save();
-    ctx.setLineDash([w]);
-    ctx.lineDashOffset = --this.offset;
-    if (this.offset < -w * 2) {
-      this.offset = 0;
-    }
-    ctx.lineWidth = w;
-    ctx.strokeStyle = "rgba(255,255,255,.5)";
-    ctx.beginPath();
-    ctx.moveTo(this.x, this.y);
-    const len = scrwidth * Math.SQRT2;
-    ctx.lineTo(this.x + len * Math.cos(this.angle), this.y + len * Math.sin(this.angle));
-    ctx.stroke();
-    ctx.restore();
-    return this.remove;
-  }
-}
