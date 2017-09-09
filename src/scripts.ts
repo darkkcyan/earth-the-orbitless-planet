@@ -50,7 +50,7 @@ const scriptController = {
   [Events.enemyFormationManagerFinish]() {
     // tslint:disable no-unused-expression
     if (this.currentStage !== 5) {
-      const imgId = ImagesId.first_planet_surface + this.currentStage + +(this.currentStage >= 4);
+      const imgId = ImagesId.first_planet_surface + this.currentStage - +(this.currentStage > 5);
       new BackgroundPlanet(
         imgId,
         Math.PI * +(imgId === ImagesId.sunSurface),
@@ -149,7 +149,7 @@ function repVal<T>(n: number, v: T) {
 
 function getUFOFormationConfig(stageNum: number) {
   const t1 = [1, 1, 3, 3, 6, 6, 10, 10, 15];
-  const t2 = [1, 1, 2, 2, 3, 3, 4, 4, 5];
+  const t2 = [1, 1, 2, 2, 2, 2, 3, 3, 4];
   const UFOCon = UFOConfig[stageNum];
   return ([] as IEnemyFormationConfig[]).concat(
     // appetizer
@@ -168,7 +168,7 @@ function getUFOFormationConfig(stageNum: number) {
     })),
     // random wheel
     repFn<IEnemyFormationConfig>(20, () => ({
-      cost: 25,
+      cost: stageNum < 6 ? 25 : 33,
       enemyConfigList: repVal(2 + stageNum, UFOCon),
       enemyPositionProcess: new PolygonEPP(),
       selfPositionProcessor: new RandomPositionSPP(),
@@ -200,7 +200,7 @@ function getUFOFormationConfig(stageNum: number) {
           break;
       }
       return {
-        cost: 20,
+        cost: stageNum < 6 ? 20 : 14,
         enemyConfigList: repVal(numUFO, UFOCon),
         enemyPositionProcess: epp,
         selfPositionProcessor: new RandomPositionSPP(),
@@ -218,7 +218,7 @@ function getUFOFormationConfig(stageNum: number) {
         numEnemy = t2[stageNum] * t2[stageNum];
         epp = new WallEPP(t2[stageNum]);
       } else {
-        numEnemy = Math.floor(stageNum * 1.5) + 2;
+        numEnemy = Math.floor(stageNum * 1.25) + 2;
         epp = new StraightLineEPP();
       }
       return {
@@ -237,7 +237,7 @@ function getUFOFormationConfig(stageNum: number) {
     // speed driller
     repFn<IEnemyFormationConfig>(stageNum + 2, () => ({
       cost: Math.floor(100 / Math.min(stageNum + 1, 3)),
-      enemyConfigList: repVal(3 + stageNum, UFOCon),
+      enemyConfigList: repVal(5, UFOCon),
       enemyPositionProcess: new StraightLineEPP(),
       selfPositionProcessor: new StraightForwardSPP(700, undefined, false),
     })),
@@ -278,7 +278,7 @@ const callBoss: Array<() => void>  = [
     ]);
   },
   () => {
-    new Boss(getBossConfig(1, 12000, 250), [
+    new Boss(getBossConfig(1, 12000, 300), [
       new RandomBulletDrop(),
       new RandomBulletSpread(5),
       new SumonFormation(() => repFn(3, () => new EnemyFormation(
@@ -291,14 +291,14 @@ const callBoss: Array<() => void>  = [
   },
   () => {
     for (let i = 2; i--; ) {
-      new Boss(getBossConfig(2, 7000, 200), [
+      new Boss(getBossConfig(2, 7000, 250), [
         new RandomBulletDrop(),
         new RandomBulletSpread(3),
       ]);
     }
   },
   () => {
-    new Boss(getBossConfig(3, 12000, 550), [
+    new Boss(getBossConfig(3, 12000, 600), [
       new RandomBulletDrop(),
       new AimPlayerMultipleBullet(),
       new SumonFormation(() => repFn(2, () => new EnemyFormation(
@@ -311,7 +311,7 @@ const callBoss: Array<() => void>  = [
   },
   () => {
     for (let i = 3; i--; ) {
-      new Boss(getBossConfig(4, 9000, 200), [
+      new Boss(getBossConfig(4, 9000, 233), [
         new RandomBulletDrop(),
         new RandomBulletSpread(2),
         new SumonFormation(() => [new EnemyFormation(
@@ -325,12 +325,12 @@ const callBoss: Array<() => void>  = [
     }
   },
   () => {
-    const c = getBossConfig(5, 20000, 700);
+    const c = getBossConfig(5, 20000, 900);
     c.imageId = ImagesId.alienPlanetSurface;
     const b = new FinalBoss(c, [
-      new LazerChase(),
-      new LazerScan(1),
-      new RadialLazerScan(),
+      new LazerChase(1),
+      new LazerScan(1, 2),
+      new RadialLazerScan(1),
     ]);
     addListener({
       [Events.bossDefeated]() {
@@ -345,7 +345,7 @@ const callBoss: Array<() => void>  = [
     }, [Events.bossDefeated]);
   },
   () => {
-    new Boss(getBossConfig(6, 20000, 700), [
+    new Boss(getBossConfig(6, 20000, 900), [
       new AimPlayerBullerDrop(),
       new RandomBulletSpread(5),
       new SumonFormation(() => [new EnemyFormation(
@@ -357,7 +357,7 @@ const callBoss: Array<() => void>  = [
     ]);
   },
   () => {
-    new Boss(getBossConfig(7, 21000, 800), [
+    new Boss(getBossConfig(7, 21000, 1000), [
       new AimPlayerBullerDrop(),
       new AimPlayerMultipleBullet(),
       new RandomBulletSpread(),
@@ -370,14 +370,13 @@ const callBoss: Array<() => void>  = [
     ]);
   },
   () => {
-    const c = getBossConfig(8, 25000, 1000);
+    const c = getBossConfig(8, 25000, 2000);
     c.imageId = ImagesId.alienPlanetSurface;
     new FinalBoss(c, [
       new LazerChase(3),
       new LazerScan(1),
       new LazerScan(2, 3),
-      new RadialLazerScan(1),
-      new RadialLazerScan(3),
+      new RadialLazerScan(3, 1),
     ]);
   },
 ];
