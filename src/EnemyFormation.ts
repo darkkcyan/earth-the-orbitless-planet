@@ -15,7 +15,7 @@ export default class Formation {
   public enemyList: Enemy[];
 
   // initialy it will start at the left side of the screen with random y
-  public x: number = scrwidth * 1.25;
+  public x: number = scrwidth * 1.4;
   public y: number = scrheight * Math.random();
 
   private numEnemy: number;
@@ -113,7 +113,7 @@ export class RandomPositionSPP implements IFormationSubProcessor {
 
   constructor(
     public moveTime = 1.5,
-    public towardPlayerProbability = .05,
+    public tpp = .05, // toward player probability
   ) {
     this.currentTime = 2 * this.moveTime;
   }
@@ -124,7 +124,7 @@ export class RandomPositionSPP implements IFormationSubProcessor {
       this.currentX = f.x;
       this.currentY = f.y;
       this.dty = scrheight * Math.random();
-      if (Math.random() <= this.towardPlayerProbability && this.currentTime < 2 * this.moveTime) {
+      if (Math.random() <= this.tpp && this.currentTime < 2 * this.moveTime) {
         this.dtx = player.x;
       } else {
         this.dtx = scrwidth * (Math.random() / 2 + .5);
@@ -138,20 +138,20 @@ export class RandomPositionSPP implements IFormationSubProcessor {
   }
 }
 
-export class TowardPlayerSPP implements IFormationSubProcessor {
-  constructor(public px: number = 300, public pyRatio = 1.2) {}
-  public process(f: Formation) {
-    f.x -= this.px * dt;
-    const d = player.y - f.y;
-    const s = d < 0 ? -1 : +(d > 0);
-    if (d * s > 200) {
-      f.y += d * dt * this.pyRatio;
-    } else if (d * s > 40) {
-      f.y += 200 * s * dt * this.pyRatio;
-    }
-    f.forceDead();
-  }
-}
+// export class TowardPlayerSPP implements IFormationSubProcessor {
+//   constructor(public px: number = 300, public pyRatio = 1.2) {}
+//   public process(f: Formation) {
+//     f.x -= this.px * dt;
+//     const d = player.y - f.y;
+//     const s = d < 0 ? -1 : +(d > 0);
+//     if (d * s > 200) {
+//       f.y += d * dt * this.pyRatio;
+//     } else if (d * s > 40) {
+//       f.y += 200 * s * dt * this.pyRatio;
+//     }
+//     f.forceDead();
+//   }
+// }
 
 export class PolygonEPP implements IFormationSubProcessor {
   private hm: HarmonicMotion;

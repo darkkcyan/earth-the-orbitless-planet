@@ -24,7 +24,7 @@ export default class Boss extends Enemy {
     this.x = scrwidth + images[config.imageId].width;
     this.y = scrheight / 2;
     this.init(config);
-    this.csk = this.csk = new MoveToPosition(relaxTime);
+    this.csk = this.rsk = new MoveToPosition(relaxTime);
     this.csk.i(this);
     Boss.activeBosses.push(this);
   }
@@ -100,30 +100,6 @@ export class MoveToPosition implements IBossSkill {
   }
 }
 
-export class RandomBulletDrop implements IBossSkill {
-  public currentTime: number;
-  private mover: MoveToPosition;
-  constructor(moveTime = .5, public shootTime = 2, public towardPlayerProbability = .5) {
-    this.mover = new MoveToPosition(moveTime);
-  }
-
-  public i(b: Boss) {
-    this.mover.i(b);
-    if (Math.random() < this.towardPlayerProbability) {
-      this.mover.dy = player.y - b.y;
-    }
-    this.currentTime = 0;
-  }
-
-  public p(b: Boss) {
-    if (this.mover.p(b)) {
-      this.currentTime += dt;
-      b.fire(Math.PI, 7);
-    }
-    return this.currentTime > this.shootTime;
-  }
-}
-
 export class AimPlayerBullerDrop implements IBossSkill {
   public currentTime: number;
   public dx: number;
@@ -191,7 +167,10 @@ export class RandomBulletSpread implements IBossSkill {
     if (this.mover.p(b)) {
       this.currentTime += dt;
       for (let i = this.numberOfRay; i--; ) {
-        b.fire(Math.PI - this.spreadAngle * (i / (this.numberOfRay - 1) - .5));
+        b.fire(Math.PI - (this.numberOfRay > 1
+          ? this.spreadAngle * (i / (this.numberOfRay - 1) - .5)
+          : 0
+        ));
       }
     }
     return this.currentTime > this.shootTime;

@@ -18,13 +18,12 @@ export interface IEnemyConfig {
   fireTimeRange?: [number, number];
 }
 
+const offsetAlpha = .05;
+const maxNumberOfShadow = 5;
+const captureTime = .075;
+const fireTimeRange: [number, number] = [4, 8];
 export default class Enemy implements ICollidable {
   [index: number]: (any?) => boolean | void;
-  public static offsetAlpha = .05;
-  public static maxNumberOfShadow = 5;
-  public static captureTime = .075;
-
-  public static fireTimeRange: [number, number] = [4, 8];
   public static fireTowardPlayerProbability = .3;
 
   public collisionShape: AllKindOfShapes;
@@ -48,7 +47,7 @@ export default class Enemy implements ICollidable {
     this.config = config;
     this.previousPos = [];
     this.captureTimeLeft = 0;
-    this.fireTime = randRange([0, (this.config.fireTimeRange || Enemy.fireTimeRange)[1]]);
+    this.fireTime = randRange([0, (this.config.fireTimeRange || fireTimeRange)[1]]);
     const i = images[config.imageId];
     this.collisionShape = new Rectangle(0, 0, i.width * .9, i.height * .9);
     this.live = config.live;
@@ -62,19 +61,19 @@ export default class Enemy implements ICollidable {
   }
 
   public [Events.process]() {
-    while (this.previousPos.length > Enemy.maxNumberOfShadow) {
+    while (this.previousPos.length > maxNumberOfShadow) {
       this.previousPos.shift();
     }
     this.captureTimeLeft -= dt;
     if (this.captureTimeLeft <= 0) {
-      this.captureTimeLeft += Enemy.captureTime;
+      this.captureTimeLeft += captureTime;
       this.previousPos.push([this.x, this.y]);
     }
 
     this.canFire = false;
     this.fireTime -= dt;
     if (this.fireTime <= 0) {
-      this.fireTime += randRange(this.config.fireTimeRange || Enemy.fireTimeRange);
+      this.fireTime += randRange(this.config.fireTimeRange || fireTimeRange);
       this.canFire = true;
     }
     this.autoFire();
@@ -114,9 +113,9 @@ export default class Enemy implements ICollidable {
     const w = img.width;
     const h = img.height;
     for (
-      let i = 0, alpha = Enemy.offsetAlpha;
+      let i = 0, alpha = offsetAlpha;
       i < this.previousPos.length - 1;
-      ++i, alpha += Enemy.offsetAlpha
+      ++i, alpha += offsetAlpha
     ) {
       ctx.globalAlpha = alpha;
       const [x, y] = this.previousPos[i];

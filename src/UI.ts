@@ -1,7 +1,7 @@
 import Boss from "./Boss";
 import {processButton} from "./Button";
 import ctx, {celm, scrheight, scrwidth} from "./canvas";
-import {easeInOutQuint} from "./ease";
+import {easeInOutCubic} from "./ease";
 import {addListener, Events} from "./EventListener";
 import {
   changeGameStage,
@@ -36,8 +36,8 @@ export function changeScreen(cb: () => void) {
         cb();
       }
       if (currentTime < changeTime) {
-        const x = easeInOutQuint(currentTime, -scrwidth * 2, scrwidth * 4, changeTime);
-        ctx.fillStyle = "black";
+        const x = easeInOutCubic(currentTime, -scrwidth * 2, scrwidth * 4, changeTime);
+        ctx.fillStyle = "#09194A";
         ctx.fillRect(x, 0, scrwidth * 2, scrheight);
       }
       return currentTime > changeTime;
@@ -86,6 +86,7 @@ function renderMenu() {
     changeScreen(() => {
       changeGameStage(GameState.ingame);
       newPlayer();
+      // player.setGunLv(7);
       scriptsController.startStage(0);
       preventButtonClick = false;
     });
@@ -150,8 +151,19 @@ function renderGameUI() {
     ctx.fillRect(x, y, bossLiveBarWidth * (1 - currentBossLive / totalBossLive), bossLiveBarHeight);
     ctx.strokeRect(x, y, bossLiveBarWidth, bossLiveBarHeight);
   } else {
-    ctx.fillText(`Stage: ${scriptsController.currentStage + 1}/${totalStages}`, scrwidth / 2 - 100, 0);
+    ctx.textAlign = "center";
+    ctx.fillText(`Next stop: ${[
+      "Neptune",
+      "Uranus",
+      "Saturn",
+      "Jupiter",
+      "Mars",
+      "Earth???",
+      "Venus",
+      "Mercury",
+      "Sun",
+    ][scriptsController.currentStage]}`, scrwidth / 2, 0);
   }
   ctx.fillStyle = "red";
-  ctx.fillText("\u{1F49A}", 0, 0);
+  ctx.fillText("\u{1F49A}", 15, 0);
 }

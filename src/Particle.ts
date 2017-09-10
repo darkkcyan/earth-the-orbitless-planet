@@ -4,10 +4,10 @@ import {addListener, Events} from "./EventListener";
 import {dt} from "./game";
 import {PI2, randNeg} from "./math";
 
+const speed = 4;
 export default class Partical {
   [index: number]: (any?) => boolean | void;
 
-  public static speed = 4;
   public static createPartical(
     num: number,
     x: number,
@@ -42,8 +42,8 @@ export default class Partical {
   }
 
   public [Events.process]() {
-    this.x += Partical.speed * Math.cos(this.angle);
-    this.y += Partical.speed * Math.sin(this.angle);
+    this.x += speed * Math.cos(this.angle);
+    this.y += speed * Math.sin(this.angle);
     ++this.currentTime;
     return this.currentTime >= this.age;
   }

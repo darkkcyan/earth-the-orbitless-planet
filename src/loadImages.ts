@@ -3,21 +3,20 @@ import {ImagesId, loadPrerender} from "./imageLoader";
 import * as surfaces from "./planet-surfaces-data";
 import fillWhite from "./prerender/fillWhite";
 import {
-  renderGunLv1,
+  // renderGunLv1,
   renderGunLv2,
-  renderGunLv3,
+  // renderGunLv3,
 } from "./prerender/gun";
 import {IPlanetSurface, renderPlanetSurface} from "./prerender/planet";
 import {renderUFO} from "./prerender/UFO";
 
 const gunw = 60;
 const gunh = 25;
-for (const [id, cb] of [
-  [ImagesId.gunlv1, renderGunLv1],
-  [ImagesId.gunlv2, renderGunLv2],
-  [ImagesId.gunlv3, renderGunLv3],
-] as Array<[number, typeof renderGunLv1]>) {
-  loadPrerender(id, gunw, gunh, () => cb({size: gunh, colorScheme: PLAYER_GUN_COLORSCHEME}));
+for (let i = -1; ++i < 3; ) {
+  loadPrerender(
+    ImagesId.gunlv1 + i, gunw, gunh,
+    () => {renderGunLv2({size: gunh, colorScheme: PLAYER_GUN_COLORSCHEME[i]})}
+  );
 }
 
 const UFOw = 100;
@@ -50,7 +49,7 @@ function loadPlanetSurface(id: number, p: IPlanetSurface, scaleRatio = 1) {
 }
 
 loadPlanetSurface(ImagesId.earthSurface, surfaces.earthsurface);
-loadPlanetSurface(ImagesId.moonSurface, surfaces.moonsurface);
+// loadPlanetSurface(ImagesId.moonSurface, surfaces.moonsurface);
 // loadPlanetSurface(ImagesId.alienPlanetSurface, surfaces.alienplanetsurface);
 loadPlanetSurface(ImagesId.alienPlanetSurfaceWithShield, surfaces.alienplanetsurfaceiwithshield);
 loadPlanetSurface(ImagesId.neptuneSurface, surfaces.neptunesurface, 8);

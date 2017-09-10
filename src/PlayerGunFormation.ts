@@ -62,9 +62,9 @@ export class HarmonicMotionPlayerGunFormation {
 }
 
 const playerBulletColor: string[] = [
-  "darkturquoise",
-  "aquamarine",
-  "springgreen",
+  "#00CED1",
+  "#7FFFD4",
+  "#00FF7F",
 ];
 function getPlayerGun(gunLv: number) {
   if (gunLv === 0) {

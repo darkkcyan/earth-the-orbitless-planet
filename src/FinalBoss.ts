@@ -7,7 +7,6 @@ import {dt, player} from "./game";
 import {images, ImagesId} from "./imageLoader";
 import Lazer from "./Lazer";
 import {clamp, cross, PI2, randRange} from "./math";
-import Moon, {MoonState} from "./Moon";
 import Planet from "./Planet";
 import {Circle} from "./shapes";
 
@@ -30,7 +29,7 @@ export default class FinalBoss extends Boss {
   public [Events.render + 2]() {
     if (this.hitCooltime) {
       ctx.beginPath();
-      ctx.fillStyle = "gainsboro";
+      ctx.fillStyle = "#DCDCDC";
       ctx.arc(this.x, this.y, this.planet.radius, 0, PI2);
       ctx.fill();
     } else {
@@ -99,8 +98,8 @@ export class LazerChase implements IBossSkill {
   }
 }
 
+const lazerOffset = 210;
 export class LazerScan implements IBossSkill {
-  public static layerOffset = 210;
   public mover: MoveToPosition;
   public currentTime: number;
   public laz: Lazer[];
@@ -143,7 +142,7 @@ export class LazerScan implements IBossSkill {
   }
 
   private getPos(i: number) {
-    return - ((this.numLazer - 1) / 2 - i) * LazerScan.layerOffset;
+    return - ((this.numLazer - 1) / 2 - i) * lazerOffset;
   }
 }
 
@@ -176,7 +175,7 @@ export class RadialLazerScan implements IBossSkill {
         this.startAngle = this.currentAngle = randRange([0, PI2]);
         this.laz = new Lazer();
         this.laz.init({
-          age: this.scanTime + Lazer.sumonTime,
+          age: this.scanTime + .3,
           aimTime: this.waitTime,
         }, b.x, b.y, this.startAngle);
       }

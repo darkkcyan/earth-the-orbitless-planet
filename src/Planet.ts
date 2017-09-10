@@ -3,8 +3,9 @@ import {Events} from "./EventListener";
 import {dt} from "./game";
 import {HALF_PI, PI2} from "./math";
 
+const tiltAngle = Math.PI / 6;
+
 export default class Planet {
-  public static tiltAngle = Math.PI / 6;
   public x: number = 0;
   public y: number = 0;
 
@@ -38,7 +39,7 @@ export default class Planet {
 
     // draw surface map
     ctx.save();
-    ctx.rotate(Planet.tiltAngle);
+    ctx.rotate(tiltAngle);
     ctx.beginPath();
     ctx.arc(0, 0, this.radius, 0, PI2);
     ctx.clip();
@@ -65,7 +66,7 @@ export default class Planet {
     ctx.restore();
 
     if (this.hasRing) {
-      ctx.rotate(Planet.tiltAngle);
+      ctx.rotate(tiltAngle);
       ctx.scale(1, .1);
       const ang1 = Math.PI / 7.3;
       const ang2 = Math.PI / 3.5;

@@ -12,9 +12,9 @@ export interface IBulletConfig {
   isPlayerBullet?: boolean;
 }
 
+const TAIL_LENGTH = 20;
 export default class Bullet implements ICollidable {
   // public static Respawner = new ObjectRespawner(Bullet);
-  public static TAIL_LENGTH = 20;
   public collisionShape: Circle = new Circle(0, 0, 0);
   public speed: number;
   public angle: number;
@@ -42,8 +42,8 @@ export default class Bullet implements ICollidable {
     const x = this.collisionShape.x += this.speed * Math.cos(this.angle) * dt;
     const y = this.collisionShape.y += this.speed * Math.sin(this.angle) * dt;
     if (
-      x < -Bullet.TAIL_LENGTH || y < -Bullet.TAIL_LENGTH ||
-      x > scrwidth + Bullet.TAIL_LENGTH || y > scrheight + Bullet.TAIL_LENGTH
+      x < -TAIL_LENGTH || y < -TAIL_LENGTH ||
+      x > scrwidth + TAIL_LENGTH || y > scrheight + TAIL_LENGTH
     ) {
       this.isDead = true;
     }
@@ -65,7 +65,7 @@ export default class Bullet implements ICollidable {
     ctx.lineCap = "round";
     ctx.strokeStyle = this.color;
     ctx.globalAlpha = .3;
-    ctx.moveTo(x - Math.cos(this.angle) * Bullet.TAIL_LENGTH, y - Math.sin(this.angle) * Bullet.TAIL_LENGTH);
+    ctx.moveTo(x - Math.cos(this.angle) * TAIL_LENGTH, y - Math.sin(this.angle) * TAIL_LENGTH);
     ctx.lineTo(x, y);
     ctx.stroke();
     ctx.beginPath();

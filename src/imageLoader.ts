@@ -1,7 +1,7 @@
 import {celm} from "./canvas";
 
 type Data = [number, number, () => void];
-const datas: Array<string | Data> = [];
+const datas: Data[] = [];
 
 export const images: HTMLImageElement[] = [];
 
@@ -9,9 +9,9 @@ export function loadPrerender(id: number, w: number, h: number, cb: () => void) 
   datas[id] = [w, h, cb];
 }
 
-export function loadImageSrc(id: number, dataURL: string) {
-  datas[id] = dataURL;
-}
+// export function loadImageSrc(id: number, dataURL: string) {
+//   datas[id] = dataURL;
+// }
 
 export function onload(cb: () => void) {
   let numloaded = 0;
@@ -30,14 +30,10 @@ export function onload(cb: () => void) {
     }
     images[i] = new Image();
     images[i].onload = imageOnloadCallback;
-    if (typeof d === "string") {
-      images[i].src = d;
-    } else {
-      celm.width = d[0];
-      celm.height = d[1];
-      d[2]();
-      images[i].src = celm.toDataURL();
-    }
+    celm.width = d[0];
+    celm.height = d[1];
+    d[2]();
+    images[i].src = celm.toDataURL();
   }
 }
 
@@ -53,8 +49,8 @@ export const enum ImagesId {
   BigUFO,
   last_BigUFO = BigUFO + 20,
   earthSurface,
-  moonSurface,
-  alienPlanetSurface,
+  // moonSurface,
+  // alienPlanetSurface,
   alienPlanetSurfaceWithShield,
   neptuneSurface,
   uranusSurface,

@@ -11,8 +11,8 @@ export interface ILazerConfig {
   age: number;
 }
 
+const sumonTime = .3;
 export default class Lazer {
-  public static sumonTime = .3;
   [index: number]: (any?) => boolean | void;
   public config: ILazerConfig;
   public x: number;
@@ -30,12 +30,12 @@ export default class Lazer {
   }
 
   public isDead() {
-    return this.currentTime > Lazer.sumonTime + this.config.age;
+    return this.currentTime > sumonTime + this.config.age;
   }
 
   public [Events.process]() {
     this.currentTime += dt;
-    if (this.currentTime - dt <= Lazer.sumonTime && this.currentTime >= Lazer.sumonTime) {
+    if (this.currentTime - dt <= sumonTime && this.currentTime >= sumonTime) {
       addListener(this, [Events.collisionCheck]);
     }
     return this.isDead();
@@ -48,12 +48,12 @@ export default class Lazer {
     const by = Math.sin(this.angle);
     if (dot(ax, ay, bx, by) > 0) {
       const d = Math.abs(dot(ax, ay, -by, bx));
-      if (d < player.planet.radius + this.getRadius()) {
+      if (d < player.radius + this.getRadius()) {
         player.loseLive();
       }
     }
 
-    return this.currentTime > this.config.age - Lazer.sumonTime;
+    return this.currentTime > this.config.age - sumonTime;
   }
 
   public [Events.render + 1]() {
@@ -67,15 +67,15 @@ export default class Lazer {
       ctx.shadowBlur = 30;
       ctx.lineCap = "round";
       ctx.shadowColor = ctx.strokeStyle = this.config.color || "#7CFC00";
-      if (this.currentTime > a - Lazer.sumonTime * 2) {
+      if (this.currentTime > a - sumonTime * 2) {
         ctx.globalAlpha = Math.max(0, easeInCubic(
-          this.currentTime - a + Lazer.sumonTime * 2,
+          this.currentTime - a + sumonTime * 2,
           1, -1,
-          Lazer.sumonTime * 2,
+          sumonTime * 2,
         ));
-      } else if (this.currentTime < Lazer.sumonTime) {
-        ctx.lineWidth = easeInCubic(this.currentTime, 0, 2 * r, Lazer.sumonTime);
-        ctx.globalAlpha = Math.min(1, easeInCubic(this.currentTime, 0, 1, Lazer.sumonTime));
+      } else if (this.currentTime < sumonTime) {
+        ctx.lineWidth = easeInCubic(this.currentTime, 0, 2 * r, sumonTime);
+        ctx.globalAlpha = Math.min(1, easeInCubic(this.currentTime, 0, 1, sumonTime));
       }
     } else {
       ctx.lineCap = "butt";

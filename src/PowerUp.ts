@@ -8,11 +8,11 @@ import {PI2, randRange} from "./math";
 import {Circle, isCollision} from "./shapes";
 import {ICollidable, Tag} from "./SpatialHashMap";
 
+const radius = 35;
+const speed = 200;
 export default class PowerUp implements ICollidable {
   [index: number]: (any?) => boolean | void;
-  public static radius = 35;
-  public static speed = 200;
-  public collisionShape = new Circle(0, 0, PowerUp.radius);
+  public collisionShape = new Circle(0, 0, radius);
   public isDead = false;
   public tag = Tag.powerup;
   constructor(public x: number, public y: number) {
@@ -20,10 +20,10 @@ export default class PowerUp implements ICollidable {
   }
 
   public [Events.process]() {
-    this.x -= PowerUp.speed * dt;
+    this.x -= speed * dt;
     this.collisionShape.x = this.x;
     this.collisionShape.y = this.y;
-    if (this.x < -PowerUp.radius) {
+    if (this.x < -radius) {
       this.isDead = true;
     }
     if (!this.isDead) {
@@ -46,7 +46,7 @@ export default class PowerUp implements ICollidable {
     const i = images[ImagesId.gunlv1];
     ctx.drawImage(i, -i.width / 2, -i.height / 2);
     ctx.beginPath();
-    ctx.arc(0, 0, PowerUp.radius, 0, PI2);
+    ctx.arc(0, 0, radius, 0, PI2);
     ctx.strokeStyle = "violet";
     ctx.lineWidth = 5;
     ctx.stroke();

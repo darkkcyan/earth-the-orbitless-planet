@@ -19,37 +19,30 @@ import {
 import {Circle} from "./shapes";
 import {ICollidable, Tag} from "./SpatialHashMap";
 
-export default class Player implements ICollidable {
-  public static respawnTime = 2;
-  public static relaxTime = 3;
-  public followMouse = true;
+const respawnTime = 2;
+const relaxTime = 3;
+export default class Player extends Planet implements ICollidable {
   public collisionShape: Circle = new Circle(0, 0, 0);
   public tag: number = Tag.player;
-  public x: number = 0;
-  public y: number = 0;
-  public planet: Planet;
 
   public live: number = 3;
   public level: number = 0;
 
   [index: number]: (any) => boolean | void;
 
-  private rocketList: Rocket[] = [];
+  private rocket: Rocket;
   private gunFormation: HarmonicMotionPlayerGunFormation;
   private currentTime: number;
 
-  constructor(radius?: number) {
-    radius = radius || images[ImagesId.earthSurface].height / 2;
-    this.planet = new Planet(images[ImagesId.earthSurface]);
-    this.collisionShape.radius = radius;
-    this.currentTime = Player.relaxTime;
-    for (let i = 0; i < 3; ++i) {
-      this.rocketList[i] = new Rocket(
-        this.planet.radius / 2.5,
-        this.planet.radius / 1.5,
-        new HarmonicMotion(5, 1, PI2 * Math.random()),
-      );
-    }
+  constructor() {
+    super(images[ImagesId.earthSurface]);
+    this.collisionShape.radius = this.radius;
+    this.currentTime = relaxTime;
+    this.rocket = new Rocket(
+      this.radius / 1.5,
+      this.radius * 1.25,
+      new HarmonicMotion(5, 1, PI2 * Math.random()),
+    );
     this.gunFormation = getPlayerGunFormation(this.level);
     addListener(this, [Events.process, Events.collisionCheck, Events.render + 3]);
   }
@@ -62,29 +55,24 @@ export default class Player implements ICollidable {
     if (this.currentTime > 0) {
       this.currentTime -= dt;
     }
-    if (this.currentTime > Player.relaxTime) {
+    if (this.currentTime > relaxTime) {
       return false;
     }
-    if (this.followMouse) {
-      [this.x, this.y] = getMousePos();
-    }
-    this.gunFormation.planetRadius = this.planet.radius * 1.1;
-    this.collisionShape.x = this.gunFormation.x = this.planet.x = this.x;
-    this.collisionShape.y = this.gunFormation.y = this.planet.y = this.y;
-    for (let i = this.rocketList.length; i--; ) {
-      const roc = this.rocketList[i];
-      roc[Events.process]();
-      roc.x = this.x - this.planet.radius - 10;
-      roc.y = this.y - 10 + 10 * i;
-    }
-    this.planet[Events.process]();
+    [this.x, this.y] = getMousePos();
+    this.gunFormation.planetRadius = this.radius * 1.1;
+    this.collisionShape.x = this.gunFormation.x = this.x;
+    this.collisionShape.y = this.gunFormation.y = this.y;
+    this.rocket[Events.process]();
+    this.rocket.x = this.x - this.radius - 10;
+    this.rocket.y = this.y;
+    super[Events.process]();
     this.gunFormation[Events.process]();
     shm.insert(this);
     return false;
   }
 
   public [Events.collisionCheck]() {
-    if (this.currentTime > Player.relaxTime) {
+    if (this.currentTime > relaxTime) {
       return false;
     }
     for (const obj of shm.retrive(this)) {
@@ -106,21 +94,19 @@ export default class Player implements ICollidable {
   }
 
   public [Events.render + 3]() {
-    if (this.currentTime < Player.relaxTime) {
-      this.planet[Events.render]();
-      for (const roc of this.rocketList) {
-        roc[Events.render]();
-      }
+    if (this.currentTime < relaxTime) {
+      super[Events.render]();
+      this.rocket[Events.render]();
       this.gunFormation[Events.render]();
     }
     if (this.isRelax()) {
-      const r = this.planet.radius * 1.4;
+      const r = this.radius * 1.4;
       ctx.save();
       ctx.lineWidth = 10;
       ctx.fillStyle = ctx.strokeStyle = "#00DCFF";
       ctx.beginPath();
       ctx.arc(this.x, this.y, r, 0, PI2);
-      ctx.globalAlpha = easeOutCubic(this.currentTime, 0, .5, Player.relaxTime);
+      ctx.globalAlpha = easeOutCubic(this.currentTime, 0, .5, relaxTime);
       ctx.fill();
       ctx.stroke();
       ctx.restore();
@@ -129,7 +115,7 @@ export default class Player implements ICollidable {
   }
 
   public isRelax() {
-    return this.currentTime > 0 && this.currentTime < Player.relaxTime;
+    return this.currentTime > 0 && this.currentTime < relaxTime;
   }
 
   public isdead() {
@@ -137,7 +123,7 @@ export default class Player implements ICollidable {
   }
 
   public justDead() {
-    return this.currentTime > Player.relaxTime;
+    return this.currentTime > relaxTime;
   }
 
   public loseLive() {
@@ -150,7 +136,7 @@ export default class Player implements ICollidable {
       }
       this.setGunLv(this.level);
       Particle.createPartical(100, this.x, this.y, 6, "cyan");
-      this.currentTime = Player.relaxTime + Player.respawnTime;
+      this.currentTime = relaxTime + respawnTime;
     }
   }
 

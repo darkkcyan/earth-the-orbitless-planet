@@ -1,7 +1,6 @@
 import Boss, {
   AimPlayerBullerDrop,
   AimPlayerMultipleBullet,
-  RandomBulletDrop,
   RandomBulletSpread,
   SumonFormation,
 } from "./Boss";
@@ -12,7 +11,6 @@ import EnemyFormation, {
   // tslint:disable ordered-imports
   RandomPositionSPP,
   StraightForwardSPP,
-  TowardPlayerSPP,
 
   PolygonEPP,
   PyramidEPP,
@@ -276,7 +274,7 @@ function getBossConfig(stageNum: number, rewardScore: number, live: number): IEn
 const callBoss: Array<() => void>  = [
   () => {
     new Boss(getBossConfig(0, 10000, 150), [
-      new RandomBulletDrop(),
+      new RandomBulletSpread(1, .5, 2),
       new SumonFormation(() => repFn(3, () => new EnemyFormation(
         [UFOConfig[0]],
         new RandomPositionSPP(),
@@ -287,7 +285,7 @@ const callBoss: Array<() => void>  = [
   },
   () => {
     new Boss(getBossConfig(1, 12000, 300), [
-      new RandomBulletDrop(),
+      new RandomBulletSpread(1, .5, 2),
       new RandomBulletSpread(5),
       new SumonFormation(() => repFn(3, () => new EnemyFormation(
         [UFOConfig[1]],
@@ -300,14 +298,14 @@ const callBoss: Array<() => void>  = [
   () => {
     for (let i = 2; i--; ) {
       new Boss(getBossConfig(2, 7000, 250), [
-        new RandomBulletDrop(),
+        new RandomBulletSpread(1, .5, 2),
         new RandomBulletSpread(3),
       ]);
     }
   },
   () => {
     new Boss(getBossConfig(3, 12000, 600), [
-      new RandomBulletDrop(),
+      new RandomBulletSpread(1, .5, 2),
       new AimPlayerMultipleBullet(),
       new SumonFormation(() => repFn(2, () => new EnemyFormation(
         repVal(3, UFOConfig[3]),
@@ -320,7 +318,7 @@ const callBoss: Array<() => void>  = [
   () => {
     for (let i = 3; i--; ) {
       new Boss(getBossConfig(4, 9000, 233), [
-        new RandomBulletDrop(),
+        new RandomBulletSpread(1, .5, 2),
         new RandomBulletSpread(2),
         new SumonFormation(() => [new EnemyFormation(
             repVal(4, UFOConfig[4]),
@@ -368,9 +366,9 @@ const callBoss: Array<() => void>  = [
     new Boss(getBossConfig(7, 21000, 1000), [
       new AimPlayerBullerDrop(),
       new AimPlayerMultipleBullet(),
-      new RandomBulletSpread(),
+      new RandomBulletSpread(5),
       new SumonFormation(() => [new EnemyFormation(
-        repVal(5, UFOConfig[6]),
+        repVal(5, UFOConfig[7]),
         new RandomPositionSPP(),
         new PolygonEPP(),
         0,
