@@ -77,10 +77,10 @@ addListener(scriptController, [Events.enemyFormationManagerFinish, Events.bossDe
 
 export default scriptController;
 
+const backgroundPlanetScrollSpeed = 150;
 class BackgroundPlanet extends Planet {
   [index: number]: (any?) => boolean | void;
-  public static scrollSpeed = 150;
-  public speed = BackgroundPlanet.scrollSpeed;
+  public speed = backgroundPlanetScrollSpeed;
   public accelerate = 0;
   constructor(
     surfaceMapId: number,
@@ -99,17 +99,17 @@ class BackgroundPlanet extends Planet {
   }
 
   public [Events.stopScroll]() {
-    this.accelerate = -BackgroundPlanet.scrollSpeed * .5;
+    this.accelerate = -backgroundPlanetScrollSpeed * .5;
     return this.x < -scrwidth;
   }
   public [Events.startScroll]() {
-    this.accelerate = BackgroundPlanet.scrollSpeed * .5;
+    this.accelerate = backgroundPlanetScrollSpeed * .5;
     return this.x < -scrwidth;
   }
 
   public [Events.process]() {
     super[Events.process]();
-    this.speed = clamp(this.speed + this.accelerate * dt, 0, BackgroundPlanet.scrollSpeed);
+    this.speed = clamp(this.speed + this.accelerate * dt, 0, backgroundPlanetScrollSpeed);
     this.x -= this.speed * dt;
     return this.x < -scrwidth;
   }
@@ -238,7 +238,7 @@ function getUFOFormationConfig(stageNum: number) {
     repFn<IEnemyFormationConfig>(2, () => ({
       enemyConfigList: repVal(10 + 3 * stageNum, UFOCon),
       enemyPositionProcess: new StraightLineEPP(),
-      selfPositionProcessor: new StraightForwardSPP(400 + stageNum * 30),
+      selfPositionProcessor: new StraightForwardSPP(430 + stageNum * 30),
     })),
     // speed driller
     repFn<IEnemyFormationConfig>(stageNum + 2, () => ({
