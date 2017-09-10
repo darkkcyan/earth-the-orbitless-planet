@@ -81,7 +81,7 @@ function getPlayerGun(gunLv: number) {
       speed: 850 + gunLv * 150,
     },
     image: images[ImagesId.playerGun + gunLv],
-    reloadTime: .55 - gunLv * .1,
+    reloadTime: .4 - gunLv * .05,
     rotate,
   });
 }

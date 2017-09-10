@@ -70,6 +70,7 @@ export default class Bullet implements ICollidable {
     ctx.stroke();
     ctx.beginPath();
     ctx.globalAlpha = 1;
+    ctx.moveTo(x, y);
     ctx.lineTo(x, y);
     ctx.stroke();
     return this.isDead;

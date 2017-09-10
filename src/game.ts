@@ -46,7 +46,7 @@ export function increaseScore(s: number) {
 
 export function resetScore() {
   score = 0;
-  nextLiveUp = 100000;
+  nextLiveUp = 500000;
 }
 
 let lastTime = Date.now();
