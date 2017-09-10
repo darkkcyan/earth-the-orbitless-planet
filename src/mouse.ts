@@ -3,17 +3,10 @@ import {clamp} from "./math";
 let currentX: number = 0;
 let currentY: number = 0;
 
-export const enum MouseStatus {
-  DOWN,
-  UP,
-}
-
-let mouseStatus = MouseStatus.UP;
-
-export let getMouseStatus = () => mouseStatus;
+export let isMouseDown = false;
 
 window.onmousedown = (e: MouseEvent) => {
-  mouseStatus = MouseStatus.DOWN;
+  isMouseDown = true;
   e.preventDefault();
 };
 
@@ -25,7 +18,7 @@ window.onmousemove = (e: MouseEvent) => {
 };
 
 window.onmouseup = (e: MouseEvent) => {
-  mouseStatus = MouseStatus.UP;
+  isMouseDown = false;
   e.preventDefault();
 };
 

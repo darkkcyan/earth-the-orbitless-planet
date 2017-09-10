@@ -50,26 +50,11 @@ export function resetScore() {
 }
 
 let lastTime = Date.now();
-let isPause = false;
-window.onkeydown = (e) => {
-  if (e.which === 80 /* P */) {
-    isPause = !isPause;
-  }
-  e.preventDefault();
-};
 
 export function gameloop() {
   requestAnimationFrame(gameloop);
   dt = Math.min((Date.now() - lastTime) / 1000, 0.02);
   lastTime = Date.now();
-  if (isPause) {
-    ctx.fillStyle = "white";
-    ctx.font = "30px Arial";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("PAUSE", scrwidth / 2, scrheight / 2);
-    return;
-  }
   celm.width ^= 0;
   shm = new SpatialHashMap();  // clear the map every frame
   emit(Events.process);

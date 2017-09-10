@@ -4,15 +4,7 @@ import {dt} from "./game";
 import Gun, {IGunConfig} from "./Gun";
 import {images, ImagesId} from "./imageLoader";
 import {PI2, SimpleHarmonicMotion as HarmonicMotion} from "./math";
-import {getMouseStatus, MouseStatus} from "./mouse";
-
-// export interface IPlayerGunFormationConfig {
-//   planetRadius: number;
-//   mainGun?: Gun;
-//   sideGunList: Gun[];
-//   sideGunPhaseOffset: number;
-//   hm: HarMonicmotion;
-// }
+import {isMouseDown} from "./mouse";
 
 export class HarmonicMotionPlayerGunFormation {
   public x: number = 0;
@@ -25,15 +17,6 @@ export class HarmonicMotionPlayerGunFormation {
   public leftSideGunList: Gun[];
   public rightSideGunList: Gun[];
 
-  // constructor(config: IPlayerGunFormationConfig) {
-  //   this.planetRadius = config.planetRadius;
-  //   if (config.mainGun) {
-  //     this.mainGun = config.mainGun;
-  //   }
-  //   this.sideGunPhaseOffset = config.sideGunPhaseOffset;
-  //   this.hm = config.hm;
-  // }
-
   public setSideGun(gl: Gun[]) {
     this.leftSideGunList = gl.map((gun) => gun.clone());
     this.rightSideGunList = gl;
@@ -42,7 +25,7 @@ export class HarmonicMotionPlayerGunFormation {
   public [Events.process]() {
     this.hm.process(dt);
     const sideGunTimeOffset = this.sideGunPhaseOffset / PI2 * this.hm.period;
-    const fire = getMouseStatus() === MouseStatus.DOWN;
+    const fire = isMouseDown;
     if (this.mainGun) {
       this.mainGun.x = this.x + this.planetRadius;
       this.mainGun.y = this.y;

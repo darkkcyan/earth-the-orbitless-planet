@@ -3,12 +3,10 @@ import {easeOutCubic} from "./ease";
 import {addListener, Events} from "./EventListener";
 import {dt} from "./game";
 import {PI2, randNeg} from "./math";
-import ObjectRespawner from "./ObjectRespawner";
 
 export default class Partical {
   [index: number]: (any?) => boolean | void;
 
-  public static Respawner = new ObjectRespawner(Partical);
   public static speed = 4;
   public static createPartical(
     num: number,
@@ -19,7 +17,7 @@ export default class Partical {
     age: number = 60,
   ) {
     while (num --) {
-      Partical.Respawner.get().init(
+      new Partical().init(
         x + randNeg(radius), y + randNeg(radius), radius + randNeg(radius - 3), color, age);
     }
   }
@@ -47,11 +45,7 @@ export default class Partical {
     this.x += Partical.speed * Math.cos(this.angle);
     this.y += Partical.speed * Math.sin(this.angle);
     ++this.currentTime;
-    if (this.currentTime >= this.age) {
-      Partical.Respawner.free(this);
-      return true;
-    }
-    return false;
+    return this.currentTime >= this.age;
   }
 
   public [Events.render]() {
@@ -60,18 +54,6 @@ export default class Partical {
     ctx.arc(this.x, this.y, this.radius, 0, PI2);
     ctx.fillStyle = this.color;
     ctx.fill();
-    // ctx.beginPath();
-    // ctx.moveTo(this.x - this.radius * Math.cos(this.angle), this.y - this.radius * Math.sin(this.angle));
-    // ctx.lineTo(this.x, this.y);
-    // ctx.globalAlpha *= .3;
-    // ctx.lineCap = "round";
-    // ctx.strokeStyle = this.color;
-    // ctx.lineWidth = this.radius * 2;
-    // ctx.stroke();
-    // ctx.beginPath();
-    // ctx.lineTo(this.x, this.y);
-    // ctx.globalAlpha /= .3;
-    // ctx.stroke();
     ctx.globalAlpha = 1;
     return this.currentTime >= this.age;
   }

@@ -30,6 +30,9 @@
     "watch": "npm run build-assets && tsc -w & rollup -c -w",
     "build-planet-surface-maker": "tsc && rollup -c -i ./build/tools/planet-surface-maker/main.js -o ./build/tools/planet-surface-maker/main.compiled.js",
     "watch-planet-surface-maker": "tsc -w & rollup -w -c -i ./build/tools/planet-surface-maker/main.js -o ./build/tools/planet-surface-maker/main.compiled.js",
-    "build-assets": "node ./scripts/surface-datas-2-ts.js ./assets > ./src/planet-surfaces-data.ts"
+    "build-assets": "node ./scripts/surface-datas-2-ts.js ./assets > ./src/planet-surfaces-data.ts",
+    "minify": "closure-compiler --rewrite_polyfills false --js ./build/main.compiled.js > ./main.min.js",
+    "zip": "advzip -a etop.zip index.html main.min.js",
+    "all": "npm run build; npm run minify; npm run zip"
   }
 }

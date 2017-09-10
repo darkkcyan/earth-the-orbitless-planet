@@ -60,14 +60,14 @@ export class LazerChase implements IBossSkill {
     this.mover = new MoveToPosition(moveTime);
   }
 
-  public init(b: Boss) {
-    this.mover.init(b, randRange([scrwidth * 2 / 3, scrwidth]));
+  public i(b: Boss) {
+    this.mover.i(b, randRange([scrwidth * 2 / 3, scrwidth]));
     this.currentTime = this.currentAngle = 0;
     this.laz = [];
   }
 
-  public process(b: Boss) {
-    if (this.mover.process(b)) {
+  public p(b: Boss) {
+    if (this.mover.p(b)) {
       this.currentTime += dt;
       let na = Math.atan2(player.y - b.y, player.x - b.x) - this.currentAngle;
       while (na > Math.PI) {
@@ -79,7 +79,7 @@ export class LazerChase implements IBossSkill {
       this.currentAngle += na * this.angleSpeedRatio * dt;
       for (let i = this.numLazer; i--; ) {
         if (!this.laz[i]) {
-          this.laz[i] = Lazer.Respawner.get();
+          this.laz[i] = new Lazer();
           this.laz[i].init({
             age: 3,
             aimTime: this.chaseTime,
@@ -108,7 +108,7 @@ export class LazerScan implements IBossSkill {
     this.mover = new MoveToPosition(moveTime);
   }
 
-  public init(b: Boss) {
+  public i(b: Boss) {
     let y: number;
     if (player.y < scrheight / 2) {
       y = 130;
@@ -116,11 +116,11 @@ export class LazerScan implements IBossSkill {
       y = scrheight - 130;
     }
     this.mover.moveTime = this.moveTime;
-    this.mover.init(b, randRange([scrwidth * 3 / 4, scrwidth]), y);
+    this.mover.i(b, randRange([scrwidth * 3 / 4, scrwidth]), y);
     this.currentTime = 0;
     this.laz = [];
     for (let i = this.numLazer; i--; ) {
-      this.laz[i] = Lazer.Respawner.get();
+      this.laz[i] = new Lazer();
       this.laz[i].init({
         age: this.scanTime + .5,
         aimTime: this.moveTime,
@@ -128,11 +128,11 @@ export class LazerScan implements IBossSkill {
     }
   }
 
-  public process(b: Boss) {
+  public p(b: Boss) {
     this.currentTime += dt;
-    if (this.mover.process(b) && this.currentTime < this.moveTime + this.scanTime) {
+    if (this.mover.p(b) && this.currentTime < this.moveTime + this.scanTime) {
       const y = scrheight - b.y;
-      this.mover.init(b, b.x, y);
+      this.mover.i(b, b.x, y);
       this.mover.moveTime = this.scanTime;
     }
     for (let i = this.numLazer; i--; ) {
@@ -158,14 +158,14 @@ export class RadialLazerScan implements IBossSkill {
 
   constructor(public numberOfScan = 1, public scanTime = 1.5, public waitTime = .5) {}
 
-  public init(b: Boss) {
-    this.mover.init(b, scrwidth / 2, scrheight / 2);
+  public i(b: Boss) {
+    this.mover.i(b, scrwidth / 2, scrheight / 2);
     this.currentScan = -1;
     this.currentTime = this.scanTime + this.waitTime;
   }
 
-  public process(b: Boss) {
-    if (this.mover.process(b)) {
+  public p(b: Boss) {
+    if (this.mover.p(b)) {
       this.currentTime += dt;
       if (this.currentTime > this.scanTime + this.waitTime) {
         this.currentTime = 0;
@@ -174,7 +174,7 @@ export class RadialLazerScan implements IBossSkill {
           return true;
         }
         this.startAngle = this.currentAngle = randRange([0, PI2]);
-        this.laz = Lazer.Respawner.get();
+        this.laz = new Lazer();
         this.laz.init({
           age: this.scanTime + Lazer.sumonTime,
           aimTime: this.waitTime,
@@ -202,29 +202,29 @@ export class RadialLazerScan implements IBossSkill {
   }
 }
 
-export class SumonMoon implements IBossSkill {
-  public moon: Moon;
-  private mover: MoveToPosition = new MoveToPosition(1.5);
-  private currentTime: number;
+// export class SumonMoon implements IBossSkill {
+//   public moon: Moon;
+//   private mover: MoveToPosition = new MoveToPosition(1.5);
+//   private currentTime: number;
 
-  constructor(public waitTime) {}
+//   constructor(public waitTime) {}
 
-  public init(b: Boss) {
-    this.moon = new Moon(b.x, b.y);
-    this.moon.state = MoonState.chasePlayer;
-    this.mover.init(b);
-    this.currentTime = 0;
-  }
+//   public i(b: Boss) {
+//     this.moon = new Moon(b.x, b.y);
+//     this.moon.state = MoonState.chasePlayer;
+//     this.mover.i(b);
+//     this.currentTime = 0;
+//   }
 
-  public process(b: Boss) {
-    this.currentTime += dt;
-    if (this.mover.process(b) && this.mover.moveTime + this.currentTime < this.waitTime) {
-      this.mover.init(b);
-    }
-    if (this.currentTime > this.waitTime) {
-      this.moon.state = MoonState.moveAway;
-      return true;
-    }
-    return false;
-  }
-}
+//   public p(b: Boss) {
+//     this.currentTime += dt;
+//     if (this.mover.p(b) && this.mover.moveTime + this.currentTime < this.waitTime) {
+//       this.mover.i(b);
+//     }
+//     if (this.currentTime > this.waitTime) {
+//       this.moon.state = MoonState.moveAway;
+//       return true;
+//     }
+//     return false;
+//   }
+// }

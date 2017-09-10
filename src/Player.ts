@@ -15,7 +15,6 @@ import Planet from "./Planet";
 import getPlayerGunFormation, {HarmonicMotionPlayerGunFormation} from "./PlayerGunFormation";
 import {
   PlayerRocket as Rocket,
-  PlayerRocketGroup as RocketGroup,
 } from "./PlayerRocket";
 import {Circle} from "./shapes";
 import {ICollidable, Tag} from "./SpatialHashMap";
@@ -35,24 +34,22 @@ export default class Player implements ICollidable {
 
   [index: number]: (any) => boolean | void;
 
-  private rocketGroup: RocketGroup;
+  private rocketList: Rocket[] = [];
   private gunFormation: HarmonicMotionPlayerGunFormation;
   private currentTime: number;
 
   constructor(radius?: number) {
     radius = radius || images[ImagesId.earthSurface].height / 2;
-    const rl = [];
     this.planet = new Planet(images[ImagesId.earthSurface]);
     this.collisionShape.radius = radius;
     this.currentTime = Player.relaxTime;
     for (let i = 0; i < 3; ++i) {
-      rl.push(new Rocket(
+      this.rocketList[i] = new Rocket(
         this.planet.radius / 2.5,
         this.planet.radius / 1.5,
         new HarmonicMotion(5, 1, PI2 * Math.random()),
-      ));
+      );
     }
-    this.rocketGroup = new RocketGroup(rl, new HarmonicMotion(this.planet.radius / 4, 2));
     this.gunFormation = getPlayerGunFormation(this.level);
     addListener(this, [Events.process, Events.collisionCheck, Events.render + 3]);
   }
@@ -73,10 +70,14 @@ export default class Player implements ICollidable {
     }
     this.gunFormation.planetRadius = this.planet.radius * 1.1;
     this.collisionShape.x = this.gunFormation.x = this.planet.x = this.x;
-    this.rocketGroup.x = this.x - this.planet.radius - 10;
-    this.collisionShape.y = this.gunFormation.y = this.rocketGroup.y = this.planet.y = this.y;
+    this.collisionShape.y = this.gunFormation.y = this.planet.y = this.y;
+    for (let i = this.rocketList.length; i--; ) {
+      const roc = this.rocketList[i];
+      roc[Events.process]();
+      roc.x = this.x - this.planet.radius - 10;
+      roc.y = this.y - 10 + 10 * i;
+    }
     this.planet[Events.process]();
-    this.rocketGroup[Events.process]();
     this.gunFormation[Events.process]();
     shm.insert(this);
     return false;
@@ -107,7 +108,9 @@ export default class Player implements ICollidable {
   public [Events.render + 3]() {
     if (this.currentTime < Player.relaxTime) {
       this.planet[Events.render]();
-      this.rocketGroup[Events.render]();
+      for (const roc of this.rocketList) {
+        roc[Events.render]();
+      }
       this.gunFormation[Events.render]();
     }
     if (this.isRelax()) {

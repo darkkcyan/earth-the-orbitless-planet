@@ -24,7 +24,7 @@ export default class Gun {
   public fire() {
     const w = this.config.image.width;
     const angle = this.config.rotate ? this.angle : 0;
-    Bullet.Respawner.get().init(
+    new Bullet().init(
       this.config.bulletConfig,
       this.x + w * Math.cos(angle),
       this.y + w * Math.sin(angle),

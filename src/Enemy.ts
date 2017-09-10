@@ -4,7 +4,7 @@ import {addListener, emit, Events} from "./EventListener";
 import {dt, increaseScore, player, shm} from "./game";
 import {images, ImagesId} from "./imageLoader";
 import {randRange} from "./math";
-import ObjectRespawner from "./ObjectRespawner";
+// import ObjectRespawner from "./ObjectRespawner";
 import Particle from "./Particle";
 import {AllKindOfShapes, Rectangle} from "./shapes";
 import {ICollidable, Tag} from "./SpatialHashMap";
@@ -19,7 +19,6 @@ export interface IEnemyConfig {
 }
 
 export default class Enemy implements ICollidable {
-  public static Respawner = new ObjectRespawner(Enemy);
   [index: number]: (any?) => boolean | void;
   public static offsetAlpha = .05;
   public static maxNumberOfShadow = 5;
@@ -88,7 +87,6 @@ export default class Enemy implements ICollidable {
     }
     if (this.isdead()) {
       this.createParticle();
-      this.free();
 
       emit(Events.enemyDead, this);
       return true;
@@ -135,7 +133,7 @@ export default class Enemy implements ICollidable {
 
   public fire(angle: number = Math.PI, offsetX = 0, offsetY = 0) {
     if (this.canFire) {
-      Bullet.Respawner.get().init(
+      new Bullet().init(
         this.config.bulletConfig,
         this.x + offsetX, this.y + offsetY,
         angle,
@@ -145,10 +143,6 @@ export default class Enemy implements ICollidable {
 
   public createParticle() {
     Particle.createPartical(20, this.x, this.y, 3, "rgb(255, 27, 242)", 100);
-  }
-
-  protected free() {
-    Enemy.Respawner.free(this);
   }
 
   protected autoFire() {

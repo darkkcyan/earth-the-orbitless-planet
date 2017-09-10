@@ -1,7 +1,6 @@
 import ctx, {scrheight, scrwidth} from "./canvas";
 import {addListener, Events} from "./EventListener";
 import {dt, shm} from "./game";
-import ObjectRespawner from "./ObjectRespawner";
 import {Circle} from "./shapes";
 import {ICollidable, Tag} from "./SpatialHashMap";
 
@@ -14,7 +13,7 @@ export interface IBulletConfig {
 }
 
 export default class Bullet implements ICollidable {
-  public static Respawner = new ObjectRespawner(Bullet);
+  // public static Respawner = new ObjectRespawner(Bullet);
   public static TAIL_LENGTH = 20;
   public collisionShape: Circle = new Circle(0, 0, 0);
   public speed: number;
@@ -55,8 +54,6 @@ export default class Bullet implements ICollidable {
 
     if (!this.isDead) {
       shm.insert(this);
-    } else {
-      Bullet.Respawner.free(this);
     }
     return this.isDead;
   }

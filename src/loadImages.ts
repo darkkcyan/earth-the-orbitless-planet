@@ -51,7 +51,7 @@ function loadPlanetSurface(id: number, p: IPlanetSurface, scaleRatio = 1) {
 
 loadPlanetSurface(ImagesId.earthSurface, surfaces.earthsurface);
 loadPlanetSurface(ImagesId.moonSurface, surfaces.moonsurface);
-loadPlanetSurface(ImagesId.alienPlanetSurface, surfaces.alienplanetsurface);
+// loadPlanetSurface(ImagesId.alienPlanetSurface, surfaces.alienplanetsurface);
 loadPlanetSurface(ImagesId.alienPlanetSurfaceWithShield, surfaces.alienplanetsurfaceiwithshield);
 loadPlanetSurface(ImagesId.neptuneSurface, surfaces.neptunesurface, 8);
 loadPlanetSurface(ImagesId.uranusSurface, surfaces.uranussurface, 8);

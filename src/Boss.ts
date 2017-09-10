@@ -10,34 +10,34 @@ import {randNeg, randRange} from "./math";
 import Particle from "./Particle";
 
 export interface IBossSkill {
-  init(boss: Boss);
-  process(boss: Boss): boolean;
+  i(boss: Boss);            // init
+  p(boss: Boss): boolean;   // process
 }
 
 export default class Boss extends Enemy {
   public static activeBosses: Boss[] = [];
 
-  private currentSkill: IBossSkill = null;
-  private relaxSkill: MoveToPosition;  // boss need to relax too :D
+  private csk: IBossSkill = null;  // current skill
+  private rsk: MoveToPosition;     // relax skill, boss need relax too
   constructor(config: IEnemyConfig, private skills: IBossSkill[], relaxTime = 2) {
     super();
     this.x = scrwidth + images[config.imageId].width;
     this.y = scrheight / 2;
     this.init(config);
-    this.currentSkill = this.relaxSkill = new MoveToPosition(relaxTime);
-    this.currentSkill.init(this);
+    this.csk = this.csk = new MoveToPosition(relaxTime);
+    this.csk.i(this);
     Boss.activeBosses.push(this);
   }
 
   public [Events.process]() {
-    if (this.currentSkill.process(this)) {
-      if (this.currentSkill !== this.relaxSkill) {
-        this.currentSkill = this.relaxSkill;  // boss need to relax
+    if (this.csk.p(this)) {
+      if (this.csk !== this.rsk) {
+        this.csk = this.rsk;  // boss need to relax
                                                    // and during the relax time it move to random position
       } else {
-        this.currentSkill = this.skills[Math.floor(Math.random() * this.skills.length)];
+        this.csk = this.skills[Math.floor(Math.random() * this.skills.length)];
       }
-      this.currentSkill.init(this);
+      this.csk.i(this);
     }
     const ret = super[Events.process]();
     if (this.isdead()) {
@@ -66,10 +66,6 @@ export default class Boss extends Enemy {
     Particle.createPartical(50, this.x, this.y, 20, "#FF4500", 70);
   }
 
-  protected free() {
-    // YES, do nothing, cuz only one boss
-  }
-
   protected autoFire() {
     // No auto fire
   }
@@ -85,7 +81,7 @@ export class MoveToPosition implements IBossSkill {
 
   constructor(public moveTime = 2) {}
 
-  public init(b: Boss, x = scrwidth * (Math.random() / 2 + .5), y = scrheight * Math.random()) {
+  public i(b: Boss, x = scrwidth * (Math.random() / 2 + .5), y = scrheight * Math.random()) {
     this.prevX = b.x;
     this.prevY = b.y;
     this.dx = x - b.x;
@@ -93,7 +89,7 @@ export class MoveToPosition implements IBossSkill {
     this.currentTime = 0;
   }
 
-  public process(b: Boss) {
+  public p(b: Boss) {
     if (this.currentTime >= this.moveTime) {
       return true;
     }
@@ -104,26 +100,27 @@ export class MoveToPosition implements IBossSkill {
   }
 }
 
-export class RandomBulletDrop extends MoveToPosition {
+export class RandomBulletDrop implements IBossSkill {
+  public currentTime: number;
+  private mover: MoveToPosition;
   constructor(moveTime = .5, public shootTime = 2, public towardPlayerProbability = .5) {
-    super(moveTime);
+    this.mover = new MoveToPosition(moveTime);
   }
 
-  public init(b: Boss) {
-    super.init(b);
+  public i(b: Boss) {
+    this.mover.i(b);
     if (Math.random() < this.towardPlayerProbability) {
-      this.dy = player.y - b.y;
+      this.mover.dy = player.y - b.y;
     }
+    this.currentTime = 0;
   }
 
-  public process(b: Boss) {
-    if (this.currentTime < this.moveTime) {
-      super.process(b);
-    } else {
+  public p(b: Boss) {
+    if (this.mover.p(b)) {
       this.currentTime += dt;
       b.fire(Math.PI, 7);
     }
-    return this.currentTime > this.moveTime + this.shootTime;
+    return this.currentTime > this.shootTime;
   }
 }
 
@@ -133,13 +130,13 @@ export class AimPlayerBullerDrop implements IBossSkill {
   public prevX: number;
   constructor(public moveTime = 4, public speedRatio = 2.5) {}
 
-  public init(b: Boss) {
+  public i(b: Boss) {
     this.currentTime = 0;
     this.dx = scrwidth * (Math.random() / 2 + .5) - b.x;
     this.prevX = b.x;
   }
 
-  public process(b: Boss) {
+  public p(b: Boss) {
     this.currentTime += dt;
     b.x = easeInOutQuad(this.currentTime, this.prevX, this.dx, this.moveTime);
     const dy = (player.y - b.y) * this.speedRatio * dt;
@@ -151,77 +148,80 @@ export class AimPlayerBullerDrop implements IBossSkill {
   }
 }
 
-export class AimPlayerMultipleBullet extends MoveToPosition {
+export class AimPlayerMultipleBullet implements IBossSkill {
+  public mover: MoveToPosition;
+  public currentTime: number;
   constructor(moveTime = 1.5, public shootTime = 4) {
-    super(moveTime);
+    this.mover = new MoveToPosition(moveTime);
   }
 
-  public init(b: Boss) {
+  public i(b: Boss) {
     // super.init(b, scrwidth / 2, scrheight / 2);
-    super.init(b);
+    this.mover.i(b);
+    this.currentTime = 0;
   }
 
-  public process(b: Boss) {
-    if (this.currentTime < this.moveTime) {
-      super.process(b);
-    } else {
+  public p(b: Boss) {
+    if (this.mover.p(b)) {
       this.currentTime += dt;
       b.fire(Math.atan2(player.y - b.y, player.x - b.x));
     }
-    return this.currentTime > this.moveTime + this.shootTime;
+    return this.currentTime > this.shootTime;
   }
 }
 
-export class RandomBulletSpread extends MoveToPosition {
+export class RandomBulletSpread implements IBossSkill {
+  public mover: MoveToPosition;
+  public currentTime: number;
   constructor(
     public numberOfRay = 3,
     moveTime = 1.5,
     public shootTime = 3,
     public spreadAngle = Math.PI / 2,
   ) {
-    super(moveTime);
+    this.mover = new MoveToPosition(moveTime);
   }
 
-  public init(b: Boss) {
-    super.init(b, randRange([scrwidth * 2 / 3, scrwidth]));
+  public i(b: Boss) {
+    this.mover.i(b, randRange([scrwidth * 2 / 3, scrwidth]));
+    this.currentTime = 0;
   }
 
-  public process(b: Boss) {
-    if (this.currentTime < this.moveTime) {
-      super.process(b);
-    } else {
+  public p(b: Boss) {
+    if (this.mover.p(b)) {
       this.currentTime += dt;
       for (let i = this.numberOfRay; i--; ) {
         b.fire(Math.PI - this.spreadAngle * (i / (this.numberOfRay - 1) - .5));
       }
     }
-    return this.currentTime > this.moveTime + this.shootTime;
+    return this.currentTime > this.shootTime;
   }
 }
 
-export class SumonFormation extends MoveToPosition {
+export class SumonFormation implements IBossSkill {
+  public mover: MoveToPosition;
   public f: EnemyFormation[];
+  public currentTime: number;
   constructor(
     public formationFactory: () => EnemyFormation[],
     public waitTime: number = Infinity,  // wait until the formation is dead
     moveTime?: number,
   ) {
-    super(moveTime);
+    this.mover = new MoveToPosition(moveTime);
   }
 
-  public init(b: Boss)  {
-    super.init(b, scrwidth - images[b.config.imageId].width / 2, scrheight / 2);
+  public i(b: Boss)  {
+    this.mover.i(b, scrwidth - images[b.config.imageId].width / 2, scrheight / 2);
     this.f = [];
+    this.currentTime = 0;
   }
 
-  public process(b: Boss) {
+  public p(b: Boss) {
     let allDead = false;
-    if (this.currentTime < this.moveTime) {
-      super.process(b);
-      if (this.currentTime >= this.moveTime) {
+    if (this.mover.p(b)) {
+      if (this.currentTime === 0) {
         this.f = this.formationFactory();
       }
-    } else {
       this.currentTime += dt;
       allDead = true;
       for (const u of this.f) {
@@ -230,6 +230,6 @@ export class SumonFormation extends MoveToPosition {
         }
       }
     }
-    return allDead || this.currentTime > this.moveTime + this.waitTime;
+    return allDead || this.currentTime > this.waitTime;
   }
 }

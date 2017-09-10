@@ -26,7 +26,7 @@ export default class Formation {
     public enemyPositionProcess: IFormationSubProcessor,
     public cost = 100,
   ) {
-    this.enemyList = enemyConfigList.map((x) => Enemy.Respawner.get().init(x));
+    this.enemyList = enemyConfigList.map((x) => new Enemy().init(x));
     this.numEnemy = enemyConfigList.length;
     addListener(this, [Events.process]);
   }

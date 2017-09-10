@@ -22,7 +22,7 @@ import EnemyFormation, {
 } from "./EnemyFormation";
 import EnemyFormationManager, {IEnemyFormationConfig} from "./EnemyFormationManager";
 import {addListener, emit, Events} from "./EventListener";
-import FinalBoss, {LazerChase, LazerScan, RadialLazerScan, SumonMoon} from "./FinalBoss";
+import FinalBoss, {LazerChase, LazerScan, RadialLazerScan} from "./FinalBoss";
 import {dt, ISavedData, player, resetScore, storageName} from "./game";
 import {images, ImagesId} from "./imageLoader";
 import {planetSurfaceScale} from "./loadImages";
@@ -334,7 +334,7 @@ const callBoss: Array<() => void>  = [
   },
   () => {
     const c = getBossConfig(5, 20000, 900);
-    c.imageId = ImagesId.alienPlanetSurface;
+    c.imageId = ImagesId.alienPlanetSurfaceWithShield;
     const b = new FinalBoss(c, [
       new LazerChase(1),
       new LazerScan(1, 2),
@@ -379,7 +379,7 @@ const callBoss: Array<() => void>  = [
   },
   () => {
     const c = getBossConfig(8, 25000, 2000);
-    c.imageId = ImagesId.alienPlanetSurface;
+    c.imageId = ImagesId.alienPlanetSurfaceWithShield;
     new FinalBoss(c, [
       new LazerChase(3),
       new LazerScan(1),

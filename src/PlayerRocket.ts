@@ -6,7 +6,6 @@ import {HALF_PI, SimpleHarmonicMotion as HarmonicMotioin} from "./math";
 export class PlayerRocket {
   public x: number = 0;
   public y: number = 0;
-  public darkness: number = 0;
 
   private previousX: number = 0;
   private previousY: number = 0;
@@ -32,12 +31,9 @@ export class PlayerRocket {
     const y = this.y;
     const halfrs = this.rocketSize / 2;
     const magic = 0.9;
-    const darkcolor = `rgba(0,0,0,${this.darkness})`;
     const d: Array<[number, number, string]> = [
       [x - halfrs * 2, y - halfrs, "#79E9DD"],
-      [x - halfrs * 2, y - halfrs, darkcolor],
       [x - halfrs * 1.5, y - halfrs, "#36C3DE"],
-      [x - halfrs * 1.5, y - halfrs, darkcolor],
     ];
     for (const [tx, ty, color] of d) {
       ctx.fillStyle = color;
@@ -49,10 +45,6 @@ export class PlayerRocket {
       ctx.fill();
     }
     ctx.fillStyle = "#2468B4";
-    ctx.beginPath();
-    ctx.arc(x - halfrs, y, halfrs, -HALF_PI, HALF_PI);
-    ctx.fill();
-    ctx.fillStyle = darkcolor;
     ctx.beginPath();
     ctx.arc(x - halfrs, y, halfrs, -HALF_PI, HALF_PI);
     ctx.fill();
@@ -87,42 +79,5 @@ export class PlayerRocket {
   public [Events.render]() {
     this.renderRocketPart();
     this.renderFlamePart();
-  }
-}
-
-type IPlayerRocketWithZOrder = PlayerRocket & {z: number};
-
-export class PlayerRocketGroup {
-  public x: number;
-  public y: number;
-  public rocketList: IPlayerRocketWithZOrder[] = [];
-
-  constructor(rocketList: PlayerRocket[], public hm: HarmonicMotioin) {
-    for (const rocket of (rocketList as IPlayerRocketWithZOrder[])) {
-      this.rocketList.push(rocket);
-      rocket.z = 0;
-    }
-  }
-
-  public [Events.process]() {
-    this.hm.process(dt);
-    const timeOffset = this.hm.period / this.rocketList.length;
-    let t = 0;
-    for (const roc of this.rocketList) {
-      roc.x = this.x;
-      roc.y = this.y + this.hm.getY(t);
-      roc.z = this.hm.getX(t);
-      t += timeOffset;
-      roc[Events.process]();
-    }
-  }
-
-  public [Events.render]() {
-    const rl = this.rocketList.slice();
-    rl.sort((a, b) => a.z - b.z);
-    for (const roc of rl) {
-      roc.darkness = 1 - Math.min(0.5 + 0.5 * (roc.z / this.hm.amplitute + 1) / 2, 1);
-      roc[Events.render]();
-    }
   }
 }

@@ -1,5 +1,5 @@
 import ctx from "./canvas";
-import {getMousePos, getMouseStatus, MouseStatus} from "./mouse";
+import {getMousePos, isMouseDown} from "./mouse";
 
 export function processButton(
   x: number, y: number, width: number, height: number,
@@ -17,7 +17,7 @@ export function processButton(
   if (x < mx && x + width > mx && y < my && y + height > my) {
     ctx.fillStyle = "rgba(255,255,255,.2)";
     ctx.fillRect(x, y, width, height);
-    if (getMouseStatus() === MouseStatus.DOWN) {
+    if (isMouseDown) {
       onclick();
     }
   }

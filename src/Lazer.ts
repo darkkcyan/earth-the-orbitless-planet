@@ -3,7 +3,6 @@ import {easeInCubic, easeOutCubic} from "./ease";
 import {addListener, Events} from "./EventListener";
 import {dt, player} from "./game";
 import {dot} from "./math";
-import ObjectRespawner from "./ObjectRespawner";
 
 export interface ILazerConfig {
   color?: string;
@@ -15,7 +14,6 @@ export interface ILazerConfig {
 export default class Lazer {
   public static sumonTime = .3;
   [index: number]: (any?) => boolean | void;
-  public static Respawner = new ObjectRespawner(Lazer);
   public config: ILazerConfig;
   public x: number;
   public y: number;
@@ -40,11 +38,7 @@ export default class Lazer {
     if (this.currentTime - dt <= Lazer.sumonTime && this.currentTime >= Lazer.sumonTime) {
       addListener(this, [Events.collisionCheck]);
     }
-    if (this.isDead()) {
-      Lazer.Respawner.free(this);
-      return true;
-    }
-    return false;
+    return this.isDead();
   }
 
   public [Events.collisionCheck]() {
