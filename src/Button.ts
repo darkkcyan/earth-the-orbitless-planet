@@ -1,6 +1,7 @@
 import ctx from "./canvas";
 import {getMousePos, isMouseDown} from "./mouse";
 
+let preventButtonClick = false;
 export function processButton(
   x: number, y: number, width: number, height: number,
   label: string,
@@ -17,8 +18,10 @@ export function processButton(
   if (x < mx && x + width > mx && y < my && y + height > my) {
     ctx.fillStyle = "rgba(255,255,255,.2)";
     ctx.fillRect(x, y, width, height);
-    if (isMouseDown) {
+    if (isMouseDown && !preventButtonClick) {
       onclick();
+      preventButtonClick = true;
+      setTimeout(() => preventButtonClick = false, 5000);
     }
   }
 }

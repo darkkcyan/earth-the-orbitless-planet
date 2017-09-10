@@ -15,20 +15,16 @@ import {
 import scriptsController, {totalStages} from "./scripts";
 
 addListener({
-  [Events.postgamereset]() {
-    addListener({
-      [Events.render + 10]() {
-        ctx.save();
-        [renderMenu, renderGameUI][gameState]();
-        ctx.restore();
-      },
-    }, [Events.render + 10]);
+  [Events.render + 10]() {
+    ctx.save();
+    [renderMenu, renderGameUI][gameState]();
+    ctx.restore();
   },
-}, [Events.postgamereset]);
+}, [Events.render + 10]);
 
 export function changeScreen(cb: () => void) {
   let currentTime = 0;
-  const changeTime = 3000;
+  const changeTime = 1500;
   addListener({
     [Events.render + 10]() {
       currentTime += 16;
@@ -36,16 +32,15 @@ export function changeScreen(cb: () => void) {
         cb();
       }
       if (currentTime < changeTime) {
-        const x = easeInOutCubic(currentTime, -scrwidth * 2, scrwidth * 4, changeTime);
-        ctx.fillStyle = "#09194A";
-        ctx.fillRect(x, 0, scrwidth * 2, scrheight);
+        const x = easeInOutCubic(currentTime, scrwidth, -scrwidth * 3, changeTime);
+        // ctx.fillStyle = "#00271A";
+        ctx.clearRect(x, 0, scrwidth * 2, scrheight);
       }
       return currentTime > changeTime;
     },
   }, [Events.render + 10]);
 }
 
-let preventButtonClick = false;
 function renderMenu() {
   celm.style.cursor = "auto";
 
@@ -79,30 +74,20 @@ function renderMenu() {
   const btw = 600;
   const bth = 70;
   processButton(x, 600, btw, bth, "NEW GAME", () => {
-    if (preventButtonClick) {
-      return;
-    }
-    preventButtonClick = true;
     changeScreen(() => {
       changeGameStage(GameState.ingame);
       newPlayer();
       // player.setGunLv(7);
       scriptsController.startStage(0);
-      preventButtonClick = false;
     });
   });
   if (ld.lastGunLevel !== null) {
     processButton(x, 700, btw, bth, "CONTINUE", () => {
-      if (preventButtonClick) {
-        return;
-      }
-      preventButtonClick = true;
       changeScreen(() => {
         changeGameStage(GameState.ingame);
         newPlayer();
         player.setGunLv(ld.lastGunLevel);
         scriptsController.startStage(ld.lastStage);
-        preventButtonClick = false;
       });
     });
   }
@@ -162,6 +147,7 @@ function renderGameUI() {
       "Venus",
       "Mercury",
       "Sun",
+      "Earth's orbit",
     ][scriptsController.currentStage]}`, scrwidth / 2, 0);
   }
   ctx.fillStyle = "red";
