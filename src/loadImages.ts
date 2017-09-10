@@ -14,8 +14,8 @@ const gunw = 60;
 const gunh = 25;
 for (let i = -1; ++i < 3; ) {
   loadPrerender(
-    ImagesId.gunlv1 + i, gunw, gunh,
-    () => {renderGunLv2({size: gunh, colorScheme: PLAYER_GUN_COLORSCHEME[i]})}
+    ImagesId.gunlv1 + i, gunw, gunh + i * 3,
+    () => {renderGunLv2({size: gunh + i * 3, colorScheme: PLAYER_GUN_COLORSCHEME[i]}); },
   );
 }
 
@@ -24,15 +24,15 @@ const UFOh = 40;
 const BigUFOw = 500;
 const BigUFOh = 200;
 loadPrerender(ImagesId.UFOHit, UFOw, UFOh, () => {
-  renderUFO({color: "black", size: UFOh});
+  renderUFO({color: "", size: UFOh});
   fillWhite();
 });
 loadPrerender(ImagesId.BigHFOHit, BigUFOw, BigUFOh, () => {
-  renderUFO({color: "black", size: BigUFOh});
+  renderUFO({color: "", size: BigUFOh});
   fillWhite();
 });
 
-const UFOColor = "red,orange,yellow,#ADFF2F,#00FF7F,darkcyan,#9370DB,crimson,dimgray".split(",");
+const UFOColor = "red,orange,yellow,#ADFF2F,#00FF7F,#008B8B,#9370DB,#DC143C,#696969".split(",");
 for (let i = UFOColor.length; i--; ) {
   loadPrerender(ImagesId.UFO + i, UFOw, UFOh, () => {
     renderUFO({color: UFOColor[i], size: UFOh});
