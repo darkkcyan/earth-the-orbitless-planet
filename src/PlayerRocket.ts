@@ -16,7 +16,7 @@ export class PlayerRocket {
 
   public [Events.process]() {
     this.hm.process(dt);
-    const RANDOM_RANGE = this.flameSize / 5;
+    const RANDOM_RANGE = this.flameSize / 3;
     this.realFlameSize = this.flameSize + (this.x - this.previousX) * 3;
     this.realFlameSize += RANDOM_RANGE * (Math.random() - 0.5);
     if (this.realFlameSize < this.flameSize / 10) {
