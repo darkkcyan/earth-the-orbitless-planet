@@ -150,6 +150,7 @@ function renderGameUI() {
       "Earth's orbit",
     ][scriptsController.currentStage]}`, scrwidth / 2, 0);
   }
+  ctx.textAlign = "left";
   ctx.fillStyle = "red";
-  ctx.fillText("\u{1F49A}", 15, 0);
+  ctx.fillText("\u{1F49A}", 0, 0);
 }
