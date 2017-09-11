@@ -25,7 +25,7 @@
     "typescript": "^2.4.2"
   },
   "scripts": {
-    "build": "npm run build-assets && tsc && rollup --config",
+    "build": "npm run build-assets; tsc; rollup --config",
     "clean": "rm -frd ./build",
     "watch": "npm run build-assets && tsc -w & rollup -c -w",
     "build-planet-surface-maker": "tsc && rollup -c -i ./build/tools/planet-surface-maker/main.js -o ./build/tools/planet-surface-maker/main.compiled.js",
