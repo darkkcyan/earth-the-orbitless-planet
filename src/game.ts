@@ -51,8 +51,20 @@ export function resetScore() {
 
 let lastTime = Date.now();
 
+let isFocus = true;
+window.onfocus = () => {
+  isFocus = true;
+};
+
+window.onblur = () => {
+  isFocus = false;
+};
+
 export function gameloop() {
   requestAnimationFrame(gameloop);
+  if (!isFocus) {
+    return ;
+  }
   dt = Math.min((Date.now() - lastTime) / 1000, 0.02);
   lastTime = Date.now();
   celm.width ^= 0;
