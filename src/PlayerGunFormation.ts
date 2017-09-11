@@ -6,6 +6,21 @@ import {images, ImagesId} from "./imageLoader";
 import {PI2, SimpleHarmonicMotion as HarmonicMotion} from "./math";
 import {isMouseDown} from "./mouse";
 
+// spacebar pressed keyboard event, because it is currently used here.
+
+let spacebarPressed = false;
+window.onkeydown = (e) => {
+  if (e.keyCode === 32) {
+    spacebarPressed = true;
+  }
+};
+
+window.onkeyup = (e) => {
+  if (e.keyCode === 32) {
+    spacebarPressed = false;
+  }
+};
+
 export class HarmonicMotionPlayerGunFormation {
   public x: number = 0;
   public y: number = 0;
@@ -25,7 +40,7 @@ export class HarmonicMotionPlayerGunFormation {
   public [Events.process]() {
     this.hm.process(dt);
     const sideGunTimeOffset = this.sideGunPhaseOffset / PI2 * this.hm.period;
-    const fire = isMouseDown;
+    const fire = isMouseDown || spacebarPressed;
     if (this.mainGun) {
       this.mainGun.x = this.x + this.planetRadius;
       this.mainGun.y = this.y;
