@@ -260,7 +260,7 @@ function getUFOFormationConfig(stageNum: number) {
 function getBossConfig(stageNum: number, rewardScore: number, live: number): IEnemyConfig {
   return {
     bulletConfig: {
-      color: "lime",
+      color: "#FF4500",
       radius: 10,
       speed: 700,
     },
