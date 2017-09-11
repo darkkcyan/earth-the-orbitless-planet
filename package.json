@@ -1,0 +1,38 @@
+{
+  "name": "earth-the-orbitless-planet",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darkkcyan/earth-the-orbitless-planet.git"
+  },
+  "author": "Tran Quang Loc <phongcachhiphop@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/darkkcyan/earth-the-orbitless-planet/issues"
+  },
+  "homepage": "https://github.com/darkkcyan/earth-the-orbitless-planet#readme",
+  "devDependencies": {
+    "@types/dat-gui": "^0.6.3",
+    "dat.gui": "^0.6.1",
+    "glob": "^7.1.2",
+    "http-server": "^0.10.0",
+    "rollup": "^0.47.4",
+    "rollup-plugin-sourcemaps": "^0.4.2",
+    "rollup-watch": "^4.3.1",
+    "tslint": "^5.6.0",
+    "typescript": "^2.4.2"
+  },
+  "scripts": {
+    "build": "npm run build-assets; tsc; rollup --config",
+    "clean": "rm -frd ./build",
+    "watch": "npm run build-assets && tsc -w & rollup -c -w",
+    "build-planet-surface-maker": "tsc && rollup -c -i ./build/tools/planet-surface-maker/main.js -o ./build/tools/planet-surface-maker/main.compiled.js",
+    "watch-planet-surface-maker": "tsc -w & rollup -w -c -i ./build/tools/planet-surface-maker/main.js -o ./build/tools/planet-surface-maker/main.compiled.js",
+    "build-assets": "node ./scripts/surface-datas-2-ts.js ./assets > ./src/planet-surfaces-data.ts",
+    "minify": "closure-compiler --rewrite_polyfills false --js ./build/main.compiled.js > ./main.min.js",
+    "zip": "advzip -a etop.zip index.html",
+    "all": "npm run build; npm run minify; ./scripts/wrap-output.sh; npm run zip"
+  }
+}

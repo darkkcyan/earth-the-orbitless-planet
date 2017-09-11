@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      padding-left: 15%;
+      padding-right: 15%;
+    }
+    canvas, img {
+      border: 1px solid black;
+    }
+    #editor {
+      cursor: crosshair;
+    }
+    #c {
+      background:#00000B;
+    }
+  </style>
+  <script src="../../dat.gui.min.js"></script>
+</head>
+<body>
+  <h1>Preview image</h1>
+  <img id="source-image" />
+  <hr>
+  <h1>Editor</h1>
+  <canvas id="editor"></canvas>
+  <hr>
+  <h1>Output</h1>
+  <img id="output-image" />
+  <hr>
+  <h1>Sample</h1>
+  <canvas id="c"></canvas>
+  <script src="../../build/tools/planet-surface-maker/main.compiled.js"></script>
+</body>
+</html>
