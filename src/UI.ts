@@ -55,19 +55,24 @@ function renderMenu() {
 
   const ld = JSON.parse(localStorage.getItem(storageName)) as ISavedData;
   ctx.fillStyle = "white";
+
+  ctx.font = "small-caps 30px Arial";
+  ctx.fillText("Made by Quang Loc Tran", x, 260);
+
   ctx.font = "30px Arial";
-  ctx.fillText(`HIGHSCORE: ${ld.highscore}`, x, 280);
+
+  ctx.fillText(`HIGHSCORE: ${ld.highscore}`, x, 340);
 
   if (sessionStorage.getItem(storageName)) {
     const sd = JSON.parse(sessionStorage.getItem(storageName)) as ISessionData;
-    ctx.fillText(`YOUR SCORE: ${sd.lastScore}`, x, 400);
+    ctx.fillText(`YOUR SCORE: ${sd.lastScore}`, x, 470);
     if (sd.lastScore >= ld.highscore) {
       ctx.fillStyle = "yellow";
-      ctx.fillText("NEW HIGH SCORE", x, 440);
+      ctx.fillText("NEW HIGH SCORE", x, 500);
     }
     ctx.fillStyle = "lime";
     ctx.font = "70px Arial";
-    ctx.fillText(sd.isLose ? "GAME OVER" : "YOU WON", x, 320);
+    ctx.fillText(sd.isLose ? "GAME OVER" : "YOU WON", x, 380);
   }
 
   ctx.font = "60px Arial";
