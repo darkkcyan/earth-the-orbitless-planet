@@ -81,7 +81,7 @@ function renderMenu() {
       scriptsController.startStage(0);
     });
   });
-  if (ld.lastGunLevel !== null) {
+  if (ld.lastGunLevel != null) {
     processButton(x, 700, btw, bth, "CONTINUE", () => {
       changeScreen(() => {
         changeGameStage(GameState.ingame);

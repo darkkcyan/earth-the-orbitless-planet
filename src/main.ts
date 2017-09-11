@@ -32,6 +32,8 @@ const lis = {
     if (!localStorage.getItem(storageName)) {
       localStorage.setItem(storageName, JSON.stringify({
         highscore: 0,
+        lastGunLevel: null,
+        lastStage: null,
       } as ISavedData));
     }
     resetScore();
