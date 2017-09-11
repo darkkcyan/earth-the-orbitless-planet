@@ -141,7 +141,7 @@ export default class Enemy implements ICollidable {
   }
 
   public createParticle() {
-    Particle.createPartical(20, this.x, this.y, 3, "rgb(255, 27, 242)", 100);
+    Particle.createPartical(20, this.x, this.y, 3, "fuchsia", 100);
   }
 
   protected autoFire() {
